@@ -9,6 +9,6 @@ vom HS 2017, aber architektonisch und technisch auf den Stand für HS 2018 gebra
 Enthalten sind folgende Funktionalitäten:
 1. Spring Boot 2.0.2 konfiguriert für Tomcat
 2. Camunda Spring Boot Starter 3.0.0
-3. Camunda Process Engine, REST API und Webapps (Tasklist, Cockpit, Admin) in der Version 7.9
+3. Camunda Process Engine, REST API und Webapps (Tasklist, Cockpit, Admin) in der Version 7.9.2 (Enterprise Edition)
 4. H2-Datenbank-Unterstützung (von Camunda Engine benötigt)
 5. "Sinnvolle" Grundkonfiguration in application.properties für Camunda, Datenbank und Tomcat

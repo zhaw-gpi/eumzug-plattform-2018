@@ -8,7 +8,7 @@
     <groupId>ch.zhaw.gpi</groupId>
     <artifactId>eumzug-plattform-2018</artifactId>
     <name>eUmzug Plattform 2018</name>
-    <version>3.0.1</version>
+    <version>3.0.2</version>
     
     <!-- Konfiguration des Maven-Projekts -->
     <properties>
@@ -18,6 +18,32 @@
         
         <!-- Setzt die Spring Boot-Starter-Version auf 3.0.0, was Camunda 7.9 enthält -->
         <camunda-bpm-spring-boot-starter.version>3.0.0</camunda-bpm-spring-boot-starter.version>
+        
+        <!-- Setzt die Camunda-Version
+             Vorsicht, dass diese bezüglich der ersten zwei Ziffern passend ist 
+             zur empfohlenen Spring Boot Starter-Version. Die letzte Ziffer darf
+             hingegen auch höher sein, damit die aktuellsten Patches enthalten
+             sind.
+
+             Um zu sehen, ob es neue Patches gibt, in Netbeans in der Zeile 
+             <version>${camunda.version}${camunda.enable.ee}</version> weiter unten
+             alles zwischen den XML-Tags vorübergehend löschen und statt dessen
+             CTRL+Leerschlag drücken
+             
+             Achtung: Beim Upgrade auf neuere Versionen muss der Local Storage des Browsers
+             geleert werden, weil sonst an etlichen Stellen nur die Translation-
+             Placeholders erscheinen statt der "übersetzten" Texte (sollte in 7.10 behoben sein).
+             Für Google Chrome ist das Vorgehen beschrieben hier:
+             https://forum.camunda.org/t/spring-boot-webapp-login-screen-showing-placeholders/8402/3?u=scepbjoern
+             -->
+        <camunda.version>7.9.2</camunda.version>
+        
+        <!-- Steuert, ob die Enterprise-Version von Camunda benutzt wird ("-ee" schreiben
+             oder die Community-Version (leer lassen). Weitere Bedingungen:
+             1. Eine Datei camunda-license.txt mit einem gültigen Key muss in
+                src/main/resources abgelegt sein (nicht committen!!!).
+             2. Es sind Credentials zum Camunda-EE-Repository erforderlich (siehe ganz unten) -->
+        <camunda.enable.ee>-ee</camunda.enable.ee>
         
         <!-- Java 8 soll genutzt werden beim Kompilieren -->
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -34,6 +60,14 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            
+            <dependency>
+                <groupId>org.camunda.bpm</groupId>
+                <artifactId>camunda-bom</artifactId>
+                <version>${camunda.version}${camunda.enable.ee}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     
@@ -45,7 +79,7 @@
         https://mvnrepository.com/artifact/org.camunda.bpm.springboot/camunda-bpm-spring-boot-starter-webapp/3.0.0 -->
         <dependency>
             <groupId>org.camunda.bpm.springboot</groupId>
-            <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
+            <artifactId>camunda-bpm-spring-boot-starter-webapp${camunda.enable.ee}</artifactId>
             <version>${camunda-bpm-spring-boot-starter.version}</version>
         </dependency>
         
@@ -94,4 +128,38 @@
             </plugin>
         </plugins>
     </build>
+    
+    <!-- Damit auch die neuesten Patches der Camunda-Komponenten verfügbar sind, sollen
+         die Komponenten nicht vom allgemeinen Maven-Repository https://mvnrepository.com
+         geladen werden, sondern von den bei Camunda gehosteten Nexus-Repositories.
+         Diese gibt es einerseits für die Community Edition (camunda-bpm-nexus) und
+         für die Enterprise Edition (camunda-bpm-ee). Die Community Repository funktioniert
+         out-of-the-box, da öffentlich zugänglich.
+
+         Die Enterprise Repository benötigt
+         hingegen Zugangsdaten, welche in einer Datei settings.xml im .m2-Verzeichnis
+         eingefügt werden. Das .m2-Verzeichnis befindet sich auf einem Windows 10-
+         Rechner in C:\Users\BENUTZERNAME\.m2. Der Inhalt von settings.xml sollte sein:
+         <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+            <servers>
+             <server>
+                <id>camunda-bpm-ee</id>
+                <username>BENUTZERNAME</username>
+                <password>PASSWORT</password>
+             </server>
+            </servers>
+           </settings> 
+    -->
+    <repositories>
+        <repository>
+            <id>camunda-bpm-nexus</id>
+            <name>camunda-bpm-nexus</name>
+            <url>https://app.camunda.com/nexus/content/groups/public</url>
+        </repository>
+        <repository>
+            <id>camunda-bpm-ee</id>
+            <name>camunda-bpm-ee</name>
+            <url>https://app.camunda.com/nexus/content/repositories/camunda-bpm-ee</url>
+        </repository>
+    </repositories>
 </project>
