@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" targetNamespace="http://www.signavio.com/bpmn20" exporter="Camunda Modeler" exporterVersion="1.16.2" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <collaboration id="Collaboration_05jmpr5">
+    <participant id="UmzugMeldenParticipant" name="Umzug melden" processRef="UmzugMelden" />
+  </collaboration>
+  <process id="UmzugMelden" name="Umzug melden" isExecutable="true">
+    <laneSet>
+      <lane id="Lane_1474uhv" name="EKS-Meldedienst" />
+      <lane id="Lane_1bppnkr" name="Umzugsplattform">
+        <flowNodeRef>UmzugsmeldungGestartet</flowNodeRef>
+        <flowNodeRef>UmzugsmeldungAbgeschlossen</flowNodeRef>
+        <childLaneSet id="LaneSet_072546v">
+          <lane id="Lane_0ppjtrr" name="Meldepflichtiger">
+            <flowNodeRef>UmzugsmeldungGestartet</flowNodeRef>
+            <flowNodeRef>UmzugsmeldungAbgeschlossen</flowNodeRef>
+          </lane>
+          <lane id="Lane_0eghv6k" name="Automatisch" />
+        </childLaneSet>
+      </lane>
+      <lane id="Lane_09fif4i" name="Mitteilungsdienst" />
+    </laneSet>
+    <startEvent id="UmzugsmeldungGestartet" name="Umzugsmeldung gestartet" camunda:formKey="embedded:app:forms/UmzugsmeldungGestartetForm.html" camunda:initiator="umziehendePerson">
+      <documentation>Noch keine Formularfelder bis auf die Start-Schaltfläche.
+
+Stattdessen wird folgender Text angezeigt:
+
+Titel: Willkommen beim eUmzug des Kantons Bern
+
+Abschnitte:
+Hier werden in der fertigen Lösung zahlreiche Hinweise stehen analog zu der eumzug.swiss-Seite (https://www.eumzug.swiss/eumzug/#/canton/zh)
+
+Insbesondere sollte der Hinweis stehen, dass nicht ausgeschlossen werden kann, dass Sie trotz elektronischer Umzugsmeldung beim Einwohneramt einer Gemeinde vorsprechen müssen.
+
+Als end-Listener wird eine businessCaseId generiert basierend auf der ProcessInstanceId mit dem Präfix EUMZUG.KTBE.</documentation>
+      <extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">execution.setVariable("businessCaseId", "EUMZUG.KTBE" + execution.getProcessInstanceId());</camunda:script>
+        </camunda:executionListener>
+      </extensionElements>
+      <outgoing>SequenceFlow_06eqn6n</outgoing>
+    </startEvent>
+    <endEvent id="UmzugsmeldungAbgeschlossen" name="Umzugsmeldung abgeschlossen">
+      <incoming>SequenceFlow_06eqn6n</incoming>
+    </endEvent>
+    <sequenceFlow id="SequenceFlow_06eqn6n" sourceRef="UmzugsmeldungGestartet" targetRef="UmzugsmeldungAbgeschlossen" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_TwitterDemoProcess">
+    <bpmndi:BPMNPlane id="BPMNPlane_TwitterDemoProcess" bpmnElement="Collaboration_05jmpr5">
+      <bpmndi:BPMNShape id="Participant_1mdci1z_di" bpmnElement="UmzugMeldenParticipant">
+        <omgdc:Bounds x="7" y="-1" width="980" height="553" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1bppnkr_di" bpmnElement="Lane_1bppnkr">
+        <omgdc:Bounds x="37" y="-1" width="950" height="287" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1474uhv_di" bpmnElement="Lane_1474uhv">
+        <omgdc:Bounds x="37" y="286" width="950" height="146" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0ppjtrr_di" bpmnElement="Lane_0ppjtrr">
+        <omgdc:Bounds x="67" y="-1" width="920" height="141" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0eghv6k_di" bpmnElement="Lane_0eghv6k">
+        <omgdc:Bounds x="67" y="140" width="920" height="146" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_09fif4i_di" bpmnElement="Lane_09fif4i">
+        <omgdc:Bounds x="37" y="432" width="950" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0ernray_di" bpmnElement="UmzugsmeldungGestartet">
+        <omgdc:Bounds x="142" y="45" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="119" y="82" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0o7km8y_di" bpmnElement="UmzugsmeldungAbgeschlossen">
+        <omgdc:Bounds x="228" y="45" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="205" y="88" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_06eqn6n_di" bpmnElement="SequenceFlow_06eqn6n">
+        <omgdi:waypoint x="178" y="63" />
+        <omgdi:waypoint x="228" y="63" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

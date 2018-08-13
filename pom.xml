@@ -1,0 +1,97 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Version von Maven -->
+    <modelVersion>4.0.0</modelVersion>
+    
+    <!-- Grundangaben zum Maven-Projekt, Versionsnummer (hinterste Ziffer) jedesmal 
+    um 1 erhöhen, wenn etwas ändert. Die ersten zwei Ziffern entsprechen Spring 
+    Boot-Versionsnummer -->
+    <groupId>ch.zhaw.gpi</groupId>
+    <artifactId>eumzug-plattform-2018</artifactId>
+    <name>eUmzug Plattform 2018</name>
+    <version>3.0.1</version>
+    
+    <!-- Konfiguration des Maven-Projekts -->
+    <properties>
+        <!-- Nicht bloss ANSI, sondern UTF-8 soll unterstützt sein -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        
+        <!-- Setzt die Spring Boot-Starter-Version auf 3.0.0, was Camunda 7.9 enthält -->
+        <camunda-bpm-spring-boot-starter.version>3.0.0</camunda-bpm-spring-boot-starter.version>
+        
+        <!-- Java 8 soll genutzt werden beim Kompilieren -->
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+    
+    <!-- Setzt Spring Boot als massgebend für die Verwaltung der Abhängigkeiten in Maven -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.0.2.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
+    <!-- Legt die einzelnen Abhängigkeiten des Maven-Projekts fest -->
+    <dependencies>
+        <!-- Importiert eine für die Spring Boot-Umgebung konfigurierte Camunda-
+        Umgebung, beinhaltend: Spring-Framework, Tomcat-Server, Camunda Process
+        Engine, Camunda Webapps (Tasklist, Cockpit, Admin), Camunda Spin
+        https://mvnrepository.com/artifact/org.camunda.bpm.springboot/camunda-bpm-spring-boot-starter-webapp/3.0.0 -->
+        <dependency>
+            <groupId>org.camunda.bpm.springboot</groupId>
+            <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
+            <version>${camunda-bpm-spring-boot-starter.version}</version>
+        </dependency>
+        
+        <!-- Importiert die REST API als weiterer Zugang für die Camunda Process Engine
+        https://mvnrepository.com/artifact/org.camunda.bpm.springboot/camunda-bpm-spring-boot-starter-rest/3.0.0 -->
+        <dependency>
+            <groupId>org.camunda.bpm.springboot</groupId>
+            <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
+            <version>${camunda-bpm-spring-boot-starter.version}</version>
+        </dependency>
+    
+        <!-- Importiert die H2-Datenbank-Abhängigkeit, damit die Camunda Process
+        Engine ihre Daten in H2 in-memory ablegen kann -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+        
+        <!-- Import die JDBC-Unterstützung für Spring Boot, damit H2 auch 
+        file-basiert sein kann -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <!-- The Spring Boot Maven Plugin provides Spring Boot support in Maven, 
+            allowing you to package executable jar or war archives and run an application “in-place”.
+            https://docs.spring.io/spring-boot/docs/2.0.4.RELEASE/maven-plugin/usage.html -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.0.3.RELEASE</version>
+                <configuration>
+                    <layout>ZIP</layout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
