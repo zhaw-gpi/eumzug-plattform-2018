@@ -1,10 +1,16 @@
+# eUmzug-Plattform 2018 (eumzug-plattform-2018)
+
 > Autoren der Dokumentation: Björn Scheppler
 > Dokumentation letztmals aktualisiert: 14.8.2018
+> TOC erstellt mit https://ecotrust-canada.github.io/markdown-toc/
 
-# eUmzug-Plattform 2018 (eumzug-plattform-2018)
 In diesem Projekt ist eine mögliche Lösung für den [UmzugsmeldepProzess](https://www.egovernment.ch/de/umsetzung/schwerpunktplan/e-umzug-schweiz/) entwickelt.
 
 Die Lösung entstand im Rahmen des Moduls Geschäftsprozesssintegration im Studiengang Wirtschaftsinformatik an der ZHAW School of Management and Law basierend auf der Lösung vom HS 2017, aber architektonisch und technisch auf den Stand für HS 2018 gebracht.
+
+## Inhaltsverzeichnis
+  * [Architektur der Umzugsplattform inklusive Umsystemen](#architektur-der-umzugsplattform-inklusive-umsystemen)
+  * [Komponenten und Funktionalitäten der Umzugsplattform](#komponenten-und-funktionalit-ten-der-umzugsplattform)
 
 ## Architektur der Umzugsplattform inklusive Umsystemen
 Die Umzugsplattform benötigt für das Funktionieren verschiedene Komponenten, welche teilweise in der Umzugsplattform selbst (= das vorliegende Maven-Projekt) enthalten sind und teilweise extern.
