@@ -1,7 +1,9 @@
 # eUmzug-Plattform 2018 (eumzug-plattform-2018)
 
 > Autoren der Dokumentation: Björn Scheppler
+
 > Dokumentation letztmals aktualisiert: 14.8.2018
+
 > TOC erstellt mit https://ecotrust-canada.github.io/markdown-toc/
 
 In diesem Projekt ist eine mögliche Lösung für den [UmzugsmeldepProzess](https://www.egovernment.ch/de/umsetzung/schwerpunktplan/e-umzug-schweiz/) entwickelt.
@@ -10,7 +12,7 @@ Die Lösung entstand im Rahmen des Moduls Geschäftsprozesssintegration im Studi
 
 ## Inhaltsverzeichnis
   * [Architektur der Umzugsplattform inklusive Umsystemen](#architektur-der-umzugsplattform-inklusive-umsystemen)
-  * [Komponenten und Funktionalitäten der Umzugsplattform](#komponenten-und-funktionalit-ten-der-umzugsplattform)
+  * [Komponenten und Funktionalitäten der Umzugsplattform](#komponenten-und-funktionalitaeten-der-umzugsplattform)
 
 ## Architektur der Umzugsplattform inklusive Umsystemen
 Die Umzugsplattform benötigt für das Funktionieren verschiedene Komponenten, welche teilweise in der Umzugsplattform selbst (= das vorliegende Maven-Projekt) enthalten sind und teilweise extern.
@@ -34,7 +36,7 @@ Im Folgenden werden die einzelnen **Komponenten der Architektur aufgelistet und 
 6. **Erfolgreichen Abschluss mitteilen**: Aufgrund der Komplexität - es sollen nebst Mail-Benachrichtigung z.B. auch SMS-Benachrichtigung ermöglicht werden -, ist eine Implementation nur als JavaDelegate nicht sinnvoll. Umgekehrt ist der Benachrichtigungsprozess selbst so trivial, dass eine eigene Process Engine nicht sinnvoll erscheint. Aus diesem Grund wird eine reine Spring Boot-Applikation entwickelt, aber als eigener Microservice, so dass diese Applikation auch von anderen Prozessen im Kanton Bern genutzt werden kann.
 7. **Persistieren-Service Tasks**: Die verschiedenen Service Tasks wie z.B. *Erfolgreichen Abschluss persistieren*, welche in der Umzugsplattform-Datenbank die wichtigsten Angaben zur meldepflichtigen Person und zum Prozessstatus persistieren sollen, werden als JavaDelegate implementiert, da die Funktonalität ziemlich trivial ist. @heip: Wir könnten aber natürlich das auch etwas ausweiten, indem eine separate Applikation diese Persistierung vornimmt mit separater Datenbank (nicht Process Engine-DB) und dafür noch einem kleinen WebGUI, wo Angestellte der Verwaltung jederzeit für einen Meldepflichtigen seinen aktuellen Status anschauen können. Anderseits: Warum hierzu nicht einfach das Camunda Cockpit nutzen mit dem Filter nach einem bestimmten BusinessKey, welcher dem Benutzer auf dem "Abschlussbestätigung anzeigen"-Dialog angezeigt wird, damit er bei Telefonaten die richtige Id nennt?
 
-## Komponenten und Funktionalitäten der Umzugsplattform
+## Komponenten und Funktionalitaeten der Umzugsplattform
 1. Spring Boot 2.0.2 konfiguriert für Tomcat
 2. Camunda Spring Boot Starter 3.0.0
 3. Camunda Process Engine, REST API und Webapps (Tasklist, Cockpit, Admin) in der Version 7.9.2 (Enterprise Edition)
