@@ -1,0 +1,41 @@
+<!--
+Formular zum UserTask "Kontaktangaben erfassen"
+Mehr Infos zu Bootstrap: https://www.w3schools.com/bootstrap/default.asp
+Mehr Infos zu AngularJS: https://angularjs.org/ und https://www.w3schools.com/angular/default.asp
+Mehr Infos zu Camunda Embedded Forms: https://docs.camunda.org/manual/7.7/reference/embedded-forms/
+Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
+-->
+<form name="camundaForm">
+    <div class="alert alert-info">
+        <p>* Diese Felder müssen ausgefüllt werden.</p>
+    </div>
+    
+    <div class="form-group">
+        <label>Telefonnummer*</label>
+        <input type="text" 
+               name="phoneNumber" 
+               class="form-control" 
+               cam-variable-name="phoneNumber" 
+               cam-variable-type="String" 
+               placeholder="+41 00 000 00 00"
+               required 
+               ng-pattern="/^.{10,20}$/">
+        <p class="help-block" ng-show="camundaForm.phoneNumber.$invalid">
+            Geben Sie Ihre Telefonnummer im Bereich von 10 bis 20 Zeichen ein.
+        </p>
+    </div>
+    
+    <div class="form-group">
+        <label>E-Mailadresse*</label>
+        <input type="email" 
+               name="emailAddress" 
+               class="form-control" 
+               cam-variable-name="emailAddress" 
+               cam-variable-type="String"
+               placeholder="hans.muster@domain.ch">
+        <p class="help-block" ng-show="camundaForm.emailAddress.$invalid">
+            Geben Sie Ihre E-Mail-Adresse im Format name@beispiel.org ein.
+        </p>
+    </div>  
+</form>
+

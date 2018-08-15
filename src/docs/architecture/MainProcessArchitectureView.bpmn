@@ -4,8 +4,11 @@
     <bpmn:participant id="Participant_1as34mt" name="Umzug melden" processRef="Process_1st0wpe" />
     <bpmn:participant id="Participant_1qc84z2" name="Gebäude und Wohnungsregister (GWR)&#10;Personenregister&#10;Einwohnerkontrollsysteme (EKS)" />
     <bpmn:participant id="Participant_18s7cj7" name="Kantonaler Zahlungsdienst" />
+    <bpmn:participant id="Participant_02je86n" name="VeKa-Center-Auskunftsdienst" />
     <bpmn:messageFlow id="MessageFlow_1bje1dv" name="eCH-Nachricht (SOAP)" sourceRef="Participant_1as34mt" targetRef="Participant_1qc84z2" />
     <bpmn:messageFlow id="MessageFlow_0cbzpow" name="eCH-Nachricht (SOAP)" sourceRef="Participant_1qc84z2" targetRef="Participant_1as34mt" />
+    <bpmn:messageFlow id="MessageFlow_07jo1ze" name="Versicherten-Angaben (REST)" sourceRef="Participant_1as34mt" targetRef="Participant_02je86n" />
+    <bpmn:messageFlow id="MessageFlow_1od53vh" name="Prüfergebnis (REST)" sourceRef="Participant_02je86n" targetRef="Participant_1as34mt" />
   </bpmn:collaboration>
   <bpmn:process id="Process_1st0wpe" isExecutable="false">
     <bpmn:startEvent id="StartEvent_1rqqxuj" name="Umzugsmeldung gestartet">
@@ -176,7 +179,7 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_01k5g2n_di" bpmnElement="Participant_18s7cj7" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <dc:Bounds x="16" y="679" width="925" height="60" />
+        <dc:Bounds x="16" y="711" width="300" height="60" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0jz9fxe_di" bpmnElement="SequenceFlow_0jz9fxe">
         <di:waypoint x="456" y="315" />
@@ -240,6 +243,23 @@
         <di:waypoint x="387" y="373" />
         <di:waypoint x="387" y="436" />
         <di:waypoint x="524" y="436" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_02je86n_di" bpmnElement="Participant_02je86n" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
+        <dc:Bounds x="340" y="711" width="598" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_07jo1ze_di" bpmnElement="MessageFlow_07jo1ze">
+        <di:waypoint x="477" y="662" />
+        <di:waypoint x="477" y="711" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="381" y="674" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_1od53vh_di" bpmnElement="MessageFlow_1od53vh">
+        <di:waypoint x="748" y="711" />
+        <di:waypoint x="748" y="662" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="760" y="678" width="63" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

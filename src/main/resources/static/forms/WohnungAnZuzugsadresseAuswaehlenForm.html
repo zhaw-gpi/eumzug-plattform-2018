@@ -1,0 +1,56 @@
+<!--
+Formular zum User Task "Wohnung auswählen"
+-->
+<form name="camundaForm">
+    <div class="alert alert-info">
+        * Diese Felder müssen ausgefüllt werden.
+    </div>
+    
+    <div class="form-group">
+        <label>Zukünftige Wohnung*</label>
+        <select name="apartmentMoveIn"
+                ng-model="apartmentMoveIn"
+                ng-options="'Etage ' + al.wstwk.toString().substr(3, 4) + ', Lage ' + al.wbez + ' (' + al.wazim + ' Zimmer) [' + al.whgnr + ']' for al in wohnungenList|orderBy:'whgnr'"
+                class="form-control"
+                required>
+        </select>
+    </div>
+    
+    <script cam-script type="text/form-script">
+        // Die AngularJS-Scope-Variable camForml.variableManager wird einer lokalen
+        // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
+        // folgenden Funktionen
+        var variableManager = camForm.variableManager;
+        
+        // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
+        // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im
+        // variableManager-Objekt (Client)
+        camForm.on('form-loaded', function() {
+            variableManager.fetchVariable("wohnungenListSerialized");
+            variableManager.fetchVariable("apartmentIdMoveIn");
+        });
+        
+        // Sobald alle Variablen client-seitig zur Verfügung stehen, werden diese
+        // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
+        // angzeigt werden können
+        camForm.on('variables-fetched', function() {
+            $scope.wohnungenList = variableManager.variableValue("wohnungenListSerialized");
+            $scope.apartmentIdMoveIn = variableManager.variableValue("apartmentIdMoveIn");
+            $scope.apartmentMoveIn = $scope.wohnungenList.find(item => item.whgnr === $scope.apartmentIdMoveIn);
+        });
+        
+        // Unmittelbar vor dem Ausführen der HTTP-Post-Anfrage des Formulars
+        // wird sichergestellt, dass die Id und der Name der im Select ausgewählten
+        // politische Gemeinde den entsprechenden Prozessvariablen zugewiesen werden
+        // Weil das Formular unter Umständen schon zum zweiten Mal aufgerufen wird, müssen
+        // zuvor dieselben Variablen gelöscht werden, damit kein Fehler auftritt
+        camForm.on('submit', function() {
+            variableManager.destroyVariable("apartmentIdMoveIn");
+            variableManager.createVariable({
+                'name': 'apartmentIdMoveIn',
+                'type': 'String',
+                'value': $scope.apartmentMoveIn.whgnr
+            });
+        });
+    </script>
+</form>

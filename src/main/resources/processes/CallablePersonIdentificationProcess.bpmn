@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_15djiii" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_15djiii" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
   <bpmn:collaboration id="Collaboration_06rojpi">
     <bpmn:participant id="PersonErfassenUndIdentifizierenParticipant" name="Person erfassen und identifizieren" processRef="PersonErfassenUndIdentifizieren" />
     <bpmn:participant id="KantonalesPersonenregisterParticipant" name="Kantonales Personenregister">
@@ -11,6 +11,10 @@
     <bpmn:messageFlow id="MessageFlow_0orjp5r" name="Existenz und Umzugs-berechtigung" sourceRef="KantonalesPersonenregisterParticipant" targetRef="PersonIdentifizieren">
       <bpmn:documentation>eCH-0194:personMoveResponse</bpmn:documentation>
     </bpmn:messageFlow>
+    <bpmn:textAnnotation id="TextAnnotation_1t02yh8">
+      <bpmn:text>In dieser Farbe sind im HS 2017 nicht oder nur teilweise oder anders implementierte Elemente markiert</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_13tr07e" sourceRef="PersonErfassenUndIdentifizierenParticipant" targetRef="TextAnnotation_1t02yh8" />
   </bpmn:collaboration>
   <bpmn:process id="PersonErfassenUndIdentifizieren" name="PersonErfassenUndIdentifizieren" isExecutable="true">
     <bpmn:startEvent id="UmzugsmeldungGestartet" name="Umzugsmeldung gestartet">
@@ -18,8 +22,7 @@
 
 Ein End-Listener ruft die JavaDelegate-Klasse 'GetMunicipalityListDelegate' auf mit folgender Aufgabe: Serialisierte Prozessvariable municipalityListSerialized mit allen Gemeinden in der Umzugsplattform-Datenbank erstellen
 
-Über ein JPA-Repository sollen alle Municipality-Objekte aus der Datenbank in ein List-Objekt eingelesen werden. Diese Objekte werden mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable municipalityListSerialized zugewiesen.
-</bpmn:documentation>
+Über ein JPA-Repository sollen alle Municipality-Objekte aus der Datenbank in ein List-Objekt eingelesen werden. Diese Objekte werden mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable municipalityListSerialized zugewiesen.</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:executionListener delegateExpression="#{getMunicipalityListAdapter}" event="end" />
       </bpmn:extensionElements>
@@ -53,8 +56,7 @@ Geburtsdatum
 Wegzugsadresse Politische Gemeinde
   eCH-0007:municipalityIdMoveOut
   Integer
-  select (basierend auf municipalityListSerialized (siehe unten), wobei municipalityName angezeigt wird)
-</bpmn:documentation>
+  select (basierend auf municipalityListSerialized (siehe unten), wobei municipalityName angezeigt wird)</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:formData />
       </bpmn:extensionElements>
@@ -233,7 +235,7 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
           <dc:Bounds x="831" y="193" width="71" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0ko93ge_di" bpmnElement="MitumziehendePersonenAuswaehlen">
+      <bpmndi:BPMNShape id="UserTask_0ko93ge_di" bpmnElement="MitumziehendePersonenAuswaehlen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="964" y="224" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0cjsigp_di" bpmnElement="ExclusiveGateway_0cjsigp" isMarkerVisible="true">
@@ -374,6 +376,13 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
         <bpmndi:BPMNLabel>
           <dc:Bounds x="621" y="72" width="64" height="40" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_1t02yh8_di" bpmnElement="TextAnnotation_1t02yh8" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+        <dc:Bounds x="70" y="27" width="339" height="45" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_13tr07e_di" bpmnElement="Association_13tr07e">
+        <di:waypoint x="387" y="118" />
+        <di:waypoint x="287" y="72" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
