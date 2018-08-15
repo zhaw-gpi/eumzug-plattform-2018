@@ -1,0 +1,57 @@
+<!--
+Formular zum UserTask "Mitumziehende Personen wählen"
+-->
+<form name="camundaForm" style="padding-top: 10px;">
+    <div class="alert alert-info">      
+        Wählen Sie alle Personen aus, die mit Ihnen umziehen. Aus Datenschutzgründen
+        werden nur die Vornamen angezeigt.
+    </div>
+    
+    <div class="checkbox" ng-repeat="relative in relativesList">
+        <label>
+            <input type="checkbox" name="movingAlongPerson" value="{{relative}}">
+            {{relative.personIdentification.firstName}}
+        </label>
+    </div>
+
+    <script cam-script type="text/from-script">
+        // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
+        // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
+        // folgenden Funktionen
+        var variableManager = camForm.variableManager;
+
+        // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
+        // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im
+        // variableManager-Objekt (Client)
+        camForm.on('form-loaded', function(){
+            variableManager.fetchVariable("relativesListSerialized");
+        });
+
+        // Sobald alle Variablen client-seitig zur Verfügung stehen, werden diese
+        // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
+        // angezeigt werden können.
+        camForm.on('variables-fetched', function(){
+            $scope.relativesList = variableManager.variableValue("relativesListSerialized");
+        });
+
+        // Vor dem Submit wird geprüft, welche Personen ausgewählt wurden. Diese
+        // werden einem neuen Array übergeben, welches serialisiert einer neuen 
+        // Prozessvariable movingAlongPersons zugewiesen wird
+        camForm.on('submit', function(){
+            var movingAlongPersons = [];
+            $("input:checkbox[name=movingAlongPerson]:checked").each(function(){
+                movingAlongPersons.push($(this).val());
+            });
+            
+            $scope.movingAlongPersons = movingAlongPersons;
+
+            var movingAlongPersonsSerialized = JSON.stringify(movingAlongPersons);
+
+            variableManager.createVariable({
+            'name':'movingAlongPersons',
+            'type':'json',
+            'value': movingAlongPersonsSerialized
+            });
+        });
+    </script> 
+</form>

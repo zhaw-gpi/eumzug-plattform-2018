@@ -18,7 +18,7 @@ Die Lösung entstand im Rahmen des Moduls Geschäftsprozesssintegration im Studi
 Die Umzugsplattform benötigt für das Funktionieren verschiedene Komponenten, welche teilweise in der Umzugsplattform selbst (= das vorliegende Maven-Projekt) enthalten sind und teilweise extern.
 
 Die **Haupt-Komponenten und ihr Zusammenspiel** sind in der untenstehenden Grafik abgebildet:
-![Abbildung Haupt-Komponenten](src/docs/readme_images/main_process_architecture_view.png "Abbildung Haupt-Komponenten")
+![Abbildung Haupt-Komponenten](src/docs/architecture/MainProcessArchitectureView.png "Abbildung Haupt-Komponenten")
 
 Die **Farben** bedeuten dabei:
 - **Weiss/farblos**: Die eigentliche Umzugsplattform mit dem Hauptprozess, welche als Camunda Spring Boot-Applikation implementiert ist. Service Tasks, welche nicht eingefärbt sind, werden über JavaDelegates implementiert, User Tasks über Embedded Forms, die in der Camunda Webapp Tasklist eingebettet sind.

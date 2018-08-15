@@ -104,6 +104,32 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
+        
+        <!-- Spring Boot Starter für JPA -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        
+        <!-- Komponenten, um Web Services aufzurufen und Nachrichten zu verarbeiten -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web-services</artifactId>
+        </dependency>
+        
+        <!-- Camunda Spin-Abhängigkeiten für Serialisierung und Deserialisierung -->
+        <dependency>
+            <groupId>org.camunda.spin</groupId>
+            <artifactId>camunda-spin-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.camunda.spin</groupId>
+            <artifactId>camunda-spin-dataformat-json-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.camunda.bpm</groupId>
+            <artifactId>camunda-engine-plugin-spin</artifactId>
+        </dependency>
     </dependencies>
     
     <build>
@@ -125,6 +151,38 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            
+            <!-- 
+            ***
+            * Das JAXB2-Plugin ist erforderlich, um aus den im WSDL enthaltenen
+            * Schema Definitions für JAX-WS annotierte Java-Klassen zu generieren.
+            * Die Dokumentation befindet sich in https://github.com/highsource/maven-jaxb2-plugin
+            ***
+            -->
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.13.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <schemaLanguage>WSDL</schemaLanguage>
+                    <schemas>
+                        <schema>
+                            <url>http://localhost:8090/soap/GebaeudeUndWohnungsRegisterService?wsdl</url>
+                        </schema>
+                        <schema>
+                            <url>http://localhost:8083/soap/PersonenRegisterService?wsdl</url>
+                        </schema>
+                    </schemas>
+                    <generateDirectory>target/generated-sources/classes-from-wsdl</generateDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>

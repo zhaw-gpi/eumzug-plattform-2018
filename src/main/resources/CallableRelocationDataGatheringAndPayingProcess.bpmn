@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_1j21kxz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+  <bpmn:collaboration id="Collaboration_0v36rjh">
+    <bpmn:participant id="UmzugsmeldungErfassenUndBezahlenParticipant" name="Umzugsmeldung erfassen und bezahlen" processRef="UmzugsmeldungErfassenUndBezahlen" />
+  </bpmn:collaboration>
+  <bpmn:process id="UmzugsmeldungErfassenUndBezahlen" name="Umzugsmeldung erfassen und bezahlen" isExecutable="true">
+    <bpmn:subProcess id="UmzugsmeldungErfassen" name="Umzugsmeldung erfassen">
+      <bpmn:documentation>Embedded Subprocess, um alle Aktivitäten zu umfassen, welche innerhalb von 48 h erledigt sein müssen, wenn der Prozess nicht abbrechen soll (siehe angeheftetes Fehler-Zwischenereignis).</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_0idpplo</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1lte88j</bpmn:outgoing>
+      <bpmn:startEvent id="StartEvent_09eswy9">
+        <bpmn:outgoing>SequenceFlow_00uv839</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:endEvent id="EndEvent_1fsuc39">
+        <bpmn:incoming>SequenceFlow_15e28af</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0mei95i" sourceRef="PersonErfassenUndIdentifizieren" targetRef="Task_0g4zbtt" />
+      <bpmn:sequenceFlow id="SequenceFlow_120w2r2" sourceRef="CallActivity_1jft79s" targetRef="CallActivity_18hm433" />
+      <bpmn:sequenceFlow id="SequenceFlow_001pwxn" sourceRef="CallActivity_18hm433" targetRef="ServiceTask_1tor46z" />
+      <bpmn:sequenceFlow id="SequenceFlow_12mko98" sourceRef="ServiceTask_1tor46z" targetRef="UserTask_0xicqkt" />
+      <bpmn:sequenceFlow id="SequenceFlow_00uv839" sourceRef="StartEvent_09eswy9" targetRef="PersonErfassenUndIdentifizieren" />
+      <bpmn:sequenceFlow id="SequenceFlow_15e28af" sourceRef="UserTask_0xicqkt" targetRef="EndEvent_1fsuc39" />
+      <bpmn:task id="UserTask_0xicqkt" name="Alle Angaben prüfen">
+        <bpmn:incoming>SequenceFlow_12mko98</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_15e28af</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:task id="ServiceTask_1tor46z" name="Gebühren ermitteln">
+        <bpmn:incoming>SequenceFlow_001pwxn</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_12mko98</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:task id="CallActivity_18hm433" name="Dokumente und weitere Angaben erfassen">
+        <bpmn:incoming>SequenceFlow_120w2r2</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_001pwxn</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:task id="CallActivity_1jft79s" name="Zuzugsinformationen erfassen und prüfen">
+        <bpmn:incoming>SequenceFlow_0hi1ppy</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_120w2r2</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:task id="Task_0g4zbtt" name="Wegzugsadresse erfassen und prüfen">
+        <bpmn:incoming>SequenceFlow_0mei95i</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0hi1ppy</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:sequenceFlow id="SequenceFlow_0hi1ppy" sourceRef="Task_0g4zbtt" targetRef="CallActivity_1jft79s" />
+      <bpmn:callActivity id="PersonErfassenUndIdentifizieren" name="Person erfassen und identifizieren" calledElement="PersonErfassenUndIdentifizieren">
+        <bpmn:documentation>Im aufgerufenen Prozess erfasst der Meldepflichtige seine Personalien und seine politische Gemeinde. Im kantonalen Personenregister wird mit diesen Angaben geprüft, ob die Person existiert und ob sie für den Umzug berechtigt ist.
+
+Dem Prozess wird der BusinessKey, die BusinessCaseId und der Benutzername (meldePflichtiger) übergeben und umgekehrt folgende Variablen zurück genommen: municipalityNameMoveOut, firstName, officialName, sex, dateOfBirth, vn, localPersonId und movingAlongPersons.
+</bpmn:documentation>
+        <bpmn:extensionElements>
+          <camunda:in businessKey="#{execution.processBusinessKey}" />
+          <camunda:in source="businessCaseId" target="businessCaseId" />
+          <camunda:in source="meldePflichtiger" target="meldePflichtiger" />
+          <camunda:out source="municipalityNameMoveOut" target="municipalityNameMoveOut" />
+          <camunda:out source="firstName" target="firstName" />
+          <camunda:out source="officialName" target="officialName" />
+          <camunda:out source="sex" target="sex" />
+          <camunda:out source="dateOfBirth" target="dateOfBirth" />
+          <camunda:out source="vn" target="vn" />
+          <camunda:out source="localPersonId" target="localPersonId" />
+          <camunda:out source="movingAlongPersons" target="movingAlongPersons" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>SequenceFlow_00uv839</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0mei95i</bpmn:outgoing>
+      </bpmn:callActivity>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="SequenceFlow_0idpplo" sourceRef="UmzugsmeldungGestartet" targetRef="UmzugsmeldungErfassen" />
+    <bpmn:sequenceFlow id="SequenceFlow_11zgl40" sourceRef="AchtundvierzigStundenVerstrichen" targetRef="ExclusiveGateway_0ldwwai" />
+    <bpmn:boundaryEvent id="AchtundvierzigStundenVerstrichen" name="48 h&#10;verstrichen" attachedToRef="UmzugsmeldungErfassen">
+      <bpmn:documentation>Es soll vermieden werden, dass Prozessinstanzen ewig hängen bleiben, weil ein Meldepflichtiger zwar Formulare aufruft, aber eines dieser Formulare nie absendet, sondern z.B. den Browser vorher schliesst. Daher ein Timeout von 48 h (PT48H).
+
+Fürs Testing Zeitdauer auf wenige Sekunden (PT30S) bis Minuten (PT3M) stellen.
+
+In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschlagen wegen Zeitüberschreitung beim Erfassen der Umzugsmeldung".</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">execution.setVariable("status", "Fehlgeschlagen wegen Zeitüberschreitung beim Erfassen der Umzugsmeldung");</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_11zgl40</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT48H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:startEvent id="UmzugsmeldungGestartet" name="Umzugsmeldung gestartet">
+      <bpmn:documentation>Dieses Prozesstartereignis wird aufgerufen vom Prozess 'UmzugMelden' und ist nicht gedacht, um unabhängig davon (z.B. aus der Tasklist) aufgerufen zu werden.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">execution.setVariable("feeMapSerialized", null);</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_0idpplo</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="GebuehrenFallenNichtAn" name="nein" sourceRef="ExclusiveGateway_1t9zc0d" targetRef="ExclusiveGateway_175tgn6">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${feeMapSerialized==null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="GebuehrenFallenAn" name="ja" sourceRef="ExclusiveGateway_1t9zc0d" targetRef="ZahlungDurchfuehren">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${feeMapSerialized!=null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1lte88j" sourceRef="UmzugsmeldungErfassen" targetRef="ExclusiveGateway_1t9zc0d" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1t9zc0d" name="Fallen Gebühren an?">
+      <bpmn:incoming>SequenceFlow_1lte88j</bpmn:incoming>
+      <bpmn:outgoing>GebuehrenFallenAn</bpmn:outgoing>
+      <bpmn:outgoing>GebuehrenFallenNichtAn</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_175tgn6">
+      <bpmn:incoming>GebuehrenFallenNichtAn</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_04m4p8a</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1y8ukhh</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:boundaryEvent id="ZahlungFehlgeschlagen" name="Zahlung fehlgeschlagen" attachedToRef="ZahlungDurchfuehren">
+      <bpmn:documentation>Kommt es innerhalb des Zahlungsprozesses zu einem Business-Fehler (z.B. Zahlung abgebrochen oder nicht innerhalb der Frist durchgeführt), so wird dieser hier abgefangen und im folgenden Sequenzfluss behandelt.
+
+In einem End-Listener wird die Prozessvariable 'status' zusammengesetzt aus dem Präfix "Fehlgeschlagen bei Zahlung durchführen. Grund: " und dem Inhalt der Error Message-Variable.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">execution.setVariable("status", "Fehlgeschlagen bei Zahlung durchführen. Grund: " + errorMessage);</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_1d0k5r8</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_1ak9z8o" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:task id="ZahlungDurchfuehren" name="Zahlung durchführen">
+      <bpmn:incoming>GebuehrenFallenAn</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_04m4p8a</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:userTask id="AbschlussBestaetigungAnzeigen" name="Abschluss-Bestätigung anzeigen" camunda:asyncAfter="true" camunda:formKey="embedded:app:forms/AbschlussBestaetigungAnzeigenForm.html" camunda:assignee="${meldePflichtiger}">
+      <bpmn:documentation>Als Abschlussbestätigung folgende Paragraphen hinzufügen:
+Sobald Sie auf "Complete" drücken, werden Ihre Angaben weiterverarbeitet und geprüft.
+Sie werden dann in den nächsten Tagen von uns kontatktiert und über das weitere Vorgehen informiert.</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_1y8ukhh</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0mh6vb8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:task id="ErfolgreicheUmzugsmeldungErfassungPersistieren" name="Erfolgreiche Umzugsmeldung-Erfassung persistieren">
+      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
+
+Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex).
+
+In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgreiche Erfassung der Umzugsmeldung".</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_0mh6vb8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_173zha0</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="SequenceFlow_173zha0" sourceRef="ErfolgreicheUmzugsmeldungErfassungPersistieren" targetRef="UmzugsmeldungErfolgreichErfasst" />
+    <bpmn:sequenceFlow id="SequenceFlow_04m4p8a" sourceRef="ZahlungDurchfuehren" targetRef="ExclusiveGateway_175tgn6" />
+    <bpmn:sequenceFlow id="SequenceFlow_1y8ukhh" sourceRef="ExclusiveGateway_175tgn6" targetRef="AbschlussBestaetigungAnzeigen" />
+    <bpmn:sequenceFlow id="SequenceFlow_0mh6vb8" sourceRef="AbschlussBestaetigungAnzeigen" targetRef="ErfolgreicheUmzugsmeldungErfassungPersistieren" />
+    <bpmn:sequenceFlow id="SequenceFlow_1d0k5r8" sourceRef="ZahlungFehlgeschlagen" targetRef="Task_1xxw28x" />
+    <bpmn:endEvent id="UmzugsmeldungErfolgreichErfasst" name="Umzugsmeldung erfolgreich erfasst">
+      <bpmn:incoming>SequenceFlow_173zha0</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="VierundzwanzigStundenVerstrichen" name="24 h &#10;verstrichen" attachedToRef="AbschlussBestaetigungAnzeigen">
+      <bpmn:documentation>Es soll vermieden werden, dass Prozessinstanzen ewig hängen bleiben, weil ein Meldepflichtiger zwar Formulare aufruft, aber eines dieser Formulare nie absendet, sondern z.B. den Browser vorher schliesst. Daher ein Timeout von 24 h (PT24H).
+
+Fürs Testing Zeitdauer auf wenige Sekunden (PT30S) bis Minuten (PT3M) stellen.
+
+In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschlagen wegen Zeitüberschreitung beim Bestätigen der Abschlussmeldung".</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">execution.setVariable("status", "Fehlgeschlagen wegen Zeitüberschreitung beim Bestätigen der Abschlussmeldung");</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_07spu5u</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT24H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_07spu5u" sourceRef="VierundzwanzigStundenVerstrichen" targetRef="ExclusiveGateway_17310vy" />
+    <bpmn:endEvent id="EndEvent_1d7w5d6" name="Wegen fehlgeschlagener Zahlung abgebrochen">
+      <bpmn:incoming>SequenceFlow_1vi0gkw</bpmn:incoming>
+      <bpmn:errorEventDefinition errorRef="Error_1ayoalr" />
+    </bpmn:endEvent>
+    <bpmn:task id="Task_1xxw28x" name="Fehlgeschlagene Zahlung persistieren">
+      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
+
+Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex), ebenfalls der Status (status).</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_1d0k5r8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1vi0gkw</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="SequenceFlow_1vi0gkw" sourceRef="Task_1xxw28x" targetRef="EndEvent_1d7w5d6" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0ldwwai" name="Person-identifikation erfasst?">
+      <bpmn:incoming>SequenceFlow_11zgl40</bpmn:incoming>
+      <bpmn:outgoing>PersonIdentifikationErfasst</bpmn:outgoing>
+      <bpmn:outgoing>PersonIdentifikationNichtErfasst</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0ebozi5">
+      <bpmn:incoming>SequenceFlow_0xvv0xn</bpmn:incoming>
+      <bpmn:incoming>PersonIdentifikationNichtErfasst</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1u4hpcs</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_0q8vph1" name="Wegen Zeitüber-schreitung abgebrochen">
+      <bpmn:incoming>SequenceFlow_1u4hpcs</bpmn:incoming>
+      <bpmn:errorEventDefinition errorRef="Error_0fmfamk" />
+    </bpmn:endEvent>
+    <bpmn:task id="AbbruchWegenZeitueberschreitungPersistieren" name="Abbruch wegen Zeitüberschreitung persistieren">
+      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
+
+Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex), ebenfalls der Status (status).</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_1g2lf5o</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0xvv0xn</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_17310vy">
+      <bpmn:incoming>PersonIdentifikationErfasst</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_07spu5u</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1g2lf5o</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="PersonIdentifikationErfasst" name="ja" sourceRef="ExclusiveGateway_0ldwwai" targetRef="ExclusiveGateway_17310vy">
+      <bpmn:documentation>Mindestens die AHV-Nummer oder die Kombination aus Vorname, Nachname und Geburtsdatum müssen erfasst sein, dass es sich lohnt, überhaupt einen Log-Eintrag zu erstellen. Wenn diese Informationen fehlen, kann davon ausgegangen werden, dass lediglich der Prozess gestartet wurde, aber nicht einmal der erste User Task "Personidentifikation erfassen" abgeschlossen wurde.
+Dies kann vereinfacht abgefragt werden, indem
+a) Bei "Personenidentifikator generieren" Async after gesetzt ist
+b) Nur das Vorhandensein von localPersonId geprüft wird (darf also nicht null sein)</bpmn:documentation>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable('localPersonId') != null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="PersonIdentifikationNichtErfasst" name="nein" sourceRef="ExclusiveGateway_0ldwwai" targetRef="ExclusiveGateway_0ebozi5">
+      <bpmn:documentation>Siehe Dokumentation bei ja</bpmn:documentation>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable('localPersonId') == null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0xvv0xn" sourceRef="AbbruchWegenZeitueberschreitungPersistieren" targetRef="ExclusiveGateway_0ebozi5" />
+    <bpmn:sequenceFlow id="SequenceFlow_1u4hpcs" sourceRef="ExclusiveGateway_0ebozi5" targetRef="EndEvent_0q8vph1" />
+    <bpmn:sequenceFlow id="SequenceFlow_1g2lf5o" sourceRef="ExclusiveGateway_17310vy" targetRef="AbbruchWegenZeitueberschreitungPersistieren" />
+    <bpmn:association id="Association_14469u2" sourceRef="UmzugsmeldungGestartet" targetRef="TextAnnotation_11cqiat" />
+    <bpmn:textAnnotation id="TextAnnotation_11cqiat">
+      <bpmn:text>End-Listener für Gebühren-Gateway noch drin</bpmn:text>
+    </bpmn:textAnnotation>
+  </bpmn:process>
+  <bpmn:error id="Error_0fmfamk" name="ErrorUmzugsmeldungErfassenUndBezahlen" errorCode="ZeitueberschreitungBenutzer" />
+  <bpmn:error id="Error_1ak9z8o" name="ErrorZahlungDurchfuehren" />
+  <bpmn:error id="Error_1ayoalr" name="ErrorUmzugsmeldungErfassenUndBezahlen" errorCode="ZahlungFehlgeschlagen" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0v36rjh">
+      <bpmndi:BPMNShape id="Participant_1206ssw_di" bpmnElement="UmzugsmeldungErfassenUndBezahlenParticipant">
+        <dc:Bounds x="0" y="-92" width="1573" height="628" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="UmzugsmeldungGestartet">
+        <dc:Bounds x="71" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="48" y="202" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1rb068c_di" bpmnElement="UmzugsmeldungErfolgreichErfasst">
+        <dc:Bounds x="1490" y="156" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1464" y="199" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0idpplo_di" bpmnElement="SequenceFlow_0idpplo">
+        <di:waypoint x="107" y="177" />
+        <di:waypoint x="151" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_0vam6rt_di" bpmnElement="UmzugsmeldungErfassen" isExpanded="true">
+        <dc:Bounds x="151" y="28" width="621" height="291" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_173zha0_di" bpmnElement="SequenceFlow_173zha0">
+        <di:waypoint x="1441" y="174" />
+        <di:waypoint x="1490" y="174" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_1o5j1g4_di" bpmnElement="AchtundvierzigStundenVerstrichen">
+        <dc:Bounds x="210" y="301" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="326.5" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xvv0xn_di" bpmnElement="SequenceFlow_0xvv0xn">
+        <di:waypoint x="654" y="439" />
+        <di:waypoint x="714" y="439" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0ebozi5_di" bpmnElement="ExclusiveGateway_0ebozi5" isMarkerVisible="true">
+        <dc:Bounds x="714" y="414" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1u4hpcs_di" bpmnElement="SequenceFlow_1u4hpcs">
+        <di:waypoint x="764" y="439" />
+        <di:waypoint x="820" y="439" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0ldwwai_di" bpmnElement="ExclusiveGateway_0ldwwai" isMarkerVisible="true">
+        <dc:Bounds x="361" y="414" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="355" y="374" width="62" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_163y65k_di" bpmnElement="PersonIdentifikationErfasst">
+        <di:waypoint x="411" y="439" />
+        <di:waypoint x="455" y="439" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="422" y="417" width="8" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1snvvu0_di" bpmnElement="PersonIdentifikationNichtErfasst">
+        <di:waypoint x="386" y="464" />
+        <di:waypoint x="386" y="505" />
+        <di:waypoint x="739" y="505" />
+        <di:waypoint x="739" y="464" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="403" y="483" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_11zgl40_di" bpmnElement="SequenceFlow_11zgl40">
+        <di:waypoint x="228" y="337" />
+        <di:waypoint x="228" y="439" />
+        <di:waypoint x="361" y="439" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1d6hl3c_di" bpmnElement="EndEvent_0q8vph1">
+        <dc:Bounds x="820" y="421" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="797" y="461" width="82" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_09eswy9_di" bpmnElement="StartEvent_09eswy9">
+        <dc:Bounds x="174" y="95" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1fsuc39_di" bpmnElement="EndEvent_1fsuc39">
+        <dc:Bounds x="702" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1e43o20_di" bpmnElement="ErfolgreicheUmzugsmeldungErfassungPersistieren">
+        <dc:Bounds x="1341" y="134" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0rkpqkv_di" bpmnElement="AbbruchWegenZeitueberschreitungPersistieren">
+        <dc:Bounds x="554" y="399" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_175tgn6_di" bpmnElement="ExclusiveGateway_175tgn6" isMarkerVisible="true">
+        <dc:Bounds x="1092" y="149" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1t9zc0d_di" bpmnElement="ExclusiveGateway_1t9zc0d" isMarkerVisible="true">
+        <dc:Bounds x="820" y="149" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="804" y="208.5" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0ozjnut_di" bpmnElement="AbschlussBestaetigungAnzeigen">
+        <dc:Bounds x="1186" y="134" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0v2jjuq_di" bpmnElement="GebuehrenFallenAn">
+        <di:waypoint x="870" y="174" />
+        <di:waypoint x="931" y="174" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="875" y="150" width="8" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1242trx_di" bpmnElement="GebuehrenFallenNichtAn">
+        <di:waypoint x="845" y="149" />
+        <di:waypoint x="845" y="99" />
+        <di:waypoint x="1117" y="99" />
+        <di:waypoint x="1117" y="149" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="854" y="102" width="21" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1y8ukhh_di" bpmnElement="SequenceFlow_1y8ukhh">
+        <di:waypoint x="1142" y="174" />
+        <di:waypoint x="1186" y="174" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0mh6vb8_di" bpmnElement="SequenceFlow_0mh6vb8">
+        <di:waypoint x="1286" y="174" />
+        <di:waypoint x="1341" y="174" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_1kvh8yb_di" bpmnElement="ZahlungDurchfuehren">
+        <dc:Bounds x="931" y="134" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_04m4p8a_di" bpmnElement="SequenceFlow_04m4p8a">
+        <di:waypoint x="1031" y="174" />
+        <di:waypoint x="1092" y="174" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_1xxw28x_di" bpmnElement="Task_1xxw28x">
+        <dc:Bounds x="1002" y="247" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0sieegt_di" bpmnElement="ZahlungFehlgeschlagen">
+        <dc:Bounds x="945" y="196" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="882" y="227" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1d0k5r8_di" bpmnElement="SequenceFlow_1d0k5r8">
+        <di:waypoint x="963" y="232" />
+        <di:waypoint x="963" y="287" />
+        <di:waypoint x="1002" y="287" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vi0gkw_di" bpmnElement="SequenceFlow_1vi0gkw">
+        <di:waypoint x="1102" y="287" />
+        <di:waypoint x="1145" y="287" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1ox16lp_di" bpmnElement="EndEvent_1d7w5d6">
+        <dc:Bounds x="1145" y="269" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1121" y="312" width="85" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0mei95i_di" bpmnElement="SequenceFlow_0mei95i">
+        <di:waypoint x="345" y="113" />
+        <di:waypoint x="400" y="113" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_120w2r2_di" bpmnElement="SequenceFlow_120w2r2">
+        <di:waypoint x="655" y="113" />
+        <di:waypoint x="722" y="113" />
+        <di:waypoint x="722" y="169" />
+        <di:waypoint x="295" y="169" />
+        <di:waypoint x="295" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_001pwxn_di" bpmnElement="SequenceFlow_001pwxn">
+        <di:waypoint x="345" y="230" />
+        <di:waypoint x="400" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_12mko98_di" bpmnElement="SequenceFlow_12mko98">
+        <di:waypoint x="500" y="230" />
+        <di:waypoint x="555" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_00uv839_di" bpmnElement="SequenceFlow_00uv839">
+        <di:waypoint x="210" y="113" />
+        <di:waypoint x="245" y="113" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_15e28af_di" bpmnElement="SequenceFlow_15e28af">
+        <di:waypoint x="655" y="230" />
+        <di:waypoint x="702" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_1gle1hx_di" bpmnElement="UserTask_0xicqkt">
+        <dc:Bounds x="555" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0efhhj4_di" bpmnElement="ServiceTask_1tor46z">
+        <dc:Bounds x="400" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_1tdgjyw_di" bpmnElement="CallActivity_18hm433">
+        <dc:Bounds x="245" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0dar1fl_di" bpmnElement="CallActivity_1jft79s">
+        <dc:Bounds x="555" y="73" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0g4zbtt_di" bpmnElement="Task_0g4zbtt">
+        <dc:Bounds x="400" y="73" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0hi1ppy_di" bpmnElement="SequenceFlow_0hi1ppy">
+        <di:waypoint x="500" y="113" />
+        <di:waypoint x="555" y="113" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1lte88j_di" bpmnElement="SequenceFlow_1lte88j">
+        <di:waypoint x="772" y="174" />
+        <di:waypoint x="820" y="174" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_0yosntn_di" bpmnElement="VierundzwanzigStundenVerstrichen">
+        <dc:Bounds x="1199" y="196" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1224" y="226" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_07spu5u_di" bpmnElement="SequenceFlow_07spu5u">
+        <di:waypoint x="1217" y="232" />
+        <di:waypoint x="1217" y="381" />
+        <di:waypoint x="480" y="381" />
+        <di:waypoint x="480" y="414" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_17310vy_di" bpmnElement="ExclusiveGateway_17310vy" isMarkerVisible="true">
+        <dc:Bounds x="455" y="414" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1g2lf5o_di" bpmnElement="SequenceFlow_1g2lf5o">
+        <di:waypoint x="505" y="439" />
+        <di:waypoint x="554" y="439" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_11cqiat_di" bpmnElement="TextAnnotation_11cqiat" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
+        <dc:Bounds x="80" y="-57" width="100" height="68" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_14469u2_di" bpmnElement="Association_14469u2">
+        <di:waypoint x="93" y="160" />
+        <di:waypoint x="123" y="11" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0ilm21n_di" bpmnElement="PersonErfassenUndIdentifizieren">
+        <dc:Bounds x="245" y="73" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

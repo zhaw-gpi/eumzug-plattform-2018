@@ -1,0 +1,232 @@
+<!--
+Formular zum UserTask "Identifikationsmerkmale erfassen"
+Da dies das erste Formular ist, sehr ausführlich kommentiert
+Mehr Infos zu Bootstrap: https://www.w3schools.com/bootstrap/default.asp
+Mehr Infos zu AngularJS: https://angularjs.org/ und https://www.w3schools.com/angular/default.asp
+Mehr Infos zu Camunda Embedded Forms: https://docs.camunda.org/manual/7.7/reference/embedded-forms/
+Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
+-->
+<form role="form" name="camundaForm">
+    <div class="alert alert-info">      
+        <p>Erfassen Sie Ihre Daten, wie diese in einem amtlichen Dokument, Ihrer Meldebestätigung 
+            oder Ihrem Schriftenempfangsschein aufgeführt sind.</p>
+        <p>Falls Sie mehrere Vornamen haben oder einen Doppelnamen führen, müssen Sie alle Namen aufführen.</p>
+        <p>* Diese Felder müssen ausgefüllt werden.</p>
+    </div>
+    
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Personalien</b></div>
+        <div class="panel-body">
+            <!-- Bootstrap-Klasse, um zwei Labels plus Eingabefelder als eine Gruppe in einer Reihe anzuzeigen -->
+            <div class="form-group row">
+                <!-- Bootstrap-Klasse, um eine Spalte mit einer Breite von 6/12 anzuzeigen -->
+                <div class="col-xs-4">
+                    <label>Vornamen*</label>
+                    <!-- form-control ist Bootstrap-Klasse, damit klar ist, dass eine 100%-Breite erwünscht ist -->
+                    <!-- cam-variable-name="firstName", damit einerseits dieses Formularfeld 
+                    an die Prozessvariable firstName gebunden wird als auch an das Angular-Modellelement firstName -->
+                    <!-- cam-variable-type="String", damit für Camunda klar ist, dass die Prozessvariable vom Typ String sein soll -->
+                    <!-- required, damit zwingend etwas einzugeben ist -->
+                    <!-- maxlength, damit wenn etwas eingegeben ist, maximal 100 Zeichen eingegeben werden -->
+                    <input type="text" 
+                           class="form-control" 
+                           cam-variable-name="firstName" 
+                           cam-variable-type="String" 
+                           placeholder="Max Emilian"
+                           required 
+                           maxlength="100">
+                    <!-- Ein Erläuterungstext, der immer sichtbar sein soll -->
+                    <p class="help-block">Geben Sie Ihre Vornamen ein, wie Sie auf Ihrem amtlichen Ausweis abgebildet sind.</p>
+                </div>
+
+                <div class="col-xs-4">
+                    <label>Nachname*</label>
+                    <input type="text" 
+                           name="officialName" 
+                           class="form-control" 
+                           cam-variable-name="officialName" 
+                           cam-variable-type="String" 
+                           placeholder="Muster"
+                           required 
+                           maxlength="100">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-xs-4">
+                    <label>AHV-Nummer</label>
+                    <!-- type="number", damit nur Nummern eingegeben werden können -->
+                    <!-- name="vn", damit Angular-Validierung (siehe nächste Code-Zeile) auf dieses Formular-Element Bezug nimmt -->            
+                    <!-- min und max als Restriktionen für die möglichen Eingaben des Benutzers -->
+                    <input type="number" 
+                           name="vn" 
+                           class="form-control" 
+                           cam-variable-name="vn" 
+                           cam-variable-type="Long" 
+                           placeholder="756**********"
+                           min="7560000000001" 
+                           max="7569999999999">
+                    <!-- ng-show="camundaForm.vn.$invalid", damit falls die Eingabe des Benutzers nicht den Anforderungen entspricht (min/max),
+                         eine Meldung angezeigt wird, was korrekterweise eingegeben werden soll -->
+                    <p class="help-block" ng-show="camundaForm.vn.$invalid">
+                        Geben Sie entweder keine AHV-Nummer ein oder eine im Bereich von 7560000000001 bis 7569999999999. Sie finden die Nummer auf Ihrer Krankenversicherungskarte.
+                    </p>
+                </div>
+
+                <div class="col-xs-4">
+                    <label>Geschlecht*</label>
+                    <!-- select, damit eine Auswahlkombobox angezeigt wird -->
+                    <select class="form-control" 
+                            name="sex" 
+                            cam-variable-type="String" 
+                            cam-variable-name="sex" 
+                            required>
+                        <!-- Die drei zur Verfügung stehenden Optionen, welche als String "1", 2 oder 3 abgespeichert werden
+                             Die Warnung von Netbeans, dass ein erster Empty-Value zur Verfügung gestellt werden soll,
+                             kann ignoriert werden, weil AngularJS eine solche Option automatisch zur Laufzeit einfügt 
+                             Bug: https://app.camunda.com/jira/browse/CAM-4289
+                        -->
+                        <option/>
+                        <option value="1">Männlich</option>
+                        <option value="2">Weiblich</option>
+                        <option value="3">Unbestimmt</option>
+                    </select>
+                </div>
+
+                <div class="col-xs-4">
+                    <label>Geburtsdatum*</label>
+                    <!-- class="input-group" (Bootstrap), damit die Schaltfläche mit dem Datepicker sowie das eigentliche
+                         Eingabefeld in derselben Zeile und direkt nebeneinander angezeigt werden -->
+                    <div class="input-group">
+                        <!-- datepicker-popup="yyyy-MM-dd'T'HH:mm:ss", damit das Datumsformat auf das von Camunda
+                             benötigte ISO-Format gesetzt wird -->
+                        <!-- is-open="dateFieldOpened", damit das Datepicker-GUI nur geöffnet wird, wenn die
+                             entsprechende Variable auf true gesetzt ist, was der Fall ist, wenn der Button
+                             geklickt wird und damit die weiter unten aufgeführte JavaScript-Methode ausgeführt wird -->
+                        <input type="text"
+                               name="dateOfBirth"
+                               ng-model="dateOfBirthUnformated"
+                               placeholder="Datumswahl -->"
+                               class="form-control"
+                               datepicker-popup="dd.MM.yyyy"
+                               is-open="dateFieldOpened"
+                               required>
+                        <!-- Die Schaltfläche mit einem Kalendersymbol. Bei einem Klick (ng-click) wird die Methode
+                             open geöffnet (siehe JavaScript unten) -->
+                        <span class="input-group-btn">
+                            <button type="button"
+                                    class="btn btn-default"
+                                    ng-click="open($event)">
+                                <!-- Bootstrap-Klasse, welche ein Kalender-Symbol anzeigt: https://www.w3schools.com/bootstrap/bootstrap_ref_comp_glyphs.asp -->
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <!-- Zeigt Fehlermeldung an, wenn das Datum im falschen Format ausgewählt wurde, also ng-invalid-date gesetzt ist  -->
+                    <p class="help-block" ng-show="camundaForm.dateOfBirth.$error.date">Geben Sie das Datum im Format JJJJ-MM-DDT00:00:00 ein.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Ihr jetziger Wohnort</b></div>
+        <div class="panel-body">
+            <div class="form-group row">
+                <div class="col-xs-12">
+                    <label>Politische Gemeinde*</label>
+                    <!--
+                    ng-options bestimmt die zur Verfügung stehenden Optionen im Select. Der Gemeinde-
+                    name wird dabei als Label verwendet, das ausgewählte Objekt wird in municipalityMoveOut
+                    gespeichert. Die Liste der Optionen wird aufsteigend nach Gemeindename sortiert.
+                    -->
+                    <select class="form-control" 
+                            name="municipalityMoveOut"
+                            ng-model="municipalityMoveOut"
+                            ng-options="ms.municipalityName for ms in municipalityList| orderBy:'municipalityName'">                    
+                    </select>
+                </div>        
+            </div>
+        </div>
+    </div>
+
+    <script cam-script type="text/form-script">
+        // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
+        // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
+        // folgenden Funktionen
+        var variableManager = camForm.variableManager;
+
+        // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
+        // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im 
+        // variableManager-Objekt (Client)
+        camForm.on('form-loaded', function() {
+            variableManager.fetchVariable('municipalityListSerialized');
+            variableManager.fetchVariable('municipalityIdMoveOut');            
+            variableManager.fetchVariable('municipalityNameMoveOut');
+            variableManager.fetchVariable("dateOfBirth");
+        });
+
+        // Sobald alle Variablen client-seitig zur Verfügung stehen, werden diese 
+        // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
+        // angezeigt werden können
+        camForm.on('variables-fetched', function() {
+            $scope.municipalityList = variableManager.variableValue('municipalityListSerialized');
+            $scope.municipalityIdMoveOut = variableManager.variableValue('municipalityIdMoveOut');
+            $scope.dateOfBirthUnformated = variableManager.variableValue("dateOfBirth");
+            // Die Wegzugsgemeinde als Objekt wird gesucht innerhalb der serialisierten
+            // Liste basierend auf der municipalityId, damit sie im select-Formularfeld
+            // ausgewählt werden kann, sofern denn ein Element gefunden wurde (ist
+            // nur der Fall, wenn das Formular zum zweiten Mal geöffnet wird)
+            $scope.municipalityMoveOut = $scope.municipalityList.find(item => item.municipalityId === $scope.municipalityIdMoveOut);
+        });        
+
+        // Unmittelbar vor dem Ausführen der HTTP-Post-Anfrage des Formulars
+        // wird sichergestellt, dass die Id und der Name der im Select ausgewählten
+        // politische Gemeinde den entsprechenden Prozessvariablen zugewiesen werden
+        // Weil das Formular unter Umständen schon zum zweiten Mal aufgerufen wird, müssen
+        // zuvor dieselben Variablen gelöscht werden, damit kein Fehler auftritt
+        camForm.on('submit', function() {
+            variableManager.destroyVariable('municipalityIdMoveOut');
+            variableManager.createVariable({
+                name: 'municipalityIdMoveOut',
+                type: 'Integer',
+                value: $scope.municipalityMoveOut.municipalityId
+            });
+
+            variableManager.destroyVariable('municipalityNameMoveOut');
+            variableManager.createVariable({
+                name: 'municipalityNameMoveOut',
+                type: 'String',
+                value: $scope.municipalityMoveOut.municipalityName
+            });
+            
+            // Die Prozessvariable 'dateOfBirth' verlangt das Format "yyyy-MM-ddThh:mm:ss". $scope.dateOfBrithUnformated wird vom Datepicker im Format "dd.MM.yyyy" gesetzt.
+            // Die Variable date besteht aus einem Jahr, Monat, Tag, Stunde, Minute, Sekunde und Millisekunde.
+            var dateOfBirthUnformated = new Date($scope.dateOfBirthUnformated);
+            
+            // Gemäss https://www.w3schools.com/jsref/jsref_toisostring.asp  und
+            // https://stackoverflow.com/questions/10830357/javascript-toisostring-ignores-timezone-offset kann 
+            // das Datum einfach in ein ISO-Format umgewandelt werden
+            var dateOfBirthFormated = new Date(dateOfBirthUnformated.getTime() - (dateOfBirthUnformated.getTimezoneOffset() * 60000)).toISOString();
+
+            // Gleichnamige Prozessvariable löschen und dann neu erstellen
+            variableManager.destroyVariable('dateOfBirth');
+            variableManager.createVariable({
+                'name':'dateOfBirth',
+                'type':'Date',
+                'value': dateOfBirthFormated
+            });
+        });
+        
+        // Wenn die Methode open aufgerufen wird, dann soll die dateFieldOpened-Variable auf true gesetzt werden,
+        // damit das DatePicker-Element weiss (konkret der JavaScript-Code dahinter), dass das Datepicker-GUI
+        // geöffnet werden soll. PreventDefault stellt sicher, dass sich der Button nicht wie ein normaler Link verhält.
+        // stopPropagation stellt sicher, dass der DOM dadurch nicht verändert wird.
+        $scope.open = function($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+
+            $scope.dateFieldOpened = true;
+        };
+    </script>
+</form>
