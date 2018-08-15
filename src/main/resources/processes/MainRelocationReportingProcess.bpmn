@@ -49,11 +49,11 @@
 
 Umfasst einerseiets alle Aktivitäen des Meldepflichtigen vom Erfassen aller Angaben für die Umzugsmeldung inklusive Aufruf von Gebäude- und Wohnungsregister sowie Personenregister, sowie anderseits den Bezahlvorgang allfälliger Gebühren.
 
-Dem Prozess wird der BusinessKey und die BusinessCaseId übergeben und umgekehrt alle im aufgerufenen Prozess erzeugten Variablen zurück genommen. (!!! DOITBETTER: Nur die wirklich benötigten Variablen zurück verlangen)</documentation>
+Theoretisch: Dem Prozess wird der BusinessKey, die BusinessCaseId und der meldePflichtiger übergeben und umgekehrt fast alle im aufgerufenen Prozess erzeugten Variablen zurück genommen, da diese relevant sind für den nächsten Schritt "Mit EK-Systemen kommunizieren". Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</documentation>
       <extensionElements>
         <camunda:in businessKey="#{execution.processBusinessKey}" />
-        <camunda:in source="meldePflichtiger" target="meldePflichtiger" />
         <camunda:out variables="all" />
+        <camunda:in variables="all" />
       </extensionElements>
       <incoming>SequenceFlow_0ypg6cw</incoming>
       <outgoing>SequenceFlow_1iopode</outgoing>

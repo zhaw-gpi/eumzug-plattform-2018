@@ -1,0 +1,147 @@
+<!--
+Formular zum UserTask "Zuzugsadresse erfassen"
+Mehr Infos zu Bootstrap: https://www.w3schools.com/bootstrap/default.asp
+Mehr Infos zu AngularJS: https://angularjs.org/ und https://www.w3schools.com/angular/default.asp
+Mehr Infos zu Camunda Embedded Forms: https://docs.camunda.org/manual/7.7/reference/embedded-forms/
+Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
+-->
+<form name="camundaForm">
+    <div class="alert alert-warning" ng-show="adresseUngueltigZaehler > 0">      
+        Die Adresse ist<span ng-show="adresseUngueltigZaehler > 1"> erneut</span> nicht gültig, respektive kann im GWR nicht gefunden werden.
+
+        Bitte korrigieren Sie entweder Ihre Eingaben im nächsten Formular oder melden Sie sich bei Ihrer Zuzugsgemeinde {{municipalityNameMoveIn}} am Schalter, wenn Sie der Meinung sind, eigentlich die korrekte Adresse erfasst zu haben. In diesem Fall können Sie einfach diese Webseite schliessen, denn Ihre elektronische Umzugsmeldung wird automatisch nach 48 Stunden archiviert. 
+    </div>
+
+    <div class="alert alert-info">      
+        <p>Erfassen Sie Ihre Daten, wie diese in einem amtlichen Dokument, Ihrer Meldebestätigung 
+            oder Ihrem Schriftenempfangsschein aufgeführt sind.</p>
+        <p>* Diese Felder müssen ausgefüllt werden.</p>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-xs-4">
+            <label>Strasse*</label>
+            <input type="text" 
+                   name="streetMoveIn" 
+                   class="form-control" 
+                   cam-variable-name="streetMoveIn" 
+                   cam-variable-type="String" 
+                   placeholder="Fantasiestrasse"
+                   required 
+                   maxlength="60">
+        </div>
+
+        <div class="col-xs-4">
+            <label>Hausnummer</label>
+            <input type="text" 
+                   name="houseNumberMoveIn" 
+                   class="form-control" 
+                   cam-variable-name="houseNumberMoveIn" 
+                   cam-variable-type="String"  
+                   placeholder="1"
+                   maxlength="12">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-xs-4">
+            <label>PLZ*</label>
+            <input  text="text" 
+                    name="swissZipCodeMoveIn"
+                    class="form-control"
+                    cam-variable-type="Integer" 
+                    cam-variable-name="swissZipCodeMoveIn" 
+                    placeholder="3000"
+                    required
+                    min="0" 
+                    max="9999">
+            <p class="help-block" ng-show="camundaForm.swissZipCodeMoveIn.$invalid">
+                Geben Sie eine PLZ zwischen 0 und 9999 ein.
+            </p>
+        </div>
+
+        <div class="col-xs-4">
+            <label>Ort*</label>
+            <input type="text" 
+                   name="townMoveIn" 
+                   class="form-control" 
+                   cam-variable-name="townMoveIn" 
+                   cam-variable-type="String" 
+                   placeholder="Bern"
+                   required 
+                   maxlength="40">
+        </div>
+
+        <div class="col-xs-4">
+            <label>Politische Gemeinde*</label>
+            <!--
+            ng-options bestimmt die zur Verfügung stehenden Optionen im Select. Der Gemeinde-
+            name wird dabei als Label verwendet, das ausgewählte Objekt wird in municipalityMoveOut
+            gespeichert. Die Liste der Optionen wird aufsteigend nach Gemeindename sortiert.
+            -->
+            <select class="form-control" 
+                    name="municipalityMoveIn"
+                    ng-model="municipalityMoveIn"
+                    ng-options="ms.municipalityName for ms in municipalityListSerialized| orderBy:'municipalityName'">                    
+            </select>
+        </div>
+    </div>
+
+    <script cam-script type="text/form-script">    
+        // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
+        // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
+        // folgenden Funktionen
+        var variableManager = camForm.variableManager;
+
+        // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
+        // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im 
+        // variableManager-Objekt (Client)
+        camForm.on('form-loaded', function() {
+        variableManager.fetchVariable('municipalityListSerialized');
+        variableManager.fetchVariable('municipalityIdMoveIn');
+        variableManager.fetchVariable('municipalityNameMoveIn');            
+        variableManager.fetchVariable('wohnungenGefunden');
+        variableManager.fetchVariable('adresseUngueltigZaehler');
+        });
+
+        // Sobald alle Variablen client-seitig zur Verfügung stehen, werden diese 
+        // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
+        // angezeigt werden können
+        camForm.on('variables-fetched', function() {
+        $scope.municipalityListSerialized = variableManager.variableValue('municipalityListSerialized');
+        $scope.municipalityIdMoveIn = variableManager.variableValue('municipalityIdMoveIn');
+        // Die Zuzugsgemeinde als Objekt wird gesucht innerhalb der serialisierten
+        // Liste basierend auf der municipalityId, damit sie im select-Formularfeld
+        // ausgewählt werden kann, sofern denn ein Element gefunden wurde (ist
+        // nur der Fall, wenn das Formular zum zweiten Mal geöffnet wird)
+        $scope.municipalityMoveIn = $scope.municipalityListSerialized.find(item => item.municipalityId === $scope.municipalityIdMoveIn);
+        $scope.wohnungenGefunden = variableManager.variableValue('wohnungenGefunden');
+        $scope.adresseUngueltigZaehler = variableManager.variableValue('adresseUngueltigZaehler');
+        });        
+
+        // Unmittelbar vor dem Ausführen der HTTP-Post-Anfrage des Formulars
+        // wird sichergestellt, dass die Id und der Name der im Select ausgewählten
+        // politische Gemeinde den entsprechenden Prozessvariablen zugewiesen werden
+        // Weil das Formular unter Umständen schon zum zweiten Mal aufgerufen wird, müssen
+        // zuvor dieselben Variablen gelöscht werden, damit kein Fehler auftritt
+        camForm.on('submit', function() {
+            camForm.variableManager.destroyVariable('municipalityIdMoveIn');
+
+            camForm.variableManager.createVariable({
+                name: 'municipalityIdMoveIn',
+                type: 'Integer',
+                value: $scope.municipalityMoveIn.municipalityId,
+                isDirty: true
+            });
+
+            camForm.variableManager.destroyVariable('municipalityNameMoveIn');
+
+            camForm.variableManager.createVariable({
+                name: 'municipalityNameMoveIn',
+                type: 'String',
+                value: $scope.municipalityMoveIn.municipalityName,
+                isDirty: true
+            });
+        });
+    </script>
+</form>
