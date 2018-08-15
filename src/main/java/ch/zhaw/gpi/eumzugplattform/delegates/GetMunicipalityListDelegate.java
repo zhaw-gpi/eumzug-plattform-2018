@@ -28,16 +28,11 @@ public class GetMunicipalityListDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        // Code soll nur ausgeführt werden, wenn municipalityListSerialized nicht bereits existiert
-        // aus einem früheren Durchgang, daher Variable auslesen und auf null prüfen
-        ObjectValue municipalityListSerialized = (ObjectValue) execution.getVariable("municipalityListSerialized");
-
-        if (municipalityListSerialized == null) {
             // Alle Gemeinde-Objekte aus der Datenbank als Liste erhalten
             List<MunicipalityEntity> municipalityList = municipalityRepository.findAll();
 
             // Diese Liste mittels Camunda Spin ins JSON-Format serialisieren
-            municipalityListSerialized = Variables
+            ObjectValue municipalityListSerialized = Variables
                     .objectValue(municipalityList)
                     .serializationDataFormat(Variables.SerializationDataFormats.JSON)
                     .create();
@@ -45,6 +40,4 @@ public class GetMunicipalityListDelegate implements JavaDelegate {
             // Die serialisierte Gemeindeliste einer Prozessvariable zuweisen
             execution.setVariable("municipalityListSerialized", municipalityListSerialized);
         }
-    }
-
 }

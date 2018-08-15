@@ -2,7 +2,9 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_15djiii" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
   <bpmn:collaboration id="Collaboration_06rojpi">
     <bpmn:participant id="PersonErfassenUndIdentifizierenParticipant" name="Person erfassen und identifizieren" processRef="PersonErfassenUndIdentifizieren" />
-    <bpmn:participant id="KantonalesPersonenregisterParticipant" name="Kantonales Personenregister" />
+    <bpmn:participant id="KantonalesPersonenregisterParticipant" name="Kantonales Personenregister">
+      <bpmn:documentation>Das kantonale Personenregister ist über einen SOAP-Web Service zugreifbar und über einen eCH-Standard sind die Schnittstellen beschrieben (siehe Nachrichtenflüsse).</bpmn:documentation>
+    </bpmn:participant>
     <bpmn:messageFlow id="MessageFlow_0jxik1a" name="Person Identifikations-merkmale" sourceRef="PersonIdentifizieren" targetRef="KantonalesPersonenregisterParticipant">
       <bpmn:documentation>eCH-0194:personMoveRequest</bpmn:documentation>
     </bpmn:messageFlow>
@@ -12,7 +14,15 @@
   </bpmn:collaboration>
   <bpmn:process id="PersonErfassenUndIdentifizieren" name="PersonErfassenUndIdentifizieren" isExecutable="true">
     <bpmn:startEvent id="UmzugsmeldungGestartet" name="Umzugsmeldung gestartet">
-      <bpmn:documentation>Dieses Prozesstartereignis wird aufgerufen vom Prozess 'UmzugsmeldungErfassenUndBezahlen' und ist nicht gedacht, um unabhängig davon (z.B. aus der Tasklist) aufgerufen zu werden.</bpmn:documentation>
+      <bpmn:documentation>Dieses Prozesstartereignis wird aufgerufen vom Prozess 'UmzugsmeldungErfassenUndBezahlen' und ist nicht gedacht, um unabhängig davon (z.B. aus der Tasklist) aufgerufen zu werden.
+
+Ein End-Listener ruft die JavaDelegate-Klasse 'GetMunicipalityListDelegate' auf mit folgender Aufgabe: Serialisierte Prozessvariable municipalityListSerialized mit allen Gemeinden in der Umzugsplattform-Datenbank erstellen
+
+Über ein JPA-Repository sollen alle Municipality-Objekte aus der Datenbank in ein List-Objekt eingelesen werden. Diese Objekte werden mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable municipalityListSerialized zugewiesen.
+</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="#{getMunicipalityListAdapter}" event="end" />
+      </bpmn:extensionElements>
       <bpmn:outgoing>SequenceFlow_0endv5n</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:userTask id="IdentifikationsmerkmaleErfassen" name="Identifikationsmerkmale erfassen" camunda:formKey="embedded:app:forms/IdentifikationsmerkmaleErfassenForm.html" camunda:assignee="${meldePflichtiger}">
@@ -44,13 +54,9 @@ Wegzugsadresse Politische Gemeinde
   eCH-0007:municipalityIdMoveOut
   Integer
   select (basierend auf municipalityListSerialized (siehe unten), wobei municipalityName angezeigt wird)
-
-Ein Start-Listener ruft die JavaDelegate-Klasse 'GetMunicipalityListDelegate' auf mit folgender Aufgabe: Serialisierte Prozessvariable municipalityListSerialized mit allen Gemeinden in der Umzugsplattform-Datenbank erstellen
-
-Über ein JPA-Repository sollen alle Municipality-Objekte aus der Datenbank in ein List-Objekt eingelesen werden. Diese Objekte werden mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable municipalityListSerialized zugewiesen.</bpmn:documentation>
+</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:formData />
-        <camunda:executionListener delegateExpression="#{getMunicipalityListAdapter}" event="start" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1qa435t</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_09b5q9r</bpmn:outgoing>
@@ -182,7 +188,9 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
     <bpmn:sequenceFlow id="SequenceFlow_0d6anna" sourceRef="ExclusiveGateway_0620p1a" targetRef="AnSchalterVerwiesenWerden" />
     <bpmn:sequenceFlow id="SequenceFlow_1jlptqu" sourceRef="AnSchalterVerwiesenWerden" targetRef="WegenNegativerPersonenIdentifikationAbgebrochen" />
     <bpmn:sequenceFlow id="SequenceFlow_0n90szt" sourceRef="ExclusiveGateway_0cjsigp" targetRef="PersonenidentifikationErfolgreichAbgeschlossen" />
-    <bpmn:sequenceFlow id="KorrekturGewuenscht" name="ja" sourceRef="ExclusiveGateway_02eif3q" targetRef="ExclusiveGateway_1nsjb6v" />
+    <bpmn:sequenceFlow id="KorrekturGewuenscht" name="ja" sourceRef="ExclusiveGateway_02eif3q" targetRef="ExclusiveGateway_1nsjb6v">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${revisionDesired}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmn:error id="Error_0j8yidj" name="ErrorPersonErfassenUndIdentifizieren" errorCode="WegenNegativerPersonenIdentifikationAbgebrochen" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">

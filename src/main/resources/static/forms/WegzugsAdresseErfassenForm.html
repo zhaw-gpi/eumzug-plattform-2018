@@ -1,0 +1,96 @@
+<!--
+Formular zum UserTask "Wegzugsadresse erfassen"
+-->
+<form role="form" name="camundaForm">
+    <div class="alert alert-warning" ng-show="adresseUngueltigZaehler > 0">      
+        Die Adresse ist<span ng-show="adresseUngueltigZaehler > 1"> erneut</span> nicht gültig, respektive kann im GWR nicht gefunden werden.
+
+        Bitte korrigieren Sie entweder Ihre Eingaben im nächsten Formular oder melden Sie sich bei Ihrer Wegzugsgemeinde {{municipalityNameMoveOut}} am Schalter, wenn Sie der Meinung sind, eigentlich die korrekte Adresse erfasst zu haben. In diesem Fall können Sie einfach diese Webseite schliessen, denn Ihre elektronische Umzugsmeldung wird automatisch nach 48 Stunden archiviert. 
+    </div>
+
+    <div class="alert alert-info">      
+        <p>Erfassen Sie Ihre Daten, wie diese in einem amtlichen Dokument, Ihrer Meldebestätigung 
+            oder Ihrem Schriftenempfangsschein aufgeführt sind.</p>
+        <p>* Diese Felder müssen ausgefüllt werden.</p>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-xs-8">
+            <label>Strasse*</label>
+            <input type="text" 
+                   name="streetMoveOut" 
+                   class="form-control" 
+                   cam-variable-name="streetMoveOut" 
+                   cam-variable-type="String" 
+                   placeholder="Fantasiestrasse"
+                   required 
+                   maxlength="60">
+        </div>
+
+        <div class="col-xs-4">
+            <label>Hausnummer</label>
+            <input type="text" 
+                   name="houseNumberMoveOut" 
+                   class="form-control" 
+                   cam-variable-name="houseNumberMoveOut" 
+                   cam-variable-type="String"
+                   placeholder="1"
+                   maxlength="12">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-xs-5">
+            <label>PLZ*</label>
+            <input type="number" 
+                   name="swissZipCodeMoveOut" 
+                   class="form-control" 
+                   cam-variable-name="swissZipCodeMoveOut" 
+                   cam-variable-type="Integer" 
+                   placeholder="3000"
+                   required
+                   min="0" 
+                   max="9999">
+            <!-- Die Meldung mit dem PLZ-Bereich soll nur angezeigt werden, wenn der Benutzer schon etwas eingegeben hat
+                 Alternative $error.max oder $error.min nutzen -->
+            <p class="help-block" ng-show="camundaForm.swissZipCodeMoveOut.$invalid && camundaForm.swissZipCodeMoveOut.$dirty">
+                Geben Sie eine PLZ im Bereich von 0 bis 9999 ein.
+            </p>
+        </div>
+
+        <div class="col-xs-7">
+            <label>Ort*</label>
+            <input type="text" 
+                   name="townMoveOut" 
+                   class="form-control" 
+                   cam-variable-name="townMoveOut" 
+                   cam-variable-type="String"
+                   placeholder="Bern"
+                   required
+                   maxlength="40">
+        </div>     
+    </div>
+
+    <script cam-script type="text/form-script">
+        // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
+        // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
+        // folgenden Funktionen
+        var variableManager = camForm.variableManager;
+
+        // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
+        // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im 
+        // variableManager-Objekt (Client)
+        camForm.on('form-loaded', function() {        
+        variableManager.fetchVariable('municipalityNameMoveOut');
+        variableManager.fetchVariable('adresseUngueltigZaehler');
+        });
+
+        // Sobald alle Variablen client-seitig zur Verfügung stehen, werden diese 
+        // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
+        // angezeigt werden können
+        camForm.on('variables-fetched', function() {
+        $scope.municipalityNameMoveOut = variableManager.variableValue('municipalityNameMoveOut');
+        $scope.adresseUngueltigZaehler = variableManager.variableValue("adresseUngueltigZaehler");
+        });
+    </script>
+</form>
