@@ -50,7 +50,7 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="SequenceFlow_0mei95i" sourceRef="PersonErfassenUndIdentifizieren" targetRef="WegzugsadresseErfassenUndPruefen" />
       <bpmn:sequenceFlow id="SequenceFlow_120w2r2" sourceRef="ZuzugsinformationenErfassenUndPruefen" targetRef="WeitereAngabenErfassen" />
-      <bpmn:sequenceFlow id="SequenceFlow_001pwxn" sourceRef="WeitereAngabenErfassen" targetRef="Task_0eccabx" />
+      <bpmn:sequenceFlow id="SequenceFlow_001pwxn" sourceRef="WeitereAngabenErfassen" targetRef="DokumenteHochladen" />
       <bpmn:sequenceFlow id="SequenceFlow_12mko98" sourceRef="ServiceTask_1tor46z" targetRef="UserTask_0xicqkt" />
       <bpmn:sequenceFlow id="SequenceFlow_00uv839" sourceRef="StartEvent_09eswy9" targetRef="PersonErfassenUndIdentifizieren" />
       <bpmn:sequenceFlow id="SequenceFlow_15e28af" sourceRef="UserTask_0xicqkt" targetRef="EndEvent_1fsuc39" />
@@ -137,16 +137,33 @@ Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtige
         <bpmn:incoming>SequenceFlow_120w2r2</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_001pwxn</bpmn:outgoing>
       </bpmn:callActivity>
-      <bpmn:task id="Task_0eccabx" name="Dokumente hochladen">
-        <bpmn:incoming>SequenceFlow_001pwxn</bpmn:incoming>
-        <bpmn:outgoing>SequenceFlow_05prxas</bpmn:outgoing>
-      </bpmn:task>
-      <bpmn:sequenceFlow id="SequenceFlow_05prxas" sourceRef="Task_0eccabx" targetRef="Task_13r9lkm" />
+      <bpmn:sequenceFlow id="SequenceFlow_05prxas" sourceRef="DokumenteHochladen" targetRef="Task_13r9lkm" />
       <bpmn:task id="Task_13r9lkm" name="Angaben für Zusatzdienste erfassen">
         <bpmn:incoming>SequenceFlow_05prxas</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_0e292zc</bpmn:outgoing>
       </bpmn:task>
       <bpmn:sequenceFlow id="SequenceFlow_0e292zc" sourceRef="Task_13r9lkm" targetRef="ServiceTask_1tor46z" />
+      <bpmn:callActivity id="DokumenteHochladen" name="Dokumente hochladen" calledElement="DokumenteHochladen">
+        <bpmn:documentation>
+municipalityIdMoveOut, municipalityIdMoveIn
+
+document1 bis document5
+</bpmn:documentation>
+        <bpmn:extensionElements>
+          <camunda:in businessKey="#{execution.processBusinessKey}" />
+          <camunda:in source="municipalityIdMoveOut" target="municipalityIdMoveOut" />
+          <camunda:in source="municipalityIdMoveIn" target="municipalityIdMoveIn" />
+          <camunda:in variables="all" />
+          <camunda:out source="document1" target="document1" />
+          <camunda:out source="document2" target="document2" />
+          <camunda:out source="document3" target="document3" />
+          <camunda:out source="document4" target="document4" />
+          <camunda:out source="document5" target="document5" />
+          <camunda:out variables="all" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>SequenceFlow_001pwxn</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_05prxas</bpmn:outgoing>
+      </bpmn:callActivity>
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="SequenceFlow_0idpplo" sourceRef="UmzugsmeldungGestartet" targetRef="UmzugsmeldungErfassen" />
     <bpmn:sequenceFlow id="SequenceFlow_11zgl40" sourceRef="AchtundvierzigStundenVerstrichen" targetRef="ExclusiveGateway_0ldwwai" />
@@ -516,9 +533,6 @@ In einem End-Listener wird die Prozessvariable 'status' zusammengesetzt aus dem 
       <bpmndi:BPMNShape id="CallActivity_12i13lc_di" bpmnElement="WeitereAngabenErfassen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="695" y="164" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_0eccabx_di" bpmnElement="Task_0eccabx" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <dc:Bounds x="237" y="281" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_05prxas_di" bpmnElement="SequenceFlow_05prxas">
         <di:waypoint x="337" y="321" />
         <di:waypoint x="392" y="321" />
@@ -537,6 +551,9 @@ In einem End-Listener wird die Prozessvariable 'status' zusammengesetzt aus dem 
         <di:waypoint x="466" y="-1" />
         <di:waypoint x="435" y="-27" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_1xn6vm1_di" bpmnElement="DokumenteHochladen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+        <dc:Bounds x="237" y="281" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

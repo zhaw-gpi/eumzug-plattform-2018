@@ -18,6 +18,7 @@
   </bpmn:collaboration>
   <bpmn:process id="WeitereAngabenErfassen" name="WeitereAngabenErfassen" isExecutable="true">
     <bpmn:startEvent id="ZuzugsInformationenErfolgreichGeprueft" name="Zuzugs-Informationen erfolgreich geprüft">
+      <bpmn:documentation>Dieses Prozesstartereignis wird aufgerufen vom Prozess 'Umzugsmeldung erfassen und bezahlen' und ist nicht gedacht, um unabhängig davon (z.B. aus der Tasklist) aufgerufen zu werden.</bpmn:documentation>
       <bpmn:outgoing>SequenceFlow_1j0inpb</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:userTask id="UmzugsdatenErfassen" name="Umzugsdaten erfassen" camunda:formKey="embedded:app:forms/UmzugsdatenErfassenForm.html" camunda:assignee="${meldePflichtiger}">
@@ -37,39 +38,6 @@ Zuzugsdatum
     <bpmn:sequenceFlow id="SequenceFlow_1j0inpb" sourceRef="ZuzugsInformationenErfolgreichGeprueft" targetRef="UmzugsdatenErfassen" />
     <bpmn:sequenceFlow id="SequenceFlow_04fd0dv" sourceRef="UmzugsdatenErfassen" targetRef="WohnverhaeltnisErfassen" />
     <bpmn:sequenceFlow id="SequenceFlow_0gaq5kd" sourceRef="WohnverhaeltnisErfassen" targetRef="VersicherungsKartennummernErfassen" />
-    <bpmn:task id="WohnverhaeltnisErfassen" name="Wohnverhältnis erfassen">
-      <bpmn:documentation>Wohnverhältnis-Typ
-  eCH-0185:housingSituationType
- String
-  select (1=Eigentümer, 2=Mieter, 3=Untermieter, Pflicht)
-
-Folgende Felder sollen nur angezeigt werden, wenn housingSituationType={2,3}:
-
-Name des Vermieters (bei housingSituationType=2)/Mieters (housingSituationType=3)
-  eCH-0185:name
-  String
-  input text (max. 100 Zeichen, Pflicht)
-Adresse des Vermieters (bei housingSituationType=2)/Mieters (housingSituationType=3) bestehend aus folgenden Feldern:
-Strasse
-  eCH-0010:streetHousingSituation (Achtung bei diesen und weiteren Attributen, die es sowohl bei Wegzug als auch Zuzug gibt und beim Wohnverhältnis: Es wurde an die eCH-Bezeichnung jeweils noch HousingSituation angehängt)
-  String
-  input text (max. 60 Zeichen, Pflicht)
-Hausnummer (optional)
-  eCH-0010:houseNumberHousingSituation
-  String
-  input text (max. 12 Zeichen)
-PLZ
-  eCH-0010:swissZipCodeHousingSituation
-  Integer
-  input number (0-9999, Pflicht)
-Ort
-  eCH-0010:townHousingSituation
-  String
-  input text (max. 40 Zeichen, Pflicht)
-</bpmn:documentation>
-      <bpmn:incoming>SequenceFlow_04fd0dv</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0gaq5kd</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:userTask id="KontaktangabenErfassen" name="Kontaktangaben erfassen" camunda:formKey="embedded:app:forms/KontaktangabenErfassenForm.html" camunda:assignee="${meldePflichtiger}">
       <bpmn:documentation>Telefonnummer
   eCH-0185:phoneNumber
@@ -98,8 +66,7 @@ In der Realität müsste man sich beim Service authentifizieren, was wir für de
 
 Die JSON-Response enthält eine einzige Variable checkResult, die positiv (Yes, Person ist grundversichert), negativ (No, Person ist nicht grundversichert) oder unklar (Unknown, die Prüfung konnte nicht durchgeführt werden. Einerseits sind nicht alle Versicherungen abfragbar (Bsp.: Helsana) oder die Versichertenkartennum-mer konnte nicht gefunden werden.)
 
-Diese Antwort wird in personHealthInsuranceList eingepflegt, indem person.healthInsuranceData.checkResult in personHealthInsuranceList gesetzt wird.
-</bpmn:documentation>
+Diese Antwort wird in personHealthInsuranceList eingepflegt, indem person.healthInsuranceData.checkResult in personHealthInsuranceList gesetzt wird.</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_1yo21lf</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0i1emeg</bpmn:outgoing>
     </bpmn:task>
@@ -110,6 +77,38 @@ Diese Antwort wird in personHealthInsuranceList eingepflegt, indem person.health
       <bpmn:documentation>Ziel ist, eine personHealthInsuranceList aufzubauen, indem aus personList eine Liste von Personen aufgeführt wird, wobei für jede davon ein FormularFeld Versichertennummer erscheint. Listenbehandlung analog zu Dokumente Hochladen.</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_0gaq5kd</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1yo21lf</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="WohnverhaeltnisErfassen" name="Wohnverhältnis erfassen" camunda:assignee="${meldePflichtiger}">
+      <bpmn:documentation>Wohnverhältnis-Typ
+  eCH-0185:housingSituationType
+ String
+  select (1=Eigentümer, 2=Mieter, 3=Untermieter, Pflicht)
+
+Folgende Felder sollen nur angezeigt werden, wenn housingSituationType={2,3}:
+
+Name des Vermieters (bei housingSituationType=2)/Mieters (housingSituationType=3)
+  eCH-0185:name
+  String
+  input text (max. 100 Zeichen, Pflicht)
+Adresse des Vermieters (bei housingSituationType=2)/Mieters (housingSituationType=3) bestehend aus folgenden Feldern:
+Strasse
+  eCH-0010:streetHousingSituation (Achtung bei diesen und weiteren Attributen, die es sowohl bei Wegzug als auch Zuzug gibt und beim Wohnverhältnis: Es wurde an die eCH-Bezeichnung jeweils noch HousingSituation angehängt)
+  String
+  input text (max. 60 Zeichen, Pflicht)
+Hausnummer (optional)
+  eCH-0010:houseNumberHousingSituation
+  String
+  input text (max. 12 Zeichen)
+PLZ
+  eCH-0010:swissZipCodeHousingSituation
+  Integer
+  input number (0-9999, Pflicht)
+Ort
+  eCH-0010:townHousingSituation
+  String
+  input text (max. 40 Zeichen, Pflicht)</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_04fd0dv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0gaq5kd</bpmn:outgoing>
     </bpmn:userTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -155,9 +154,6 @@ Diese Antwort wird in personHealthInsuranceList eingepflegt, indem person.health
         <di:waypoint x="926" y="104" />
         <di:waypoint x="985" y="104" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_0xlj5d1_di" bpmnElement="WohnverhaeltnisErfassen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <dc:Bounds x="341" y="64" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_1ifc12z_di" bpmnElement="GrundversicherungPruefen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="667" y="64" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -191,6 +187,9 @@ Diese Antwort wird in personHealthInsuranceList eingepflegt, indem person.health
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_1jnsbiw_di" bpmnElement="VersicherungsKartennummernErfassen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="502" y="64" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1hs2uh5_di" bpmnElement="WohnverhaeltnisErfassen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+        <dc:Bounds x="341" y="64" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

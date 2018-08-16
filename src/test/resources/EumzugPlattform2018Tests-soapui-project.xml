@@ -121,11 +121,11 @@ Vorbedingungen: Personenregister, GWR und Umzugsplattform müssen auf localhost 
              "variables": {
              			  "meldePflichtiger": {"value": "a", "type": "String"},
                            "firstName": {"value": "Hans", "type": "String"}, 
-                           "officialName": {"value": "Meiere", "type": "String"},
+                           "officialName": {"value": "Meier", "type": "String"},
                            "sex": {"value": "1", "type": "String"},
                            "dateOfBirth": {"value": "1970-01-01T00:00:00.000+0100", "type": "Date"},
                            "streetMoveOut": {"value":"Dorfstrasse", "type": "String"},
-                           "houseNumberMoveOut": {"value":"13" , "type": "String"},
+                           "houseNumberMoveOut": {"value":"13a" , "type": "String"},
                            "swissZipCodeMoveOut": {"value":"3226" , "type": "Integer"},
                            "townMoveOut": {"value": "Kallnach" , "type": "String"},
                            "municipalityIdMoveOut": {"value": "304", "type": "Integer"},

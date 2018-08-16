@@ -117,18 +117,39 @@
             <artifactId>spring-boot-starter-web-services</artifactId>
         </dependency>
         
+        <!-- Komponenten, um PDFs generieren zu können -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+        </dependency>
+        
         <!-- Camunda Spin-Abhängigkeiten für Serialisierung und Deserialisierung -->
         <dependency>
             <groupId>org.camunda.spin</groupId>
             <artifactId>camunda-spin-core</artifactId>
+            <version>1.5.3</version>
         </dependency>
         <dependency>
             <groupId>org.camunda.spin</groupId>
             <artifactId>camunda-spin-dataformat-json-jackson</artifactId>
+            <version>1.5.3</version>
         </dependency>
         <dependency>
             <groupId>org.camunda.bpm</groupId>
             <artifactId>camunda-engine-plugin-spin</artifactId>
+            <version>7.9.0</version>
+        </dependency>
+        
+        <!-- Importiert die Mail-Unterstützung für Spring Boot-Projekte. Sofern
+             keine Mails gesendet werden sollen, ist diese Abhängigkeit überflüssig -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
     </dependencies>
     
