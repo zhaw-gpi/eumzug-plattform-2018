@@ -1,0 +1,301 @@
+<!--
+    Formular zum UserTask "Alle Angaben prüfen"
+-->
+
+<form name="camundaForm">
+    <div class="alert alert-info">
+        Prüfen Sie bitte Ihre Angaben{{feesInfoText}}, bevor Sie fortfahren.
+    </div>
+    
+    <div class="panel panel-warning" ng-show="total > 0">
+        <div class="panel-heading"><b>Gebühren</b></div>
+        <div class="panel-body">
+            <table class="table" style="margin-bottom: 0">
+                <thead>
+                    <tr>
+                        <th class="col-md-6">Gebührentyp</th>
+                        <th class="col-md-6">Gebühr</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 
+                    ng-repeat entspricht einem foreach in Java. Das heisst, für jeden Gebühren-
+                    eintrag wird eine Zeile hinzugefügt
+                    -->
+                    <tr ng-repeat="(key, value) in feeMapSerialized">
+                        <td>{{key}}</td>
+                        <td>Fr. {{value}}.-</td>
+                    </tr>
+                    <tr class="active">
+                        <td><b>Total</b></td>
+                        <td><b>Fr. {{total}}.-</b></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Personalien</b></div>
+        <div class="panel-body">
+            <table class="table" style="margin-bottom: 0">
+                <tbody>
+                    <tr ng-show="vn != null">
+                        <th class="col-md-6" scope="row">AHV-Nummer</th>
+                        <td class="col-md-6">{{vn}}</td>
+                    </tr>
+                    <tr>
+                        <th class="col-md-6" scope="row">Vornamen</th>
+                        <td class="col-md-6">{{firstName}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Nachname</th>
+                        <td>{{officialName}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Geschlecht</th>
+                        <td>
+                            <span ng-show="sex === '1'">Männlich</span>
+                            <span ng-show="sex === '2'">Weiblich</span>
+                            <span ng-show="sex === '3'">Unbestimmt</span>
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd">
+                        <th scope="row">Geburtsdatum</th>
+                        <td>{{dateOfBirth| date:'dd.MM.yyyy'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Mitumziehende Personen</b></div>
+        <div class="panel-body">
+            TODO
+        </div>
+    </div>
+    
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Dokumente</b></div>
+        <div class="panel-body">
+            TODO
+        </div>
+    </div>
+    
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Kontaktangaben</b></div>
+        <div class="panel-body">
+            <table class="table" style="margin-bottom: 0">
+                <tbody>
+                    <tr>
+                        <th class="col-md-6" scope="row">Telefon</th>
+                        <td class="col-md-6">{{phoneNumber}}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd">
+                        <th scope="row">E-Mail</th>
+                        <td>{{emailAddress}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Wegzugsinformationen</b></div>
+        <div class="panel-body">
+            <table class="table" style="margin-bottom: 0">
+                <tbody>
+                    <tr>
+                        <th class="col-md-6" scope="row">Strasse</th>
+                        <td class="col-md-6">{{streetMoveOut}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Hausnummer</th>
+                        <td>{{houseNumberMoveOut}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">PLZ</th>
+                        <td>{{swissZipCodeMoveOut}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Ort</th>
+                        <td>{{townMoveOut}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Politische Gemeinde</th>
+                        <td>{{municipalityNameMoveOut}}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd">
+                        <th scope="row">Zuzugsdatum</th>
+                        <td>{{departureDate | date: 'dd.MM.yyyy'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+   
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Zuzugsinformationen</b></div>
+        <div class="panel-body">
+            <table class="table" style="margin-bottom: 0">
+                <tbody>
+                    <tr>
+                        <th class="col-md-6" scope="row">Strasse</th>
+                        <td class="col-md-6">{{streetMoveIn}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Hausnummer</th>
+                        <td>{{houseNumberMoveIn}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">PLZ</th>
+                        <td>{{swissZipCodeMoveIn}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Ort</th>
+                        <td>{{townMoveIn}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Wohnungsnummer</th>
+                        <td>{{apartmentIdMoveIn}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Politische Gemeinde</th>
+                        <td>{{municipalityNameMoveIn}}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd">
+                        <th scope="row">Zuzugsdatum</th>
+                        <td>{{arrivalDate | date: 'dd.MM.yyyy'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div style="text-align:right">
+        <label>
+            <b>Alle Angaben sind korrekt</b>
+            <input name="allDataCorrect"
+            type="checkbox"
+            cam-variable-name="allDataCorrect"
+            cam-variable-type="Boolean"
+            checked>
+        </label>
+    </div>
+    
+    <div class="alert alert-info" style="text-align: center" ng-show="!allDataCorrect">
+        Sie werden zurück zum ersten Formular geführt, womit Sie in jedem Formular
+        Ihre Angaben nochmals korrigieren können.
+    </div>
+    
+    <div style="text-align:right" ng-show="total > 0 && allDataCorrect">
+        <label>
+            <b>Ich akzeptiere, die Gebühr von Fr. {{total}}.- zu bezahlen</b>
+            <input name="feesAccepted"
+            type="checkbox"
+            cam-variable-name="feesAccepted"
+            cam-variable-type="Boolean"
+            checked>
+        </label>
+    </div>
+    
+    <div class="alert alert-danger" style="text-align: center" ng-show="!feesAccepted">
+        Sind Sie sicher? Hierdurch werden alle Ihre Angaben gelöscht und Sie müssen
+        am Schalter der Weg- und Zuzugsgemeinde erscheinen.
+    </div>
+   
+    
+    <script cam-script type="text/form-script">
+        // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
+        // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
+        // folgenden Funktionen
+        var variableManager = camForm.variableManager;
+
+        // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
+        // die Prozessvariablen feeMapSerialized von der Process Engine (Server) 
+        // in das variableManager-Objekt (Client)
+        camForm.on('form-loaded', function() {
+            variableManager.fetchVariable('feeMapSerialized');
+            
+            variableManager.fetchVariable('vn');
+            variableManager.fetchVariable('firstName');
+            variableManager.fetchVariable('officialName');
+            variableManager.fetchVariable('sex');
+            variableManager.fetchVariable('dateOfBirth');
+            
+            variableManager.fetchVariable('phoneNumber');
+            variableManager.fetchVariable('emailAddress');
+            
+            variableManager.fetchVariable('streetMoveOut');
+            variableManager.fetchVariable('houseNumberMoveOut');
+            variableManager.fetchVariable('swissZipCodeMoveOut');
+            variableManager.fetchVariable('townMoveOut');
+            variableManager.fetchVariable('municipalityNameMoveOut');
+            variableManager.fetchVariable('departureDate');
+            
+            variableManager.fetchVariable('streetMoveIn');
+            variableManager.fetchVariable('houseNumberMoveIn');
+            variableManager.fetchVariable('swissZipCodeMoveIn');
+            variableManager.fetchVariable('townMoveIn');
+            variableManager.fetchVariable('apartmentIdMoveIn');
+            variableManager.fetchVariable('municipalityNameMoveIn');
+            variableManager.fetchVariable('arrivalDate');
+        });
+
+        // Sobald alle Variablen client-seitig zur Verfügung stehen, wird zum einen
+        // die feeMapSerialized einer Variable im AngularJS-Scope-Objekt übergeben
+        // Zudem wird das Total aller Gebühren berechnet
+        camForm.on('variables-fetched', function() {
+            $scope.feeMapSerialized = variableManager.variableValue('feeMapSerialized');
+            
+            $scope.vn = variableManager.variableValue('vn');
+            $scope.firstName = variableManager.variableValue('firstName');
+            $scope.officialName = variableManager.variableValue('officialName');
+            $scope.sex = variableManager.variableValue('sex');
+            $scope.dateOfBirth = variableManager.variableValue('dateOfBirth');            
+            
+            $scope.phoneNumber = variableManager.variableValue('phoneNumber');
+            $scope.emailAddress = variableManager.variableValue('emailAddress');
+            
+            $scope.streetMoveOut = variableManager.variableValue('streetMoveOut');
+            $scope.houseNumberMoveOut = variableManager.variableValue('houseNumberMoveOut');
+            $scope.swissZipCodeMoveOut = variableManager.variableValue('swissZipCodeMoveOut');
+            $scope.townMoveOut = variableManager.variableValue('townMoveOut');
+            $scope.municipalityNameMoveOut = variableManager.variableValue('municipalityNameMoveOut');
+            $scope.departureDate = variableManager.variableValue('departureDate');
+            
+            $scope.streetMoveIn = variableManager.variableValue('streetMoveIn');
+            $scope.houseNumberMoveIn = variableManager.variableValue('houseNumberMoveIn');
+            $scope.swissZipCodeMoveIn = variableManager.variableValue('swissZipCodeMoveIn');
+            $scope.townMoveIn = variableManager.variableValue('townMoveIn');
+            $scope.apartmentIdMoveIn = variableManager.variableValue('apartmentIdMoveIn');
+            $scope.municipalityNameMoveIn = variableManager.variableValue('municipalityNameMoveIn');
+            $scope.arrivalDate = variableManager.variableValue('arrivalDate');
+
+            // Totalgebühr initial auf 0 und feesInfoText auf "" setzen
+            $scope.total = 0;
+            $scope.feesInfoText = "";
+                
+            // Anzahl Gebührenelemente bestimmen
+            if($scope.feeMapSerialized !== null){
+                var mapLength = Object.keys($scope.feeMapSerialized).length;              
+
+                // Für jedes Gebührenelement ...
+                for(var i = 0; i < mapLength; i++){
+                // Den Key (z.B. Umzugsgebühr) des i-ten Eintrags ermitteln
+                    var keyName = Object.keys($scope.feeMapSerialized)[i];
+
+                    // Den Value (die Gebühr) des Gebührenelements mit dem gefundenen Key auslesen
+                    var fee = $scope.feeMapSerialized[keyName];
+
+                    // Dem Total die gefundene Gebühr addieren
+                    $scope.total += fee;
+                }
+                if($scope.total > 0){
+                    $scope.feesInfoText = " und allfällige Gebühren";
+                }
+            }
+        });
+    </script>
+</form>
