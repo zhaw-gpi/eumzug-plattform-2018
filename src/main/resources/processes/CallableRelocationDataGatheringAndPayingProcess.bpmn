@@ -42,6 +42,7 @@ Theoretisch: Dem Prozess wird der BusinessKey, die BusinessCaseId und der Benutz
           <camunda:in variables="all" />
           <camunda:in source="businessCaseId" target="businessCaseId" />
           <camunda:in source="meldePflichtiger" target="meldePflichtiger" />
+          <camunda:out variables="all" />
         </bpmn:extensionElements>
         <bpmn:incoming>SequenceFlow_1p9ea31</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_0mei95i</bpmn:outgoing>
@@ -66,7 +67,7 @@ Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtige
       <bpmn:callActivity id="ZuzugsinformationenErfassenUndPruefen" name="Zuzugsinformationen erfassen und prüfen" calledElement="ZuzugsinformationenErfassenUndPruefen">
         <bpmn:documentation>Im aufgerufenen Prozess erfasst der Meldepflichtige die politische Zuzugsgemeinde und die Zuzugsadresse, welche im Gebäude- und Wohnungsregister geprüft wird. Existiert sie, kann er aus einer Liste von Wohnungen die zukünftige auswählen.
 
-Theoretisch: Dem Prozess wird der BusinessKey und der Benutzername (meldePflichtiger) übergeben und umgekehrt folgende Variablen zurück genommen: houseNumberMoveIn, swissZipCodeMoveIn, streetMoveIn, townMoveIn und apartmentMoveIn. Praktisch: Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
+Theoretisch: Dem Prozess wird der BusinessKey und der Benutzername (meldePflichtiger) übergeben und umgekehrt folgende Variablen zurück genommen: houseNumberMoveIn, swissZipCodeMoveIn, streetMoveIn, townMoveIn, apartmentMoveIn und municipalityNameMoveIn. Praktisch: Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
         <bpmn:extensionElements>
           <camunda:in businessKey="#{execution.processBusinessKey}" />
           <camunda:in source="meldePflichtiger" target="meldePflichtiger" />
@@ -76,6 +77,8 @@ Theoretisch: Dem Prozess wird der BusinessKey und der Benutzername (meldePflicht
           <camunda:out source="townMoveIn" target="townMoveIn" />
           <camunda:out source="apartmentMoveIn" target="apartmentMoveIn" />
           <camunda:in variables="all" />
+          <camunda:out source="municipalityNameMoveIn" target="municipalityNameMoveIn" />
+          <camunda:out variables="all" />
         </bpmn:extensionElements>
         <bpmn:incoming>SequenceFlow_0hi1ppy</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_120w2r2</bpmn:outgoing>
@@ -109,8 +112,7 @@ Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtige
       <bpmn:callActivity id="DokumenteHochladen" name="Dokumente hochladen" calledElement="DokumenteHochladen">
         <bpmn:documentation>Im aufgerufenen Prozess lädt der Meldepflichtige allenfalls erforderliche, eingescannte Dokumente hoch.
 
-Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger), municipalityIdMoveOut und municipalityIdMoveIn übergeben und umgekehrt folgende Variablen zurück genommen: documentsExist und documentListSerialized. Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.
-</bpmn:documentation>
+Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger), municipalityIdMoveOut und municipalityIdMoveIn übergeben und umgekehrt folgende Variablen zurück genommen: documentsExist und documents. Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
         <bpmn:extensionElements>
           <camunda:in businessKey="#{execution.processBusinessKey}" />
           <camunda:in source="municipalityIdMoveOut" target="municipalityIdMoveOut" />
@@ -119,7 +121,7 @@ Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtige
           <camunda:out variables="all" />
           <camunda:in source="meldePflichtiger" target="meldePflichtiger" />
           <camunda:out source="documentsExist" target="documentsExist" />
-          <camunda:out source="documentListSerialized" target="documentListSerialized" />
+          <camunda:out source="documents" target="documents" />
         </bpmn:extensionElements>
         <bpmn:incoming>SequenceFlow_001pwxn</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_05prxas</bpmn:outgoing>
@@ -197,14 +199,19 @@ Ablaufjahr
         <bpmn:incoming>SequenceFlow_0eixy45</bpmn:incoming>
         <bpmn:errorEventDefinition errorRef="Error_0ye3wrs" />
       </bpmn:endEvent>
-      <bpmn:task id="GebuehrenNichtAkzeptiertPersistieren" name="Gebühren nicht akzeptiert persistieren">
+      <bpmn:sequenceFlow id="SequenceFlow_0eixy45" sourceRef="GebuehrenNichtAkzeptiertPersistieren" targetRef="WegenNichtAkzeptierterGebuehrenAbgebrochenErrorEvent" />
+      <bpmn:serviceTask id="GebuehrenNichtAkzeptiertPersistieren" name="Gebühren nicht akzeptiert persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
         <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
 
-Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex), ebenfalls der Status (status).</bpmn:documentation>
+Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex). In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Fehlgeschlagen wegen nicht akzeptierter Gebühren".</bpmn:documentation>
+        <bpmn:extensionElements>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="status">"Fehlgeschlagen wegen nicht akzeptierter Gebühren"</camunda:inputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
         <bpmn:incoming>Abbrechen</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_0eixy45</bpmn:outgoing>
-      </bpmn:task>
-      <bpmn:sequenceFlow id="SequenceFlow_0eixy45" sourceRef="GebuehrenNichtAkzeptiertPersistieren" targetRef="WegenNichtAkzeptierterGebuehrenAbgebrochenErrorEvent" />
+      </bpmn:serviceTask>
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="SequenceFlow_0idpplo" sourceRef="UmzugsmeldungGestartet" targetRef="UmzugsmeldungErfassen" />
     <bpmn:sequenceFlow id="SequenceFlow_11zgl40" sourceRef="AchtundvierzigStundenVerstrichen" targetRef="ExclusiveGateway_0ldwwai" />
@@ -239,13 +246,6 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschla
       <bpmn:incoming>SequenceFlow_1u4hpcs</bpmn:incoming>
       <bpmn:errorEventDefinition errorRef="Error_0fmfamk" />
     </bpmn:endEvent>
-    <bpmn:task id="AbbruchWegenZeitueberschreitungPersistieren" name="Abbruch wegen Zeitüberschreitung persistieren">
-      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
-
-Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex), ebenfalls der Status (status).</bpmn:documentation>
-      <bpmn:incoming>PersonIdentifikationErfasst</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0xvv0xn</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:sequenceFlow id="PersonIdentifikationNichtErfasst" name="nein" sourceRef="ExclusiveGateway_0ldwwai" targetRef="ExclusiveGateway_0ebozi5">
       <bpmn:documentation>Siehe Dokumentation bei ja</bpmn:documentation>
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable('localPersonId') == null}</bpmn:conditionExpression>
@@ -268,6 +268,7 @@ b) Nur das Vorhandensein von localPersonId geprüft wird (darf also nicht null s
       <bpmn:errorEventDefinition errorRef="Error_0ye3wrs" />
     </bpmn:boundaryEvent>
     <bpmn:task id="ZahlungDurchfuehren" name="Zahlung durchführen">
+      <bpmn:documentation>TODO: Wie soll die Integration genau funktionieren?</bpmn:documentation>
       <bpmn:incoming>GebuehrenFallenAn</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_04m4p8a</bpmn:outgoing>
     </bpmn:task>
@@ -275,19 +276,12 @@ b) Nur das Vorhandensein von localPersonId geprüft wird (darf also nicht null s
       <bpmn:incoming>SequenceFlow_1vi0gkw</bpmn:incoming>
       <bpmn:errorEventDefinition errorRef="Error_1ayoalr" />
     </bpmn:endEvent>
-    <bpmn:task id="Task_1xxw28x" name="Fehlgeschlagene Zahlung persistieren">
-      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
-
-Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex), ebenfalls der Status (status).</bpmn:documentation>
-      <bpmn:incoming>SequenceFlow_1d0k5r8</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1vi0gkw</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:exclusiveGateway id="ExclusiveGateway_175tgn6">
       <bpmn:incoming>GebuehrenFallenNichtAn</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_04m4p8a</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1y8ukhh</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="AbschlussBestaetigungAnzeigen" name="Abschluss-Bestätigung anzeigen" camunda:asyncAfter="true" camunda:assignee="${meldePflichtiger}">
+    <bpmn:userTask id="AbschlussBestaetigungAnzeigen" name="Abschluss-Bestätigung anzeigen" camunda:asyncAfter="true" camunda:formKey="embedded:app:forms/AbschlussBestaetigungAnzeigenForm.html" camunda:assignee="${meldePflichtiger}">
       <bpmn:documentation>Als Abschlussbestätigung folgende Paragraphen hinzufügen:
 Sobald Sie auf "Complete" drücken, werden Ihre Angaben weiterverarbeitet und geprüft.
 Sie werden dann in den nächsten Tagen von uns kontatktiert und über das weitere Vorgehen informiert.</bpmn:documentation>
@@ -299,15 +293,6 @@ Sie werden dann in den nächsten Tagen von uns kontatktiert und über das weiter
       <bpmn:incoming>SequenceFlow_0mh6vb8</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0cprgwn</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:task id="ErfolgreicheUmzugsmeldungErfassungPersistieren" name="Erfolgreiche Umzugsmeldung-Erfassung persistieren">
-      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
-
-Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex).
-
-In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgreiche Erfassung der Umzugsmeldung".</bpmn:documentation>
-      <bpmn:incoming>SequenceFlow_0cprgwn</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_173zha0</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:endEvent id="UmzugsmeldungErfolgreichErfasst" name="Umzugsmeldung erfolgreich erfasst">
       <bpmn:incoming>SequenceFlow_173zha0</bpmn:incoming>
     </bpmn:endEvent>
@@ -348,8 +333,8 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschla
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${feeMapSerialized!=null}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_04m4p8a" sourceRef="ZahlungDurchfuehren" targetRef="ExclusiveGateway_175tgn6" />
-    <bpmn:sequenceFlow id="SequenceFlow_1vi0gkw" sourceRef="Task_1xxw28x" targetRef="EndEvent_1d7w5d6" />
-    <bpmn:sequenceFlow id="SequenceFlow_1d0k5r8" sourceRef="ZahlungFehlgeschlagen" targetRef="Task_1xxw28x" />
+    <bpmn:sequenceFlow id="SequenceFlow_1vi0gkw" sourceRef="FehlgeschlageneZahlungPersistieren" targetRef="EndEvent_1d7w5d6" />
+    <bpmn:sequenceFlow id="SequenceFlow_1d0k5r8" sourceRef="ZahlungFehlgeschlagen" targetRef="FehlgeschlageneZahlungPersistieren" />
     <bpmn:sequenceFlow id="GebuehrenFallenNichtAn" name="nein" sourceRef="ExclusiveGateway_1t9zc0d" targetRef="ExclusiveGateway_175tgn6">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${feeMapSerialized==null}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -362,6 +347,34 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschla
       <bpmn:documentation>Dieses Prozesstartereignis wird aufgerufen vom Prozess 'UmzugMelden' und ist nicht gedacht, um unabhängig davon (z.B. aus der Tasklist) aufgerufen zu werden.</bpmn:documentation>
       <bpmn:outgoing>SequenceFlow_0idpplo</bpmn:outgoing>
     </bpmn:startEvent>
+    <bpmn:serviceTask id="AbbruchWegenZeitueberschreitungPersistieren" name="Abbruch wegen Zeitüberschreitung persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
+      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
+
+Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex), ebenfalls der Status (status).</bpmn:documentation>
+      <bpmn:incoming>PersonIdentifikationErfasst</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0xvv0xn</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="FehlgeschlageneZahlungPersistieren" name="Fehlgeschlagene Zahlung persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
+      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
+
+Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex), ebenfalls der Status (status).</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_1d0k5r8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1vi0gkw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ErfolgreicheUmzugsmeldungErfassungPersistieren" name="Erfolgreiche Umzugsmeldung-Erfassung persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
+      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
+
+Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex).
+
+In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgreiche Erfassung der Umzugsmeldung".</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">"Erfolgreiche Erfassung der Umzugsmeldung"</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0cprgwn</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_173zha0</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmn:error id="Error_0fmfamk" name="ErrorUmzugsmeldungErfassenUndBezahlen" errorCode="ZeitueberschreitungBenutzer" />
   <bpmn:error id="Error_1ak9z8o" name="ErrorZahlungDurchfuehren" />
@@ -443,12 +456,6 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschla
       <bpmndi:BPMNShape id="EndEvent_1fsuc39_di" bpmnElement="EndEvent_1fsuc39">
         <dc:Bounds x="1159" y="292" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_1e43o20_di" bpmnElement="ErfolgreicheUmzugsmeldungErfassungPersistieren">
-        <dc:Bounds x="1805" y="259" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_0rkpqkv_di" bpmnElement="AbbruchWegenZeitueberschreitungPersistieren">
-        <dc:Bounds x="378" y="545" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_175tgn6_di" bpmnElement="ExclusiveGateway_175tgn6" isMarkerVisible="true">
         <dc:Bounds x="1499" y="274" width="50" height="50" />
       </bpmndi:BPMNShape>
@@ -492,9 +499,6 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschla
         <di:waypoint x="1468" y="299" />
         <di:waypoint x="1499" y="299" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_1xxw28x_di" bpmnElement="Task_1xxw28x">
-        <dc:Bounds x="1439" y="372" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BoundaryEvent_0sieegt_di" bpmnElement="ZahlungFehlgeschlagen">
         <dc:Bounds x="1382" y="321" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -659,9 +663,6 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschla
           <dc:Bounds x="1144" y="434" width="65" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_0o71azy_di" bpmnElement="GebuehrenNichtAkzeptiertPersistieren">
-        <dc:Bounds x="1013" y="371" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0eixy45_di" bpmnElement="SequenceFlow_0eixy45">
         <di:waypoint x="1113" y="411" />
         <di:waypoint x="1159" y="411" />
@@ -682,6 +683,18 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschla
         <bpmndi:BPMNLabel>
           <dc:Bounds x="744" y="514" width="65" height="53" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_14d9ckh_di" bpmnElement="AbbruchWegenZeitueberschreitungPersistieren">
+        <dc:Bounds x="378" y="545" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0nhbdvy_di" bpmnElement="GebuehrenNichtAkzeptiertPersistieren">
+        <dc:Bounds x="1013" y="371" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0n32zod_di" bpmnElement="FehlgeschlageneZahlungPersistieren">
+        <dc:Bounds x="1439" y="372" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0oz8vy1_di" bpmnElement="ErfolgreicheUmzugsmeldungErfassungPersistieren">
+        <dc:Bounds x="1805" y="259" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

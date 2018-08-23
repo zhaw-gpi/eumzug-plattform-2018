@@ -2,11 +2,12 @@
     Formular zum UserTask "Alle Angaben prüfen"
 -->
 
-<form name="camundaForm">
+<form ng-app="testapp" name="camundaForm">
     <div class="alert alert-info">
         Prüfen Sie bitte Ihre Angaben{{feesInfoText}}, bevor Sie fortfahren.
     </div>
-    
+
+    <!-- GEBÜHREN-Panel, sofern das Total grösser als 0 Franken beträgt -->
     <div class="panel panel-warning" ng-show="total > 0">
         <div class="panel-heading"><b>Gebühren</b></div>
         <div class="panel-body">
@@ -20,12 +21,14 @@
                 <tbody>
                     <!-- 
                     ng-repeat entspricht einem foreach in Java. Das heisst, für jeden Gebühren-
-                    eintrag wird eine Zeile hinzugefügt
+                    eintrag wird eine Zeile hinzugefügt. Da feeMapSerialized eine HashMap ist,
+                    können Gebührentyp als key und die Gebühr als value ausgelesen werden.
                     -->
                     <tr ng-repeat="(key, value) in feeMapSerialized">
                         <td>{{key}}</td>
                         <td>Fr. {{value}}.-</td>
                     </tr>
+                    <!-- Das Total soll hervorgehoben werden, was mit der Bootstrap-Klasse active geschieht -->
                     <tr class="active">
                         <td><b>Total</b></td>
                         <td><b>Fr. {{total}}.-</b></td>
@@ -34,13 +37,14 @@
             </table>
         </div>
     </div>
-    
+
+    <!-- PERSONALIEN-Panel -->
     <div class="panel panel-default">
         <div class="panel-heading"><b>Personalien</b></div>
         <div class="panel-body">
             <table class="table" style="margin-bottom: 0">
                 <tbody>
-                    <tr ng-show="vn != null">
+                    <tr ng-show="vn !== null">
                         <th class="col-md-6" scope="row">AHV-Nummer</th>
                         <td class="col-md-6">{{vn}}</td>
                     </tr>
@@ -68,21 +72,59 @@
             </table>
         </div>
     </div>
-    
+
+    <!-- MITUMZIEHENDE PERSONEN-Panel -->
     <div class="panel panel-default">
         <div class="panel-heading"><b>Mitumziehende Personen</b></div>
         <div class="panel-body">
-            TODO
+            <!-- Die Vornamen der mitumziehenden Personen (moveAlong ist true) werden angezeigt.
+            Betreffend Sicherheitsproblemen bei dieser Lösung sowie der Bedeutung von track by
+            siehe Kommentare in MitumziehendePersonenWaehlenForm.html -->
+            <p ng-repeat="relative in relatives track by relative.localPersonId" ng-show="relative.moveAlong">
+                {{relative.firstName}}
+            </p>
         </div>
     </div>
-    
-    <div class="panel panel-default">
+
+    <!-- DOKUMENTE-Panel (nur anzeigen, wenn grundsätzlich überhaupt Dokumente hätten hochgeladen werden können -->
+    <div class="panel panel-default" ng-show="documentsExist">
         <div class="panel-heading"><b>Dokumente</b></div>
         <div class="panel-body">
-            TODO
+            <p>Folgende Dokumente haben Sie hochgeladen:</p>
+
+            <table class="table" style="margin-bottom: 0">
+                <!-- Die Dokumente werden als Tabelle ausgegeben. Die erste Spalte enthält den
+                Dokumentenname (z.B. Heiratsurkunde), die zweite Spalte entweder einen Link
+                zum hochgeladenen Dokument mit dem entsprechenden Dateinamen oder den
+                Hinweis 'Kein Dokument hochgeladen' -->
+                <tbody>
+                    <tr ng-repeat="document in documents.municipalityDocumentUploadedFiles track by document.municipalityDocumentRelationEntity.documentEntity.name">
+                        <th class="col-md-6" scope="row">{{document.municipalityDocumentRelationEntity.documentEntity.name}}</th>
+                        <!-- Eigentlich wäre die naheligende Lösung, mit ng-href="{{document.fileDataUrl}}" 
+                        direkt die DataUrl als Link anzugeben, aber diese Variante geht leider nicht, da 
+                        Links als unsafe gekennzeichnet werden (https://stackoverflow.com/questions/15606751/angularjs-changes-urls-to-unsafe-in-extension-page )
+                        und wir die AngularJS-app-Configuration nicht übersteuern können. Daher eine Hack-
+                        Variante, welche beim Klick auf den Link eine unten definerte Funktion downloadFile
+                        aufruft. PS: ng-click funktioniert nicht. Um aber aus dem JavaScript onclick-Event
+                        auf eine im Angular-Scope definierte Funktion zugreifen zu können, muss der
+                        Scope über angular.element(this).scope() ermittelt werden. -->
+                        <td class="col-md-6">
+                            <span ng-show="document.fileDataUrl !== null">
+                                <a onclick="angular.element(this).scope().downloadFile(this)" id="{{document.municipalityDocumentRelationEntity.documentEntity.name}}" target="_blank">
+                                    {{document.fileName}}
+                                </a>
+                            </span>
+                            <span ng-show="document.fileDataUrl === null">
+                                Kein Dokument hochgeladen
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
     
+    <!-- KONTAKTANGABEN-Panel -->
     <div class="panel panel-default">
         <div class="panel-heading"><b>Kontaktangaben</b></div>
         <div class="panel-body">
@@ -100,7 +142,8 @@
             </table>
         </div>
     </div>
-    
+
+    <!-- WEGZUGSINFORMATIONEN-Panel -->
     <div class="panel panel-default">
         <div class="panel-heading"><b>Wegzugsinformationen</b></div>
         <div class="panel-body">
@@ -127,14 +170,15 @@
                         <td>{{municipalityNameMoveOut}}</td>
                     </tr>
                     <tr style="border-bottom: 1px solid #ddd">
-                        <th scope="row">Zuzugsdatum</th>
-                        <td>{{departureDate | date: 'dd.MM.yyyy'}}</td>
+                        <th scope="row">Wegzugsdatum</th>
+                        <td>{{departureDate| date: 'dd.MM.yyyy'}}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-   
+
+    <!-- ZUZUGSINFORMATIONEN-Panel -->
     <div class="panel panel-default">
         <div class="panel-heading"><b>Zuzugsinformationen</b></div>
         <div class="panel-body">
@@ -166,46 +210,49 @@
                     </tr>
                     <tr style="border-bottom: 1px solid #ddd">
                         <th scope="row">Zuzugsdatum</th>
-                        <td>{{arrivalDate | date: 'dd.MM.yyyy'}}</td>
+                        <td>{{arrivalDate| date: 'dd.MM.yyyy'}}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    
+
+    <!-- CHECKBOXES und WARNHINWEISE -->
+    <!-- Checkbox und zugehörige Warnung, dass alle Angaben in Ordnung sind -->
     <div style="text-align:right">
         <label>
             <b>Alle Angaben sind korrekt</b>
             <input name="allDataCorrect"
-            type="checkbox"
-            cam-variable-name="allDataCorrect"
-            cam-variable-type="Boolean"
-            checked>
+                   type="checkbox"
+                   cam-variable-name="allDataCorrect"
+                   cam-variable-type="Boolean"
+                   checked>
         </label>
     </div>
-    
+
+    <!-- Der Hinweis stimmt (noch) nicht ganz, denn im MitumziehendePersonenAuswaehlenForm werden die 
+    ausgewählten Personen nicht angezeigt und beim DokumenteHochladenForm.html die bereits
+    hochgeladenen Dokumente ebenfalls nicht -->
     <div class="alert alert-info" style="text-align: center" ng-show="!allDataCorrect">
-        Sie werden zurück zum ersten Formular geführt, womit Sie in jedem Formular
-        Ihre Angaben nochmals korrigieren können.
+        Sie werden zurück zum ersten Formular geführt, womit Sie in jedem Formular Ihre Angaben nochmals korrigieren können. Bestehende Eingaben bleiben erhalten.
     </div>
-    
+
+    <!-- Checkbox und zugehörige Warnung, dass allfällig zu zahlende Gebühren akzeptiert werden -->
     <div style="text-align:right" ng-show="total > 0 && allDataCorrect">
         <label>
             <b>Ich akzeptiere, die Gebühr von Fr. {{total}}.- zu bezahlen</b>
             <input name="feesAccepted"
-            type="checkbox"
-            cam-variable-name="feesAccepted"
-            cam-variable-type="Boolean"
-            checked>
+                   type="checkbox"
+                   cam-variable-name="feesAccepted"
+                   cam-variable-type="Boolean"
+                   checked>
         </label>
     </div>
-    
+
     <div class="alert alert-danger" style="text-align: center" ng-show="!feesAccepted">
-        Sind Sie sicher? Hierdurch werden alle Ihre Angaben gelöscht und Sie müssen
-        am Schalter der Weg- und Zuzugsgemeinde erscheinen.
+        Sind Sie sicher? Hierdurch werden alle Ihre Angaben aus Gründen der Nachvollziehbarkeit in der Umzugsplattform-Datenbank gespeichert, aber nicht an die Weg- und Zuzugsgemeinden weiter geleitet. Das heisst, Sie müssen in jedem Fall den Umzug persönlich am Schalter der Weg- und Zuzugsgemeinde melden.
     </div>
-   
-    
+
     <script cam-script type="text/form-script">
         // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
         // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
@@ -227,6 +274,8 @@
             variableManager.fetchVariable('phoneNumber');
             variableManager.fetchVariable('emailAddress');
             
+            variableManager.fetchVariable('relativesList');
+            
             variableManager.fetchVariable('streetMoveOut');
             variableManager.fetchVariable('houseNumberMoveOut');
             variableManager.fetchVariable('swissZipCodeMoveOut');
@@ -241,6 +290,9 @@
             variableManager.fetchVariable('apartmentIdMoveIn');
             variableManager.fetchVariable('municipalityNameMoveIn');
             variableManager.fetchVariable('arrivalDate');
+            
+            variableManager.fetchVariable('documents');
+            variableManager.fetchVariable('documentsExist');
         });
 
         // Sobald alle Variablen client-seitig zur Verfügung stehen, wird zum einen
@@ -248,7 +300,9 @@
         // Zudem wird das Total aller Gebühren berechnet
         camForm.on('variables-fetched', function() {
             $scope.feeMapSerialized = variableManager.variableValue('feeMapSerialized');
-            
+            $scope.documents = variableManager.variableValue('documents');
+            $scope.documentsExist = variableManager.variableValue('documentsExist');
+                        
             $scope.vn = variableManager.variableValue('vn');
             $scope.firstName = variableManager.variableValue('firstName');
             $scope.officialName = variableManager.variableValue('officialName');
@@ -257,6 +311,8 @@
             
             $scope.phoneNumber = variableManager.variableValue('phoneNumber');
             $scope.emailAddress = variableManager.variableValue('emailAddress');
+            
+            $scope.relatives = variableManager.variableValue('relativesList').relatives;
             
             $scope.streetMoveOut = variableManager.variableValue('streetMoveOut');
             $scope.houseNumberMoveOut = variableManager.variableValue('houseNumberMoveOut');
@@ -273,29 +329,79 @@
             $scope.municipalityNameMoveIn = variableManager.variableValue('municipalityNameMoveIn');
             $scope.arrivalDate = variableManager.variableValue('arrivalDate');
 
+            // GEBÜHREN AUSLESEN
             // Totalgebühr initial auf 0 und feesInfoText auf "" setzen
             $scope.total = 0;
             $scope.feesInfoText = "";
-                
-            // Anzahl Gebührenelemente bestimmen
+            
+            // Prüfen, ob überhaupt Gebühren zu bezahlen sind
             if($scope.feeMapSerialized !== null){
+                // Anzahl Gebührenelemente bestimmen
+                // Hierzu wird die Object.keys-Funktion genutzt (https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Object/keys)
                 var mapLength = Object.keys($scope.feeMapSerialized).length;              
 
                 // Für jedes Gebührenelement ...
                 for(var i = 0; i < mapLength; i++){
-                // Den Key (z.B. Umzugsgebühr) des i-ten Eintrags ermitteln
+                // Den Schlüssel (z.B. Umzugsgebühr) des i-ten Eintrags ermitteln
                     var keyName = Object.keys($scope.feeMapSerialized)[i];
 
-                    // Den Value (die Gebühr) des Gebührenelements mit dem gefundenen Key auslesen
+                    // Den Value (die Gebühr) des Gebührenelements mit dem gefundenen Key aus der HashMap auslesen
                     var fee = $scope.feeMapSerialized[keyName];
 
                     // Dem Total die gefundene Gebühr addieren
                     $scope.total += fee;
                 }
+                // Wenn Gebühren anfallen, dann das Textschnipsel setzen, welches zuoberst im Gebühren-Panel angezeigt wird
                 if($scope.total > 0){
                     $scope.feesInfoText = " und allfällige Gebühren";
                 }
             }
         });
+        
+        
+        /**
+         * Definition der Funktion downloadFile, welche den eigentlichen Download einer
+         * vorher hochgeladenen Datei ermöglicht.
+         * 
+         * Der Grund, wieso diese "Hack-Variante" erforderlich ist, steht oben,
+         * wo der Aufruf der Funktion ausgelöst wird.
+         * 
+         * Die Grundidee ist, direkt im DOM ein neues unsichtbares Element hinzuzufügen,
+         * welchem der Link zur Datei hinzugefügt wird und diesen Link dann 
+         * automatisch "anzuklicken".
+         */
+        $scope.downloadFile = function(element){ 
+            // Um den folgenden Code kürzer zu halten, die Referenz auf die Liste der Dokumente in einer Variable setzen
+            var docListDirect = $scope.documents.municipalityDocumentUploadedFiles;
+
+            // Anzahl der Dokumente auslesen
+            var docListSize = docListDirect.length;
+
+            // Über die Liste der Dokumente iterieren
+            for (var i = 0; i < docListSize; i++) {
+                // Den Namen (z.B. Heiratsurkunde) des Dokuments auslesen
+                var documentName = docListDirect[i].municipalityDocumentRelationEntity.documentEntity.name;
+                
+                // ... und diesen vergleichen mit dem Namen, welcher als Id des Input-Elements gesetzt wurde. Nur wenn er gleich ist ...
+                if(documentName == element.id){
+                    // ... soll das temporäre anchor (a)-Element im DOM (document -> hat nichts zu tun mit unseren Dokumenten) erstellt werden -> https://developer.mozilla.org/de/docs/Web/API/Document/createElement erstellt werden ...
+                    var a = document.createElement('a');
+                    // ... der Link auf die DataUrl der Datei gesetzt werden
+                    a.href = $scope.documents.municipalityDocumentUploadedFiles[i].fileDataUrl;
+                    // ... als Ziel ein neues Fenster festgelegt werden
+                    a.target = '_blank';
+                    // ... angegeben werden, dass die verlinkte Ressource heruntergeladen werden soll und zwar mit dem hochgeladenen Dateinamen als Vorschlag -> https://developer.mozilla.org/de/docs/Web/HTML/Element/a
+                    a.download = $scope.documents.municipalityDocumentUploadedFiles[i].fileName;
+                    // ... das erstellte a-Element soll zuunterst im Body-Teil des DOMS als Kind-Knoten hinzugefügt werden -> https://www.w3schools.com/jsref/met_node_appendchild.asp
+                    document.body.appendChild(a);
+                    // ... es soll simuliert werden, dass der Benutzer auf das Link (a)-Element geklickt hat, um den eigentlichen Download anzustossen
+                    a.click();
+                    // ... Aufräumarbeiten (löschen des a-Elements)
+                    a.remove();
+                    // ... For-Schleife verlassen
+                    break;
+                }
+            }  
+        };
     </script>
 </form>

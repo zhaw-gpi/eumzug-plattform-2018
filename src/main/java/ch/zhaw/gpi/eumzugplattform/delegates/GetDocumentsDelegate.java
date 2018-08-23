@@ -1,8 +1,8 @@
 package ch.zhaw.gpi.eumzugplattform.delegates;
 
-import ch.zhaw.gpi.eumzugplattform.entities.DocumentList;
+import ch.zhaw.gpi.eumzugplattform.processdata.DocumentList;
 import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityDocumentRelationEntity;
-import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityDocumentUploadedFile;
+import ch.zhaw.gpi.eumzugplattform.processdata.MunicipalityDocumentUploadedFile;
 import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityEntity;
 import ch.zhaw.gpi.eumzugplattform.repositories.MunicipalityRepository;
 import java.util.List;
@@ -23,16 +23,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  * werden.
  * 
  * Von dieser Liste wird für jeden Eintrag ein Objekt der Klasse MunicipalityDocumentUploadedFile
- * erzeugt, welches einerseits den Eintrag erhält, aber auch eine Eigenschaft file,
- * welche dann im "Dokumente hochladen"-User Task mit Inhalt gefüllt wird.
+ * erzeugt, welches einerseits den Eintrag erhält, aber auch zwei Eigenschaften fileDataUrl
+ * und fileName, welche dann im "Dokumente hochladen"-User Task mit Inhalt gefüllt wird.
  * 
  * Damit keine Deserialisierungs-Probleme auftreten (Details siehe in JavaDoc der Klasse
  * DocumentList), benötigt es ein Hilfsobjekt der Klasse DocumentList.
  * 
  * Dieses Hilfsobjekt wird mittels Camunda Spin in ein JSON-Objekt
- * serialisiert und der Prozessvariable documentListSerialized zugewiesen. Der
- * Prozessvariable documentsExist wird mit true/fals mitgegeben, ob Dokumente
- * existieren.
+ * serialisiert und der Prozessvariable documents zugewiesen. Der Prozessvariable
+ * documentsExist wird mit true/fals mitgegeben, ob Dokumente existieren.
  */
 @Named("getDocumentsAdapter")
 public class GetDocumentsDelegate implements JavaDelegate {
@@ -54,7 +53,7 @@ public class GetDocumentsDelegate implements JavaDelegate {
         List<MunicipalityDocumentRelationEntity> municipalityDocuments;
 
         // Die Variable ObjectValue wird mit null initialisiert
-        ObjectValue documentListpSerialized = null;
+        ObjectValue documents = null;
 
         // Die Variable documentsExist wird mit false initialisiert
         Boolean documentsExist = false;
@@ -76,7 +75,7 @@ public class GetDocumentsDelegate implements JavaDelegate {
                     documentList.addMunicipalityDocumentUploadedFile(municipalityDocumentUploadedFile);
                 }
                 // Diese Liste mittels Camunda Spin ins JSON-Format serialisieren
-                documentListpSerialized = Variables.objectValue(documentList)
+                documents = Variables.objectValue(documentList)
                         .serializationDataFormat(Variables.SerializationDataFormats.JSON)
                         .create();
                 documentsExist = true;
@@ -84,7 +83,7 @@ public class GetDocumentsDelegate implements JavaDelegate {
         } // Falls nicht, dann muss nichts gemacht werden, weil die entsprechenden Variablen schon gesetzt sind
 
         // Die serialisierte Dokumentenliste einer Prozessvariable zuweisen
-        execution.setVariable("documentListSerialized", documentListpSerialized);
+        execution.setVariable("documents", documents);
         // Die Variable documentsExists einer Prozessvariable zuweisen
         execution.setVariable("documentsExist", documentsExist);
     }

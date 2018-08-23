@@ -7,6 +7,9 @@ import ch.ech.xmlns.ech_0044._4.PersonIdentificationType;
 import ch.ech.xmlns.ech_0194._1.PersonMoveRequest;
 import ch.ech.xmlns.ech_0194._1.PersonMoveResponse;
 import static ch.zhaw.gpi.eumzugplattform.helpers.DateConversionHelper.DateToXMLGregorianCalendar;
+import ch.zhaw.gpi.eumzugplattform.processdata.Relative;
+import ch.zhaw.gpi.eumzugplattform.processdata.RelativesList;
+import ch.zhaw.gpi.eumzugplattform.services.LocalPersonIdGeneratorService;
 import ch.zhaw.gpi.eumzugplattform.webserviceclients.ResidentRegisterWebServiceClient;
 import java.math.BigInteger;
 import java.util.Date;
@@ -39,6 +42,9 @@ public class IdentifyPersonDelegate implements JavaDelegate {
 
     @Autowired
     private ResidentRegisterWebServiceClient personenRegisterClient;
+    
+    @Autowired
+    private LocalPersonIdGeneratorService localPersonIdGeneratorService;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -94,22 +100,47 @@ public class IdentifyPersonDelegate implements JavaDelegate {
                 Boolean moveAllowed = moveAllowedBigInteger.equals(BigInteger.valueOf(1L));
                 execution.setVariable("moveAllowed", moveAllowed);                
 
-                //Wenn Person umzugsberechtigt ist, werden die mitumziehenden Personen 
-                // ausgelesen, serializiert und in eine Prozessvariable gespeichert
+                /** Wenn Person umzugsberechtigt ist, werden die mitumziehenden Personen 
+                * ausgelesen, serializiert und in eine Prozessvariable gespeichert
+                * Leider muss dies über den Umweg einer Hilfsklasse RelativesList geschehen
+                * (siehe JavaDoc dort für Gründe). Das heisst, entsprechend müssen Eigenschaften
+                * aus der Liste der vom Personenregister zurück gegebenen mitumziehenden Personen
+                * ausgelesen und in die Einträge der Hilfsklasse übersetzt werden. */
                 if(moveAllowed) {
-                    List<PersonMoveResponse.RelatedPerson> relatives = personMoveResponse.getRelatedPerson();
-                    ObjectValue relativesListSerialized = null;
+                    RelativesList relativesList = new RelativesList();
+                    
+                    List<PersonMoveResponse.RelatedPerson> relatedPersons = personMoveResponse.getRelatedPerson();
+                    
+                    for(PersonMoveResponse.RelatedPerson relatedPerson : relatedPersons){
+                        Relative relative = new Relative();
+                        PersonIdentificationType personIdentificationType = relatedPerson.getPersonIdentification();
+                        
+                        relative.setDateOfBirth(personIdentificationType.getDateOfBirth().getYearMonthDay().toGregorianCalendar().getTime());
+                        relative.setFirstName(personIdentificationType.getFirstName());
+                        relative.setOfficialName(personIdentificationType.getOfficialName());
+                        relative.setSex(personIdentificationType.getSex());
+                        // Die AHV-Nummer kann nicht direkt ausgelesen werden (BigInteger)
+                        Long vnTemp = (personIdentificationType.getVn() != null ? personIdentificationType.getVn().longValue() : null);
+                        // Die localPersonId wird generiert wie beim Meldepflichtigen mit dem localPersonIdGeneratorService
+                        relative.setLocalPersonId(localPersonIdGeneratorService.generateId(vnTemp, relative.getFirstName(), relative.getOfficialName(), relative.getDateOfBirth(), relative.getSex()));
+                        
+                        relativesList.addRelative(relative);
+                    }
+                    
+                    // Nun kommt die eigentliche Serialisierung und das Setzen der Variable relativesExist
+                    ObjectValue relatives = null;
                     Boolean relativesExist = false;
 
-                    if(relatives != null && !relatives.isEmpty()) {
-                        relativesListSerialized = Variables
-                                .objectValue(relatives)
+                    if(relativesList.getRelatives()!= null && !relativesList.getRelatives().isEmpty()) {
+                        relatives = Variables
+                                .objectValue(relativesList)
                                 .serializationDataFormat(Variables.SerializationDataFormats.JSON)
                                 .create();
                         relativesExist = true;
                     }
 
-                    execution.setVariable("relativesListSerialized", relativesListSerialized);
+                    // Schreiben der Prozessvariablen relativesList und relativesExist
+                    execution.setVariable("relativesList", relatives);
                     execution.setVariable("relativesExist", relativesExist);
                 }
             }

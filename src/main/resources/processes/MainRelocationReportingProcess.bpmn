@@ -12,23 +12,23 @@
       <lane id="Lane_1bppnkr" name="Umzugsplattform">
         <flowNodeRef>UmzugsmeldungGestartet</flowNodeRef>
         <flowNodeRef>UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen</flowNodeRef>
-        <flowNodeRef>EndEvent_15z9qe3</flowNodeRef>
-        <flowNodeRef>EndEvent_13cetj5</flowNodeRef>
-        <flowNodeRef>EndEvent_1egx8l8</flowNodeRef>
-        <flowNodeRef>ServiceTask_14hymeh</flowNodeRef>
-        <flowNodeRef>ServiceTask_1ct20r3</flowNodeRef>
-        <flowNodeRef>ServiceTask_00h59wi</flowNodeRef>
+        <flowNodeRef>UmzugsmeldungErfolgreichAbgeschlossen</flowNodeRef>
         <flowNodeRef>UmzugsmeldungErfassenUndBezahlen</flowNodeRef>
+        <flowNodeRef>ErfolgreichenAbschlussPersistieren</flowNodeRef>
+        <flowNodeRef>UeberschreitenDerAntwortfristPersistieren</flowNodeRef>
+        <flowNodeRef>AblehnungPersistieren</flowNodeRef>
         <flowNodeRef>EinAbbruchgrundIstEingetroffen</flowNodeRef>
+        <flowNodeRef>UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen</flowNodeRef>
+        <flowNodeRef>UmzugsmeldungWegenAblehnungFehlgeschlagen</flowNodeRef>
         <childLaneSet id="LaneSet_072546v">
           <lane id="UmzugsplattformAutomatisch" name="Automatisch">
             <flowNodeRef>UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen</flowNodeRef>
-            <flowNodeRef>EndEvent_15z9qe3</flowNodeRef>
-            <flowNodeRef>EndEvent_13cetj5</flowNodeRef>
-            <flowNodeRef>EndEvent_1egx8l8</flowNodeRef>
-            <flowNodeRef>ServiceTask_14hymeh</flowNodeRef>
-            <flowNodeRef>ServiceTask_1ct20r3</flowNodeRef>
-            <flowNodeRef>ServiceTask_00h59wi</flowNodeRef>
+            <flowNodeRef>UmzugsmeldungErfolgreichAbgeschlossen</flowNodeRef>
+            <flowNodeRef>ErfolgreichenAbschlussPersistieren</flowNodeRef>
+            <flowNodeRef>UeberschreitenDerAntwortfristPersistieren</flowNodeRef>
+            <flowNodeRef>AblehnungPersistieren</flowNodeRef>
+            <flowNodeRef>UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen</flowNodeRef>
+            <flowNodeRef>UmzugsmeldungWegenAblehnungFehlgeschlagen</flowNodeRef>
           </lane>
           <lane id="UmzugsplattformMeldepflichtiger" name="Meldepflichtiger">
             <flowNodeRef>UmzugsmeldungGestartet</flowNodeRef>
@@ -37,15 +37,15 @@
           </lane>
         </childLaneSet>
       </lane>
-      <lane id="EksMeldedienst" name="EKS-Meldedienst">
-        <flowNodeRef>ServiceTask_1gx10n3</flowNodeRef>
-        <flowNodeRef>SechzigTageVerstrichen</flowNodeRef>
-        <flowNodeRef>UmzugsmeldungVonGemeindenAbgelehnt</flowNodeRef>
-      </lane>
       <lane id="Mitteilungsdienst" name="Mitteilungsdienst">
-        <flowNodeRef>ServiceTask_19czrkw</flowNodeRef>
+        <flowNodeRef>ErfolgreichenAbschlussMitteilen</flowNodeRef>
         <flowNodeRef>ServiceTask_0xhiz34</flowNodeRef>
-        <flowNodeRef>ServiceTask_0nksala</flowNodeRef>
+        <flowNodeRef>AblehnungMitteilen</flowNodeRef>
+      </lane>
+      <lane id="EksMeldedienst" name="EKS-Meldedienst">
+        <flowNodeRef>MitEKSystemenKommunizieren</flowNodeRef>
+        <flowNodeRef>UmzugsmeldungVonGemeindenAbgelehnt</flowNodeRef>
+        <flowNodeRef>SechzigTageVerstrichen</flowNodeRef>
       </lane>
     </laneSet>
     <startEvent id="UmzugsmeldungGestartet" name="Umzugsmeldung gestartet" camunda:formKey="embedded:app:forms/UmzugsmeldungGestartetForm.html" camunda:initiator="meldePflichtiger">
@@ -82,62 +82,13 @@ execution.setBusinessKey(businessCaseId);</camunda:script>
     <endEvent id="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen" name="Umzugsmeldung wegen einem Abbruchgrund fehlgeschlagen">
       <incoming>SequenceFlow_1312w0k</incoming>
     </endEvent>
-    <endEvent id="EndEvent_15z9qe3" name="Umzugsmeldung erfolgreich abgeschlossen">
+    <endEvent id="UmzugsmeldungErfolgreichAbgeschlossen" name="Umzugsmeldung erfolgreich abgeschlossen">
       <incoming>SequenceFlow_1hdylfx</incoming>
     </endEvent>
-    <endEvent id="EndEvent_13cetj5" name="Umzugsmeldung wegen Ablehnung fehlgeschlagen">
-      <incoming>SequenceFlow_1czfkrs</incoming>
-    </endEvent>
-    <endEvent id="EndEvent_1egx8l8" name="Umzugsmeldung wegen Zeitüber-schreitung fehlgeschlagen">
-      <incoming>SequenceFlow_13o5ois</incoming>
-    </endEvent>
-    <sequenceFlow id="SequenceFlow_1ptg35o" sourceRef="ServiceTask_1gx10n3" targetRef="ServiceTask_19czrkw" />
-    <sequenceFlow id="SequenceFlow_1x0qckx" sourceRef="ServiceTask_19czrkw" targetRef="ServiceTask_00h59wi" />
-    <sequenceFlow id="SequenceFlow_1hdylfx" sourceRef="ServiceTask_00h59wi" targetRef="EndEvent_15z9qe3" />
-    <sequenceFlow id="SequenceFlow_1woxygr" sourceRef="UmzugsmeldungVonGemeindenAbgelehnt" targetRef="ServiceTask_0nksala" />
-    <sequenceFlow id="SequenceFlow_1563am6" sourceRef="ServiceTask_0nksala" targetRef="ServiceTask_14hymeh" />
-    <sequenceFlow id="SequenceFlow_1czfkrs" sourceRef="ServiceTask_14hymeh" targetRef="EndEvent_13cetj5" />
-    <sequenceFlow id="SequenceFlow_0qpbkoo" sourceRef="SechzigTageVerstrichen" targetRef="ServiceTask_0xhiz34" />
-    <sequenceFlow id="SequenceFlow_0ygmvzp" sourceRef="ServiceTask_0xhiz34" targetRef="ServiceTask_1ct20r3" />
-    <sequenceFlow id="SequenceFlow_13o5ois" sourceRef="ServiceTask_1ct20r3" targetRef="EndEvent_1egx8l8" />
-    <task id="ServiceTask_1gx10n3" name="Mit EK-Systemen kommunizieren">
-      <incoming>SequenceFlow_1iopode</incoming>
-      <outgoing>SequenceFlow_1ptg35o</outgoing>
-    </task>
-    <boundaryEvent id="SechzigTageVerstrichen" name="60 Tage verstrichen" attachedToRef="ServiceTask_1gx10n3">
-      <outgoing>SequenceFlow_0qpbkoo</outgoing>
-      <timerEventDefinition id="TimerEventDefinition_12hpg9n">
-        <timeDuration xsi:type="tFormalExpression">P60D</timeDuration>
-      </timerEventDefinition>
-    </boundaryEvent>
-    <boundaryEvent id="UmzugsmeldungVonGemeindenAbgelehnt" name="Umzugsmeldung von Gemeinde(n) abgelehnt" attachedToRef="ServiceTask_1gx10n3">
-      <outgoing>SequenceFlow_1woxygr</outgoing>
-      <errorEventDefinition id="ErrorEventDefinition_1le8zoq" errorRef="Error_04jbe5p" />
-    </boundaryEvent>
-    <task id="ServiceTask_19czrkw" name="Erfolgreichen Abschluss mitteilen">
-      <incoming>SequenceFlow_1ptg35o</incoming>
-      <outgoing>SequenceFlow_1x0qckx</outgoing>
-    </task>
-    <task id="ServiceTask_0xhiz34" name="Überschreiten der Antwortfrist mitteilen">
-      <incoming>SequenceFlow_0qpbkoo</incoming>
-      <outgoing>SequenceFlow_0ygmvzp</outgoing>
-    </task>
-    <task id="ServiceTask_0nksala" name="Ablehnung mitteilen">
-      <incoming>SequenceFlow_1woxygr</incoming>
-      <outgoing>SequenceFlow_1563am6</outgoing>
-    </task>
-    <task id="ServiceTask_14hymeh" name="Ablehnung persistieren">
-      <incoming>SequenceFlow_1563am6</incoming>
-      <outgoing>SequenceFlow_1czfkrs</outgoing>
-    </task>
-    <task id="ServiceTask_1ct20r3" name="Überschreiten der Antwortfrist persistieren">
-      <incoming>SequenceFlow_0ygmvzp</incoming>
-      <outgoing>SequenceFlow_13o5ois</outgoing>
-    </task>
-    <task id="ServiceTask_00h59wi" name="Erfolgreichen Abschluss persistieren">
-      <incoming>SequenceFlow_1x0qckx</incoming>
-      <outgoing>SequenceFlow_1hdylfx</outgoing>
-    </task>
+    <sequenceFlow id="SequenceFlow_1x0qckx" sourceRef="ErfolgreichenAbschlussMitteilen" targetRef="ErfolgreichenAbschlussPersistieren" />
+    <sequenceFlow id="SequenceFlow_1hdylfx" sourceRef="ErfolgreichenAbschlussPersistieren" targetRef="UmzugsmeldungErfolgreichAbgeschlossen" />
+    <sequenceFlow id="SequenceFlow_1iopode" sourceRef="UmzugsmeldungErfassenUndBezahlen" targetRef="MitEKSystemenKommunizieren" />
+    <sequenceFlow id="SequenceFlow_1312w0k" sourceRef="EinAbbruchgrundIstEingetroffen" targetRef="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen" />
     <callActivity id="UmzugsmeldungErfassenUndBezahlen" name="Umzugsmeldung erfassen und bezahlen" calledElement="UmzugsmeldungErfassenUndBezahlen">
       <documentation>Prozess 'UmzugsmeldungErfassenUndBezahlen' aufrufen
 
@@ -145,44 +96,117 @@ Umfasst einerseiets alle Aktivitäen des Meldepflichtigen vom Erfassen aller Ang
 
 Theoretisch: Dem Prozess wird der BusinessKey, die BusinessCaseId und der meldePflichtiger übergeben und umgekehrt fast alle im aufgerufenen Prozess erzeugten Variablen zurück genommen, da diese relevant sind für den nächsten Schritt "Mit EK-Systemen kommunizieren". Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</documentation>
       <extensionElements>
-        <camunda:in businessKey="#{execution.processBusinessKey}" />
         <camunda:out variables="all" />
         <camunda:in variables="all" />
         <camunda:in source="meldePflichtiger" target="meldePflichtiger" />
         <camunda:in source="businessCaseId" target="businessCaseId" />
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
       </extensionElements>
       <incoming>SequenceFlow_0ypg6cw</incoming>
       <outgoing>SequenceFlow_1iopode</outgoing>
     </callActivity>
-    <sequenceFlow id="SequenceFlow_1iopode" sourceRef="UmzugsmeldungErfassenUndBezahlen" targetRef="ServiceTask_1gx10n3" />
     <boundaryEvent id="EinAbbruchgrundIstEingetroffen" name="Ein Abbruchgrund ist eingetroffen" attachedToRef="UmzugsmeldungErfassenUndBezahlen">
       <documentation>Kommt es innerhalb des aufgerufenen Prozesses zu einem Fehler, so soll dieser innerhalb des aufgerufenen Prozesses behandelt werden, während der Hauptprozess lediglich darüber informiert wird, damit die Prozessinstanz entsprechend vorzeitig beendet werden kann.</documentation>
       <outgoing>SequenceFlow_1312w0k</outgoing>
       <errorEventDefinition id="ErrorEventDefinition_0pb3nhb" errorRef="Error_12sd8hn" />
     </boundaryEvent>
-    <sequenceFlow id="SequenceFlow_1312w0k" sourceRef="EinAbbruchgrundIstEingetroffen" targetRef="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen" />
+    <serviceTask id="ErfolgreichenAbschlussPersistieren" name="Erfolgreichen Abschluss persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
+      <documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
+
+Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex). In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgreicher Abschluss des eUmzugsmeldung".</documentation>
+      <extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">"Erfolgreicher Abschluss des eUmzugsmeldung"</camunda:inputParameter>
+        </camunda:inputOutput>
+      </extensionElements>
+      <incoming>SequenceFlow_1x0qckx</incoming>
+      <outgoing>SequenceFlow_1hdylfx</outgoing>
+    </serviceTask>
+    <endEvent id="UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen" name="Umzugsmeldung wegen Zeitüber-schreitung fehlgeschlagen">
+      <incoming>SequenceFlow_13o5ois</incoming>
+    </endEvent>
+    <serviceTask id="UeberschreitenDerAntwortfristPersistieren" name="Überschreiten der Antwortfrist persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
+      <documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
+
+Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex). In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Fehlgeschlagen wegen Zeitüberschreitung bei der Kommunikation mit den Einwohnerkontrollsystemen".</documentation>
+      <extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">"Fehlgeschlagen wegen Zeitüberschreitung bei der Kommunikation mit den Einwohnerkontrollsystemen"</camunda:inputParameter>
+        </camunda:inputOutput>
+      </extensionElements>
+      <incoming>SequenceFlow_0ygmvzp</incoming>
+      <outgoing>SequenceFlow_13o5ois</outgoing>
+    </serviceTask>
+    <endEvent id="UmzugsmeldungWegenAblehnungFehlgeschlagen" name="Umzugsmeldung wegen Ablehnung fehlgeschlagen">
+      <incoming>SequenceFlow_1czfkrs</incoming>
+    </endEvent>
+    <task id="MitEKSystemenKommunizieren" name="Mit EK-Systemen kommunizieren">
+      <incoming>SequenceFlow_1iopode</incoming>
+      <outgoing>SequenceFlow_1ptg35o</outgoing>
+    </task>
+    <task id="ErfolgreichenAbschlussMitteilen" name="Erfolgreichen Abschluss mitteilen">
+      <incoming>SequenceFlow_1ptg35o</incoming>
+      <outgoing>SequenceFlow_1x0qckx</outgoing>
+    </task>
+    <task id="ServiceTask_0xhiz34" name="Überschreiten der Antwortfrist mitteilen">
+      <incoming>SequenceFlow_0qpbkoo</incoming>
+      <outgoing>SequenceFlow_0ygmvzp</outgoing>
+    </task>
+    <serviceTask id="AblehnungPersistieren" name="Ablehnung persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
+      <documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
+
+Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex). In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Fehlgeschlagen wegen Ablehnung einer Einwohnergemeinde".</documentation>
+      <extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">"Fehlgeschlagen wegen Ablehnung einer Einwohnergemeinde"</camunda:inputParameter>
+        </camunda:inputOutput>
+      </extensionElements>
+      <incoming>SequenceFlow_1563am6</incoming>
+      <outgoing>SequenceFlow_1czfkrs</outgoing>
+    </serviceTask>
+    <task id="AblehnungMitteilen" name="Ablehnung mitteilen">
+      <incoming>SequenceFlow_1woxygr</incoming>
+      <outgoing>SequenceFlow_1563am6</outgoing>
+    </task>
+    <boundaryEvent id="UmzugsmeldungVonGemeindenAbgelehnt" name="Umzugsmeldung von Gemeinde(n) abgelehnt" attachedToRef="MitEKSystemenKommunizieren">
+      <outgoing>SequenceFlow_1woxygr</outgoing>
+      <errorEventDefinition id="ErrorEventDefinition_1le8zoq" errorRef="Error_04jbe5p" />
+    </boundaryEvent>
+    <boundaryEvent id="SechzigTageVerstrichen" name="60 Tage verstrichen" attachedToRef="MitEKSystemenKommunizieren">
+      <outgoing>SequenceFlow_0qpbkoo</outgoing>
+      <timerEventDefinition id="TimerEventDefinition_12hpg9n">
+        <timeDuration xsi:type="tFormalExpression">P60D</timeDuration>
+      </timerEventDefinition>
+    </boundaryEvent>
+    <sequenceFlow id="SequenceFlow_13o5ois" sourceRef="UeberschreitenDerAntwortfristPersistieren" targetRef="UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen" />
+    <sequenceFlow id="SequenceFlow_0ygmvzp" sourceRef="ServiceTask_0xhiz34" targetRef="UeberschreitenDerAntwortfristPersistieren" />
+    <sequenceFlow id="SequenceFlow_1czfkrs" sourceRef="AblehnungPersistieren" targetRef="UmzugsmeldungWegenAblehnungFehlgeschlagen" />
+    <sequenceFlow id="SequenceFlow_1ptg35o" sourceRef="MitEKSystemenKommunizieren" targetRef="ErfolgreichenAbschlussMitteilen" />
+    <sequenceFlow id="SequenceFlow_0qpbkoo" sourceRef="SechzigTageVerstrichen" targetRef="ServiceTask_0xhiz34" />
+    <sequenceFlow id="SequenceFlow_1563am6" sourceRef="AblehnungMitteilen" targetRef="AblehnungPersistieren" />
+    <sequenceFlow id="SequenceFlow_1woxygr" sourceRef="UmzugsmeldungVonGemeindenAbgelehnt" targetRef="AblehnungMitteilen" />
   </process>
   <error id="Error_12sd8hn" name="ErrorUmzugsmeldungErfassenUndBezahlen" />
   <error id="Error_04jbe5p" name="ErrorEksAblehnung" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_TwitterDemoProcess">
     <bpmndi:BPMNPlane id="BPMNPlane_TwitterDemoProcess" bpmnElement="Collaboration_05jmpr5">
       <bpmndi:BPMNShape id="Participant_1mdci1z_di" bpmnElement="UmzugMeldenParticipant">
-        <omgdc:Bounds x="-1" y="-1" width="1060" height="1045" />
+        <omgdc:Bounds x="-1" y="-1" width="1060" height="1011" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1bppnkr_di" bpmnElement="Lane_1bppnkr">
-        <omgdc:Bounds x="29" y="-1" width="1030" height="560" />
+        <omgdc:Bounds x="29" y="-1" width="1030" height="526" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1474uhv_di" bpmnElement="EksMeldedienst">
-        <omgdc:Bounds x="29" y="559" width="1030" height="152" />
+        <omgdc:Bounds x="29" y="525" width="1030" height="152" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_0ppjtrr_di" bpmnElement="UmzugsplattformMeldepflichtiger">
         <omgdc:Bounds x="59" y="-1" width="1000" height="165" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_0eghv6k_di" bpmnElement="UmzugsplattformAutomatisch">
-        <omgdc:Bounds x="59" y="164" width="1000" height="395" />
+        <omgdc:Bounds x="59" y="164" width="1000" height="361" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_09fif4i_di" bpmnElement="Mitteilungsdienst">
-        <omgdc:Bounds x="29" y="711" width="1030" height="333" />
+        <omgdc:Bounds x="29" y="677" width="1030" height="333" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0fypb5d_di" bpmnElement="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen">
         <omgdc:Bounds x="300" y="206" width="36" height="36" />
@@ -190,49 +214,49 @@ Theoretisch: Dem Prozess wird der BusinessKey, die BusinessCaseId und der meldeP
           <omgdc:Bounds x="278" y="246" width="83" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_15z9qe3_di" bpmnElement="EndEvent_15z9qe3">
+      <bpmndi:BPMNShape id="EndEvent_15z9qe3_di" bpmnElement="UmzugsmeldungErfolgreichAbgeschlossen">
         <omgdc:Bounds x="977" y="206" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <omgdc:Bounds x="954" y="249" width="83" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_13cetj5_di" bpmnElement="EndEvent_13cetj5">
-        <omgdc:Bounds x="977" y="457" width="36" height="36" />
+      <bpmndi:BPMNShape id="EndEvent_13cetj5_di" bpmnElement="UmzugsmeldungWegenAblehnungFehlgeschlagen">
+        <omgdc:Bounds x="977" y="423" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="951" y="500" width="88" height="40" />
+          <omgdc:Bounds x="951" y="466" width="88" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_1egx8l8_di" bpmnElement="EndEvent_1egx8l8">
-        <omgdc:Bounds x="977" y="329" width="36" height="36" />
+      <bpmndi:BPMNShape id="EndEvent_1egx8l8_di" bpmnElement="UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen">
+        <omgdc:Bounds x="977" y="316" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="954" y="372" width="83" height="53" />
+          <omgdc:Bounds x="954" y="359" width="83" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BoundaryEvent_0qzu74p_di" bpmnElement="UmzugsmeldungVonGemeindenAbgelehnt">
-        <omgdc:Bounds x="474" y="642" width="36" height="36" />
+        <omgdc:Bounds x="474" y="608" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="381" y="660" width="85" height="40" />
+          <omgdc:Bounds x="381" y="626" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BoundaryEvent_1n6yipp_di" bpmnElement="SechzigTageVerstrichen">
-        <omgdc:Bounds x="527" y="642" width="36" height="36" />
+        <omgdc:Bounds x="527" y="608" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="562" y="666" width="53" height="27" />
+          <omgdc:Bounds x="562" y="632" width="53" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1ptg35o_di" bpmnElement="SequenceFlow_1ptg35o">
-        <omgdi:waypoint x="565" y="620" />
-        <omgdi:waypoint x="646" y="620" />
-        <omgdi:waypoint x="646" y="740" />
+        <omgdi:waypoint x="565" y="586" />
+        <omgdi:waypoint x="646" y="586" />
+        <omgdi:waypoint x="646" y="706" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1woxygr_di" bpmnElement="SequenceFlow_1woxygr">
-        <omgdi:waypoint x="492" y="678" />
-        <omgdi:waypoint x="492" y="984" />
-        <omgdi:waypoint x="596" y="984" />
+        <omgdi:waypoint x="492" y="644" />
+        <omgdi:waypoint x="492" y="950" />
+        <omgdi:waypoint x="596" y="950" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1x0qckx_di" bpmnElement="SequenceFlow_1x0qckx">
-        <omgdi:waypoint x="696" y="780" />
-        <omgdi:waypoint x="730" y="780" />
+        <omgdi:waypoint x="696" y="746" />
+        <omgdi:waypoint x="730" y="746" />
         <omgdi:waypoint x="730" y="224" />
         <omgdi:waypoint x="794" y="224" />
       </bpmndi:BPMNEdge>
@@ -241,29 +265,29 @@ Theoretisch: Dem Prozess wird der BusinessKey, die BusinessCaseId und der meldeP
         <omgdi:waypoint x="977" y="224" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1563am6_di" bpmnElement="SequenceFlow_1563am6">
-        <omgdi:waypoint x="696" y="984" />
-        <omgdi:waypoint x="771" y="984" />
-        <omgdi:waypoint x="771" y="475" />
-        <omgdi:waypoint x="794" y="475" />
+        <omgdi:waypoint x="696" y="950" />
+        <omgdi:waypoint x="771" y="950" />
+        <omgdi:waypoint x="771" y="441" />
+        <omgdi:waypoint x="794" y="441" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1czfkrs_di" bpmnElement="SequenceFlow_1czfkrs">
-        <omgdi:waypoint x="894" y="475" />
-        <omgdi:waypoint x="977" y="475" />
+        <omgdi:waypoint x="894" y="441" />
+        <omgdi:waypoint x="977" y="441" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0qpbkoo_di" bpmnElement="SequenceFlow_0qpbkoo">
-        <omgdi:waypoint x="545" y="678" />
-        <omgdi:waypoint x="545" y="880" />
-        <omgdi:waypoint x="596" y="880" />
+        <omgdi:waypoint x="545" y="644" />
+        <omgdi:waypoint x="545" y="846" />
+        <omgdi:waypoint x="596" y="846" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0ygmvzp_di" bpmnElement="SequenceFlow_0ygmvzp">
-        <omgdi:waypoint x="696" y="880" />
-        <omgdi:waypoint x="749" y="880" />
-        <omgdi:waypoint x="749" y="347" />
-        <omgdi:waypoint x="794" y="347" />
+        <omgdi:waypoint x="696" y="846" />
+        <omgdi:waypoint x="749" y="846" />
+        <omgdi:waypoint x="749" y="334" />
+        <omgdi:waypoint x="794" y="334" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_13o5ois_di" bpmnElement="SequenceFlow_13o5ois">
-        <omgdi:waypoint x="894" y="347" />
-        <omgdi:waypoint x="977" y="347" />
+        <omgdi:waypoint x="894" y="334" />
+        <omgdi:waypoint x="977" y="334" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="StartEvent_0ernray_di" bpmnElement="UmzugsmeldungGestartet">
         <omgdc:Bounds x="123" y="46" width="36" height="36" />
@@ -275,35 +299,20 @@ Theoretisch: Dem Prozess wird der BusinessKey, die BusinessCaseId und der meldeP
         <omgdi:waypoint x="159" y="64" />
         <omgdi:waypoint x="230" y="64" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_0u85wij_di" bpmnElement="ServiceTask_1gx10n3" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <omgdc:Bounds x="465" y="580" width="100" height="80" />
+      <bpmndi:BPMNShape id="Task_0u85wij_di" bpmnElement="MitEKSystemenKommunizieren" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+        <omgdc:Bounds x="465" y="546" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_0a8k9tz_di" bpmnElement="ServiceTask_19czrkw" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <omgdc:Bounds x="596" y="740" width="100" height="80" />
+      <bpmndi:BPMNShape id="Task_0a8k9tz_di" bpmnElement="ErfolgreichenAbschlussMitteilen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+        <omgdc:Bounds x="596" y="706" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_1d4dzwt_di" bpmnElement="ServiceTask_0xhiz34">
-        <omgdc:Bounds x="596" y="840" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_0re4z6c_di" bpmnElement="ServiceTask_0nksala">
-        <omgdc:Bounds x="596" y="944" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_1sag8qz_di" bpmnElement="ServiceTask_14hymeh">
-        <omgdc:Bounds x="794" y="435" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_18863cc_di" bpmnElement="ServiceTask_1ct20r3">
-        <omgdc:Bounds x="794" y="307" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_1mmsquc_di" bpmnElement="ServiceTask_00h59wi">
-        <omgdc:Bounds x="794" y="184" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_1jsp0ib_di" bpmnElement="UmzugsmeldungErfassenUndBezahlen">
-        <omgdc:Bounds x="230" y="24" width="100" height="80" />
+        <omgdc:Bounds x="596" y="806" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1iopode_di" bpmnElement="SequenceFlow_1iopode">
         <omgdi:waypoint x="330" y="64" />
         <omgdi:waypoint x="422" y="64" />
-        <omgdi:waypoint x="422" y="620" />
-        <omgdi:waypoint x="465" y="620" />
+        <omgdi:waypoint x="422" y="586" />
+        <omgdi:waypoint x="465" y="586" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BoundaryEvent_18l55ip_di" bpmnElement="EinAbbruchgrundIstEingetroffen">
         <omgdc:Bounds x="235" y="86" width="36" height="36" />
@@ -320,9 +329,24 @@ Theoretisch: Dem Prozess wird der BusinessKey, die BusinessCaseId und der meldeP
         <omgdc:Bounds x="682" y="-75" width="274" height="40" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0x0zaoe_di" bpmnElement="Association_0x0zaoe">
-        <omgdi:waypoint x="792" y="-1" />
+        <omgdi:waypoint x="791" y="-1" />
         <omgdi:waypoint x="809" y="-35" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_1jsp0ib_di" bpmnElement="UmzugsmeldungErfassenUndBezahlen">
+        <omgdc:Bounds x="230" y="24" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0hhrqwf_di" bpmnElement="ErfolgreichenAbschlussPersistieren">
+        <omgdc:Bounds x="794" y="184" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0hxz067_di" bpmnElement="UeberschreitenDerAntwortfristPersistieren">
+        <omgdc:Bounds x="794" y="294" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1fxn2rg_di" bpmnElement="AblehnungPersistieren">
+        <omgdc:Bounds x="794" y="401" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0x3xk1h_di" bpmnElement="AblehnungMitteilen">
+        <omgdc:Bounds x="596" y="910" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </definitions>

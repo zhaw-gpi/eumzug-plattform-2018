@@ -1,4 +1,4 @@
-package ch.zhaw.gpi.eumzugplattform.entities;
+package ch.zhaw.gpi.eumzugplattform.processdata;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,10 +12,8 @@ import java.util.List;
  * die Deserialisierung nicht klappt. Es wird dann List<java.util.Object> zurück gegeben
  * statt List<MunicipalityDocumentUploadedFile>. Tipp von hier: https://forum.camunda.org/t/how-to-properly-de-serialize-collections-to-json/3331/2?u=scepbjoern 
  * 
- * Diese Hilfsklasse enthält daher nichts weiter als eine Kapselung von List<MunicipalityDocumentUploadedFile>
- * 
- * TODO: Trotzdem klappt die Deserialisierung nicht. Es kommt zu folgendem Fehler
- * Unrecognized field "$$hashKey" (class ch.zhaw.gpi.eumzugplattform.entities.MunicipalityDocumentUploadedFile), not marked as ignorable (2 known properties: "file", "municipalityDocumentRelationEntity"])
+ * Diese Hilfsklasse enthält daher nichts weiter als eine Kapselung von List<MunicipalityDocumentUploadedFile>,
+ * was als Prozessvariable gespeichert und auch persistiert wird.
  * 
  * @author scep
  */

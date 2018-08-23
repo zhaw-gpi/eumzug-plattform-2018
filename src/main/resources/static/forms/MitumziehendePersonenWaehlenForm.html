@@ -7,10 +7,23 @@ Formular zum UserTask "Mitumziehende Personen wählen"
         werden nur die Vornamen angezeigt.
     </div>
     
-    <div class="checkbox" ng-repeat="relative in relativesList">
+    <!-- Mittels ng-repeat wird über jeden Eintrag der in der in relativesList enthaltenen Liste
+    iteriert und Label gebildet bestehend aus dem Vornamen der potentiell mitumziehenden Person
+    sowie eine Checkbox, welche als Id die localPersonId enthält (da mehrere Personen den gleichen Vornamen)
+    haben könnten. Als Value wird das relative-Objekt selbst gespeichert.
+    
+    Wichtig: In einer produktiven Lösung dürfte man nicht das relative-Objekt selbst verwenden, 
+    da dieses z.B. das Geburtsdatum enthält, welches zwar wohl nicht angezeigt wird, aber 
+    natürlich client-seitig leicht durch ein Debugging ausgelesen werden könnte. Stattdessen
+    müsste man wirklich nur die Liste der Vornamen plus eine anonymisierte Id für die Rückreferenzierung serverseitig ausgeben
+    
+    "track by" wird benötigt, weil sonst ein $$hashKey-Attribut dem relatives-Objekt angehängt wird, was eine
+    Deserialisierung verunmöglicht.
+    -->
+    <div class="checkbox" ng-repeat="relative in relatives track by relative.localPersonId">
         <label>
-            <input type="checkbox" name="movingAlongPerson" value="{{relative}}">
-            {{relative.personIdentification.firstName}}
+            <input type="checkbox" id="{{relative.localPersonId}}" name="movingAlongPerson" value="{{relative}}">
+            {{relative.firstName}}
         </label>
     </div>
 
@@ -24,33 +37,33 @@ Formular zum UserTask "Mitumziehende Personen wählen"
         // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im
         // variableManager-Objekt (Client)
         camForm.on('form-loaded', function(){
-            variableManager.fetchVariable("relativesListSerialized");
+            // Streng genommen geht das aus Datenschutzgründen nicht (Grund siehe erster Kommentar oben)
+            variableManager.fetchVariable("relativesList");
         });
 
         // Sobald alle Variablen client-seitig zur Verfügung stehen, werden diese
         // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
         // angezeigt werden können.
         camForm.on('variables-fetched', function(){
-            $scope.relativesList = variableManager.variableValue("relativesListSerialized");
+            // Die eigentliche Liste wird ausgegeben
+            $scope.relatives = variableManager.variableValue("relativesList").relatives;
         });
 
-        // Vor dem Submit wird geprüft, welche Personen ausgewählt wurden. Diese
-        // werden einem neuen Array übergeben, welches serialisiert einer neuen 
-        // Prozessvariable movingAlongPersons zugewiesen wird
+        // Vor dem Submit wird geprüft, welche Personen ausgewählt wurden. Für diese
+        // wird die Eigenschaft moveAlong auf true gesetzt
         camForm.on('submit', function(){
-            var movingAlongPersons = [];
+            // JQuery-Funktion, um über alle angehakten Einträge zu iterieren
             $("input:checkbox[name=movingAlongPerson]:checked").each(function(){
-                movingAlongPersons.push($(this).val());
-            });
-            
-            $scope.movingAlongPersons = movingAlongPersons;
-
-            var movingAlongPersonsSerialized = JSON.stringify(movingAlongPersons);
-
-            variableManager.createVariable({
-            'name':'movingAlongPersons',
-            'type':'json',
-            'value': movingAlongPersonsSerialized
+                // Für jeden ausgewählten Eintrag über jeden relative iterieren...
+                for(var i=0;i<$scope.relatives.length;i++){
+                    // ... und falls die id des ausgewählten Elements mit der localPersonId übereinstimmt ...
+                    if(this.id == $scope.relatives[i].localPersonId){
+                        // ... dann die moveAlong-Eigenschaft auf true setzen
+                        $scope.relatives[i].moveAlong = true;
+                        // ... und die for-Schleife verlassen
+                        break;
+                    }
+                }
             });
         });
     </script> 

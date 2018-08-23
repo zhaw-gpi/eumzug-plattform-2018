@@ -1,117 +1,34 @@
 <!--
 Formular zum User Task "Dokumente hochladen"
 
-TODO: Noch ist alles sehr hemdsärmelig gelöst
-Eventuell eher vorgehen wie in https://forum.camunda.org/t/upload-multiple-files-in-embedded-form/1206/21 gezeigt?
-Denn das Hauptproblem ist ja, dass man nun nicht mehr eine Prozessvariable vom Typ 
-File hat, sondern ein java.io.File innerhalb von documentList.municipalityDocumentUploadedFiles
+Einschränkung: Im Moment werden nur die Dokumente des Meldepflichtigen abgebildet,
+aber eigentlich müssten natürlich auch diejenigen der mitumziehenden Personen hochgeladen werden.
 -->
 <form name="camundaForm">
     <div class="alert alert-info">      
         Scannen Sie die für Sie zutreffenden Dokumente und laden Sie sie hoch.
     </div>
-   
-    <!-- Mittels ng-repeat wird über jeden Eintrag der in der in documentList enthaltenen Liste
+
+    <!-- Mittels ng-repeat wird über jeden Eintrag der in der in documents enthaltenen Liste
     iteriert und Label gebildet bestehend aus dem Namen des hochzuladenden Dokuments
     und allfälligen Einschränkungen, wann dieses Dokument hochzuladen ist
-    
-    TODO, sobald Deserialisierung sauber läuft für documentListSerialized: Statt separat die Labels und
-    die Input-Felder aufzubereiten, diese innerhalb von einem ng-repeat erstellen
     -->
-    <div class="col-xs-6" style="padding-left: 0px; ">
-        <div ng-repeat="document in documentList.municipalityDocumentUploadedFiles track by document.municipalityDocumentRelationEntity.documentEntity.name" class="form-group col-xs-12" style="padding-left: 0px;">
-            <label style="margin-top: 5px; margin-bottom: 20px; padding-left: 0px;">
-                {{document.municipalityDocumentRelationEntity.documentEntity.name}} 
-                <span ng-show="document.municipalityDocumentRelationEntity.marriageCondition"><i> (falls verheiratet)</i></span>
-                <span ng-show="document.municipalityDocumentRelationEntity.strangerCondition"><i> (falls Ausländer)</i></span>
-                <span ng-show="document.municipalityDocumentRelationEntity.childrenCondition"><i> (falls Kinder)</i></span>
-            </label>
-        </div>
-    </div>
-    
-    <!-- Aktuell (wegen Deserialisierungs-Problem) sind 5 hardcodierte Input-Felder
-    vom Camunda-Variablen-Type File erstellt. Wie viele davon angezeigt werden, hängt
-    von der Variable documentLength ab, welche unten im script-Code gebildet wird. -->
-    <div class="col-xs-6">
-        <div ng-show="documentLength > 0" class="input-group" id="document1" style="margin-bottom: 25px; display: table">
-            <label class="input-group-btn">
-                <span class="btn btn-primary">
-                    Browse&hellip; <input type="file"
-                                          style="display: none;" 
-                                          cam-variable-name="document1"
-                                          cam-variable-type="File"
-                                          cam-max-filesize="10000000">
-                </span>
-            </label>
-            <input type="text"
-                   class="form-control"
-                   id="documentText1"
-                   readonly>
-        </div>
+    <div class="form-group" ng-repeat="document in documents.municipalityDocumentUploadedFiles track by document.municipalityDocumentRelationEntity.documentEntity.name">
+        <label>{{document.municipalityDocumentRelationEntity.documentEntity.name}} 
+            <span ng-show="document.municipalityDocumentRelationEntity.marriageCondition"><i> (falls verheiratet)</i></span>
+            <span ng-show="document.municipalityDocumentRelationEntity.strangerCondition"><i> (falls Ausländer)</i></span>
+            <span ng-show="document.municipalityDocumentRelationEntity.childrenCondition"><i> (falls Kinder)</i></span>
+        </label>
+        <!-- Sobald der Benutzer eine Datei ausgewählt hat (onchange), soll die 
+        unten definierte Funktion readAndEncodeLocalFileToDataUrl aufgerufen werden.
         
-        <div ng-show="documentLength > 1" class="input-group" id="document2" style="margin-bottom: 25px; display: table">
-            <label class="input-group-btn">
-                <span class="btn btn-primary">
-                    Browse&hellip; <input type="file"
-                                          style="display: none;" 
-                                          cam-variable-name="document2"
-                                          cam-variable-type="File"
-                                          cam-max-filesize="10000000">
-                </span>
-            </label>
-            <input type="text"
-                   class="form-control"
-                   id="documentText2"
-                   readonly>
-        </div>
-        
-        <div ng-show="documentLength > 2" class="input-group" id="document3" style="margin-bottom: 25px; display: table">
-            <label class="input-group-btn">
-                <span class="btn btn-primary">
-                    Browse&hellip; <input type="file"
-                                          style="display: none;" 
-                                          cam-variable-name="document3"
-                                          cam-variable-type="File"
-                                          cam-max-filesize="10000000">
-                </span>
-            </label>
-            <input type="text"
-                   class="form-control"
-                   id="documentText3"
-                   readonly>
-        </div>
-        
-        <div ng-show="documentLength > 3" class="input-group" id="document4" style="margin-bottom: 25px; display: table">
-            <label class="input-group-btn">
-                <span class="btn btn-primary">
-                    Browse&hellip; <input type="file"
-                                          style="display: none;" 
-                                          cam-variable-name="document4"
-                                          cam-variable-type="File"
-                                          cam-max-filesize="10000000">
-                </span>
-            </label>
-            <input type="text"
-                   class="form-control"
-                   id="documentText4"
-                   readonly>
-        </div>
-        
-        <div ng-show="documentLength > 4" class="input-group" id="document5" style="margin-bottom: 25px; display: table">
-            <label class="input-group-btn">
-                <span class="btn btn-primary">
-                    Browse&hellip; <input type="file"
-                                          style="display: none;" 
-                                          cam-variable-name="document5"
-                                          cam-variable-type="File"
-                                          cam-max-filesize="10000000">
-                </span>
-            </label>
-            <input type="text"
-                   class="form-control"
-                   id="documentText5"
-                   readonly>
-        </div>
+        PS: ng-click funktioniert nicht. Um aber aus dem JavaScript onclick-Event
+        auf eine im Angular-Scope definierte Funktion zugreifen zu können, muss der
+        Scope über angular.element(this).scope() ermittelt werden. -->
+        <input type="file"
+               id="{{document.municipalityDocumentRelationEntity.documentEntity.name}}"
+               class="form-control"
+               onchange="angular.element(this).scope().readAndEncodeLocalFileToDataUrl(this)"/>
     </div>
 
     <script cam-script type="text/from-script">
@@ -123,107 +40,61 @@ File hat, sondern ein java.io.File innerhalb von documentList.municipalityDocume
         // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
         // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im
         // variableManager-Objekt (Client)
-        camForm.on('form-loaded', function(){
-            variableManager.fetchVariable("documentListSerialized");
+        camForm.on('form-loaded', function () {
+            variableManager.fetchVariable("documents");
         });
 
         // Sobald alle Variablen cleint-seitig zur Verfügung stehen, werden diese
         // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
         // angezeigt werden können.
-        camForm.on('variables-fetched', function(){
-            $scope.documentList = variableManager.variableValue("documentListSerialized");
-            // Ermitteln, wie viele Listenelemente vorhanden sind und damit indirekt, wie viele Input-Felder angezeigt werden sollen
-            $scope.documentLength = $scope.documentList.municipalityDocumentUploadedFiles.length;
+        camForm.on('variables-fetched', function () {
+            $scope.documents = variableManager.variableValue("documents");
         });
 
-        // Aktuell wird unmittelbar vor dem Absenden des Formulars für alle
-        // überflüssigen Dokument-Variablen (document1, 2, ...) die Variable gelöscht
-        // damit es nicht zu einem NullPointerException kommt und damit keine unnötigen
-        // Prozessvariablen existieren
-        // Code hauptsächlich von https://forum.camunda.org/t/multiple-file-uploads-in-the-embedded-form/531/6
-        // TODO: Dieser Code wird überflüssig, wenn Deserialisierung sauber läuft
-        camForm.on('submit', function() {
-            var indexOfUploadFileField = 0;
-            for (var i = 0; i < camForm.fields.length; i++) {
-                
-                if (camForm.fields[i].variableName == 'document1') {
+        /**
+         * Definition der Funktion readAndEncodeLocalFileToDataUrl, welche die vom
+         * Benutzer ausgewählte Datei vom lokalen Dateisystem liest und in 
+         * einen Base64-String encodiert als Teil einer Data Url
+         */
+        $scope.readAndEncodeLocalFileToDataUrl = function(element) {
+            // Die Metadaten der ausgewählten Datei (nur die erste, falls der Benutzer mehrere ausgewählt hat) einer Variable zuweisen
+            // -> https://developer.mozilla.org/de/docs/Web/API/File
+            var file = element.files[0];
+            
+            // Eine neue FileReader-Instanz erstellen, welche zuständig ist, um den 
+            // eigentlichen Inhalt der Datei vom lokalen Dateisystem asynchron (ohne Blockieren des GUI) auszulesen
+            // (in unserem Fall als DataUrl) -> https://developer.mozilla.org/de/docs/Web/API/FileReader
+            var reader = new FileReader();
+            
+            // Eine EventHandler-Funktion für den loadend-Event registrieren, also für
+            // den Zeitpunkt, wenn der Lesevorgang erfolgreich oder fehlerhaft beendet wurde
+            reader.onloadend = function () {        
+                // Um den folgenden Code kürzer zu halten, die Referenz auf die Liste der Dokumente in einer Variable setzen
+                var docListDirect = $scope.documents.municipalityDocumentUploadedFiles;
 
-                        if (camForm.fields[i].element.context.value == '') {
-                                indexOfUploadFileField = i;
-                                camForm.fields.splice(indexOfUploadFileField, 1);
-                                camForm.variableManager.destroyVariable('document1');
-                        }
-                }
+                // Anzahl der Dokumente auslesen
+                var docListSize = docListDirect.length;
 
-                if (camForm.fields[i].variableName == 'document2') {
+                // Über die Liste der Dokumente iterieren
+                for (var i = 0; i < docListSize; i++) {
+                    // Den Namen (z.B. Heiratsurkunde) des aktuellen Dokument-Objekts auslesen
+                    var documentName = docListDirect[i].municipalityDocumentRelationEntity.documentEntity.name;
 
-                        if (camForm.fields[i].element.context.value == '') {
-                                indexOfUploadFileField = i;
-                                camForm.fields.splice(indexOfUploadFileField, 1);
-                                camForm.variableManager.destroyVariable('document2');
-                        }
-                }
-
-                if (camForm.fields[i].variableName == 'document3') {
-
-                        if (camForm.fields[i].element.context.value == '') {
-                                indexOfUploadFileField = i;
-                                camForm.fields.splice(indexOfUploadFileField, 1);
-                                camForm.variableManager.destroyVariable('document3');
-                        }
-                }
-
-                if (camForm.fields[i].variableName == 'document4') {
-
-                        if (camForm.fields[i].element.context.value == '') {
-                                indexOfUploadFileField = i;
-                                camForm.fields.splice(indexOfUploadFileField, 1);
-                                camForm.variableManager.destroyVariable('document4');
-                        }
-                }
-
-                if (camForm.fields[i].variableName == 'document5') {
-
-                        if (camForm.fields[i].element.context.value == '') {
-                                indexOfUploadFileField = i;
-                                camForm.fields.splice(indexOfUploadFileField, 1);
-                                camForm.variableManager.destroyVariable('document5');
-                        }
+                    // Wenn dieser übereinstimmt mit dem Namen, welcher als Id des Input-Elements gesetzt wurde
+                    if(documentName == element.id){
+                        // Dann der Eigenschaft fileDataUrl das Resultat des Lesevorgangs (eine DataUrl) übergeben
+                        docListDirect[i].fileDataUrl = reader.result;
+                        // und der fileName-Eigenschaft den Dateinamen der hochgeladenen Datei
+                        docListDirect[i].fileName = file.name;
+                        // For-Schleife verlassen
+                        break;
+                    }
                 }
             }
             
-            // Damit es nicht zu einem Deserialisierungsfehler kommt, muss documentListSerialized
-            // aktuell zerstört werden vor dem Übermitteln
-            // TODO: ist nicht mehr nötig, wenn Deserialisierung sauber läuft
-            //variableManager.destroyVariable('documentListSerialized');
-        });
-
-        // Code, damit nach dem Auswählen einer Datei, der Name dieser Datei
-        // im Input-Feld angezeigt wird.
-        $(function() {
-            // Das Ereignis "fileselect" kann an alle File input Felder angehängt werden.
-            $(document).on('change', ':file', function() {
-                var input = $(this),
-                    numFiles = input.get(0).files ? input.get(0).files.length : 1,
-                    label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-
-                input.trigger('fileselect', [numFiles, label]);
-            });
-
-            // Hier können wir unser benutzerdefiniertes Ereignis "fileselect" beobachten
-            $(document).ready( function() {
-                $(':file').on('fileselect', function(event, numFiles, label) {
-
-                    var input = $(this).parents('.input-group').find(':text'),
-                        log = numFiles > 1 ? numFiles + ' files selected' : label;
-
-                    if( input.length ) {
-                        input.val(log);
-                    } else {
-                    }
-
-                });
-            });
-        });
+            // Nun, wo eine Funktion ausgeführt, wenn das Laden beendet ist, soll der eigentliche
+            // Lade-Vorgang gestartet werden über die Methode readAsDataUrl -> https://developer.mozilla.org/de/docs/Web/API/FileReader/readAsDataURL
+            reader.readAsDataURL(file);
+        }
     </script> 
 </form>
