@@ -49,6 +49,9 @@ public class GetFeesDelegate implements JavaDelegate {
         // feeMapSerialized wird initialisiert
         ObjectValue feeMapSerialized = null;
         
+        // Das Total der Gebühren wird auf 0 gesetzt
+        Integer feesTotal = 0;
+        
         // Wenn die Gebühren Map Daten enthält hat...
         if (feeMap.size() > 0) {
             // ... wird sie serialisiert 
@@ -56,10 +59,16 @@ public class GetFeesDelegate implements JavaDelegate {
                     .objectValue(feeMap)
                     .serializationDataFormat(Variables.SerializationDataFormats.JSON)
                     .create();
+            
+            // Das Total der Gebühren wird der Variable feesTotal zugewiesen
+            for(Integer feeMapEntry : feeMap.values()){
+                feesTotal += feeMapEntry;
+            }
         }
         
-        // Die lokale Variable wird der Prozessvariable zugewiesen
+        // Die lokalen Variablen werden den Prozessvariablen zugewiesen
         execution.setVariable("feeMapSerialized", feeMapSerialized);
+        execution.setVariable("feesTotal", feesTotal);
     }
 
     private Map<String, Integer> getFees(DelegateExecution execution) {

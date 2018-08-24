@@ -15,7 +15,7 @@
       <bpmn:startEvent id="StartEvent_09eswy9">
         <bpmn:outgoing>SequenceFlow_00uv839</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:endEvent id="EndEvent_1fsuc39">
+      <bpmn:endEvent id="EndEvent_1fsuc39" name="Angaben erfolgreich geprüft">
         <bpmn:incoming>Weiter</bpmn:incoming>
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="SequenceFlow_0mei95i" sourceRef="PersonErfassenUndIdentifizieren" targetRef="WegzugsadresseErfassenUndPruefen" />
@@ -206,7 +206,7 @@ Ablaufjahr
 Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex). In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Fehlgeschlagen wegen nicht akzeptierter Gebühren".</bpmn:documentation>
         <bpmn:extensionElements>
           <camunda:inputOutput>
-            <camunda:inputParameter name="status">"Fehlgeschlagen wegen nicht akzeptierter Gebühren"</camunda:inputParameter>
+            <camunda:inputParameter name="status">Fehlgeschlagen wegen nicht akzeptierter Gebühren</camunda:inputParameter>
           </camunda:inputOutput>
         </bpmn:extensionElements>
         <bpmn:incoming>Abbrechen</bpmn:incoming>
@@ -267,11 +267,6 @@ b) Nur das Vorhandensein von localPersonId geprüft wird (darf also nicht null s
       <bpmn:outgoing>SequenceFlow_0bjydst</bpmn:outgoing>
       <bpmn:errorEventDefinition errorRef="Error_0ye3wrs" />
     </bpmn:boundaryEvent>
-    <bpmn:task id="ZahlungDurchfuehren" name="Zahlung durchführen">
-      <bpmn:documentation>TODO: Wie soll die Integration genau funktionieren?</bpmn:documentation>
-      <bpmn:incoming>GebuehrenFallenAn</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_04m4p8a</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:endEvent id="EndEvent_1d7w5d6" name="Wegen fehlgeschlagener Zahlung abgebrochen">
       <bpmn:incoming>SequenceFlow_1vi0gkw</bpmn:incoming>
       <bpmn:errorEventDefinition errorRef="Error_1ayoalr" />
@@ -301,18 +296,6 @@ Sie werden dann in den nächsten Tagen von uns kontatktiert und über das weiter
       <bpmn:outgoing>GebuehrenFallenAn</bpmn:outgoing>
       <bpmn:outgoing>GebuehrenFallenNichtAn</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:boundaryEvent id="ZahlungFehlgeschlagen" name="Zahlung fehlgeschlagen" attachedToRef="ZahlungDurchfuehren">
-      <bpmn:documentation>Kommt es innerhalb des Zahlungsprozesses zu einem Business-Fehler (z.B. Zahlung abgebrochen oder nicht innerhalb der Frist durchgeführt), so wird dieser hier abgefangen und im folgenden Sequenzfluss behandelt.
-
-In einem End-Listener wird die Prozessvariable 'status' zusammengesetzt aus dem Präfix "Fehlgeschlagen bei Zahlung durchführen. Grund: " und dem Inhalt der Error Message-Variable.</bpmn:documentation>
-      <bpmn:extensionElements>
-        <camunda:executionListener event="end">
-          <camunda:script scriptFormat="JavaScript">execution.setVariable("status", "Fehlgeschlagen bei Zahlung durchführen. Grund: " + errorMessage);</camunda:script>
-        </camunda:executionListener>
-      </bpmn:extensionElements>
-      <bpmn:outgoing>SequenceFlow_1d0k5r8</bpmn:outgoing>
-      <bpmn:errorEventDefinition errorRef="Error_1ak9z8o" camunda:errorMessageVariable="errorMessage" />
-    </bpmn:boundaryEvent>
     <bpmn:boundaryEvent id="VierundzwanzigStundenVerstrichen" name="24 h &#10;verstrichen" attachedToRef="AbschlussBestaetigungAnzeigen">
       <bpmn:documentation>Es soll vermieden werden, dass Prozessinstanzen ewig hängen bleiben, weil ein Meldepflichtiger zwar Formulare aufruft, aber eines dieser Formulare nie absendet, sondern z.B. den Browser vorher schliesst. Daher ein Timeout von 24 h (PT24H).
 
@@ -369,15 +352,44 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
 In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgreiche Erfassung der Umzugsmeldung".</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="status">"Erfolgreiche Erfassung der Umzugsmeldung"</camunda:inputParameter>
+          <camunda:inputParameter name="status">Erfolgreiche Erfassung der Umzugsmeldung</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0cprgwn</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_173zha0</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:callActivity id="ZahlungDurchfuehren" name="Zahlung durchführen" calledElement="ZahlungDurchfuehren">
+      <bpmn:documentation>Im aufgerufenen Prozess erfasst der Meldepflichtige die Zahlungsangaben (z.B. Kreditkartennummer) in einem mit Stripe Elements aufgebauten Formular, also so, dass weder Client noch Server diese Zahlungsangaben erhalten. Die Stripe-JS-Bibliothek sendet die Zahlungsangaben an den Stripe-Server und erhält im Normfalfall ein Token zurück. Dieses wird in einer Prozessvariable gespeichert. 
+
+In einem Service Task wird nun eine Zahlungsanfrage an Stripe mit dem Token gesendet. Synchron kommt nun eine Antwort von Stripe zurück, entweder eine erfolgreiche Belastung der Kreditkarte oder ein Error. Im ersten Fall erhält der Benutzer eine Bestätigung, im anderen Fall muss er es erneut versuchen. Falls er dies nicht innert 24 h erledigt, wird der Zahlungsvorgang als fehlgeschlagen gekennzeichnet (was zum Prozessabruch führt). 
+
+Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger) und die Gebührentabelle (feeMapSerialized) übergeben und umgekehrt keine Variablen zurück genommen. Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.
+</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in source="meldePflichtiger" target="meldePflichtiger" />
+        <camunda:in source="feeMapSerialized" target="feeMapSerialized" />
+        <camunda:in variables="all" />
+        <camunda:out variables="all" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>GebuehrenFallenAn</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_04m4p8a</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:boundaryEvent id="ZahlungFehlgeschlagen" name="Zahlung fehlgeschlagen" attachedToRef="ZahlungDurchfuehren">
+      <bpmn:documentation>Kommt es innerhalb des Zahlungsprozesses zu einem Business-Fehler (z.B. Zahlung abgebrochen oder nicht innerhalb der Frist durchgeführt), so wird dieser hier abgefangen und im folgenden Sequenzfluss behandelt.
+
+In einem End-Listener wird die Prozessvariable 'status' gesetzt auf "Fehlgeschlagen bei Zahlung durchführen".</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">execution.setVariable("status", "Fehlgeschlagen bei Zahlung durchführen.");</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_1d0k5r8</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_1ak9z8o" />
+    </bpmn:boundaryEvent>
   </bpmn:process>
   <bpmn:error id="Error_0fmfamk" name="ErrorUmzugsmeldungErfassenUndBezahlen" errorCode="ZeitueberschreitungBenutzer" />
-  <bpmn:error id="Error_1ak9z8o" name="ErrorZahlungDurchfuehren" />
+  <bpmn:error id="Error_1ak9z8o" name="ErrorZahlungFehlgeschlagen" />
   <bpmn:error id="Error_1ayoalr" name="ErrorUmzugsmeldungErfassenUndBezahlen" errorCode="ZahlungFehlgeschlagen" />
   <bpmn:error id="Error_0ye3wrs" name="ErrorGebuehrenNichtAkzeptiert" errorCode="ErrorGebuehrenNichtAkzeptiert" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -455,6 +467,9 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1fsuc39_di" bpmnElement="EndEvent_1fsuc39">
         <dc:Bounds x="1159" y="292" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1132" y="335" width="90" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_175tgn6_di" bpmnElement="ExclusiveGateway_175tgn6" isMarkerVisible="true">
         <dc:Bounds x="1499" y="274" width="50" height="50" />
@@ -492,9 +507,6 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
         <di:waypoint x="1692" y="299" />
         <di:waypoint x="1722" y="299" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_1kvh8yb_di" bpmnElement="ZahlungDurchfuehren" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <dc:Bounds x="1368" y="259" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_04m4p8a_di" bpmnElement="SequenceFlow_04m4p8a">
         <di:waypoint x="1468" y="299" />
         <di:waypoint x="1499" y="299" />
@@ -695,6 +707,9 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0oz8vy1_di" bpmnElement="ErfolgreicheUmzugsmeldungErfassungPersistieren">
         <dc:Bounds x="1805" y="259" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0e63u17_di" bpmnElement="ZahlungDurchfuehren" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+        <dc:Bounds x="1368" y="259" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

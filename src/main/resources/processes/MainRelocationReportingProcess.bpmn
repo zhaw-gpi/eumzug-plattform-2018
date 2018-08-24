@@ -116,7 +116,7 @@ Theoretisch: Dem Prozess wird der BusinessKey, die BusinessCaseId und der meldeP
 Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex). In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgreicher Abschluss des eUmzugsmeldung".</documentation>
       <extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="status">"Erfolgreicher Abschluss des eUmzugsmeldung"</camunda:inputParameter>
+          <camunda:inputParameter name="status">Erfolgreicher Abschluss des eUmzugsmeldung</camunda:inputParameter>
         </camunda:inputOutput>
       </extensionElements>
       <incoming>SequenceFlow_1x0qckx</incoming>
@@ -131,7 +131,7 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
 Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex). In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Fehlgeschlagen wegen Zeitüberschreitung bei der Kommunikation mit den Einwohnerkontrollsystemen".</documentation>
       <extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="status">"Fehlgeschlagen wegen Zeitüberschreitung bei der Kommunikation mit den Einwohnerkontrollsystemen"</camunda:inputParameter>
+          <camunda:inputParameter name="status">Fehlgeschlagen wegen Zeitüberschreitung bei der Kommunikation mit den Einwohnerkontrollsystemen</camunda:inputParameter>
         </camunda:inputOutput>
       </extensionElements>
       <incoming>SequenceFlow_0ygmvzp</incoming>
@@ -158,7 +158,7 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
 Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex). In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Fehlgeschlagen wegen Ablehnung einer Einwohnergemeinde".</documentation>
       <extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="status">"Fehlgeschlagen wegen Ablehnung einer Einwohnergemeinde"</camunda:inputParameter>
+          <camunda:inputParameter name="status">Fehlgeschlagen wegen Ablehnung einer Einwohnergemeinde</camunda:inputParameter>
         </camunda:inputOutput>
       </extensionElements>
       <incoming>SequenceFlow_1563am6</incoming>

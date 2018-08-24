@@ -24,10 +24,25 @@
       <bpmn:outgoing>SequenceFlow_19e1phj</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:serviceTask id="HochzuladendeDokumenteErmitteln" name="Hochzuladende Dokumente ermitteln" camunda:delegateExpression="#{getDocumentsAdapter}">
+      <bpmn:documentation>Serialisierte Prozessvariable mit relevanten Dokumenten basierend auf Angaben in der Umzugsplattform-Datenbank erstellen
+
+Über ein Data Access Object sollen die Dokumente der relevanten MunicipalityEntity-Objekte aus der Datenbank in ein List Objekt eingelesen werden.
+
+Von dieser Liste wird für jeden Eintrag ein Objekt der Klasse MunicipalityDocumentUploadedFile erzeugt, welches einerseits den Eintrag erhält, aber auch zwei Eigenschaften fileDataUrl und fileName, welche dann im "Dokumente hochladen"-User Task mit Inhalt gefüllt wird.
+
+Damit keine Deserialisierungs-Probleme auftreten (Details siehe in JavaDoc der Klasse DocumentList), benötigt es ein Hilfsobjekt der Klasse DocumentList.
+
+Dieses Hilfsobjekt wird mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable documents zugewiesen. Der Prozessvariable documentsExist wird mit true/fals mitgegeben, ob Dokumente existieren.</bpmn:documentation>
       <bpmn:incoming>WegzugZuzug</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1l3ujyh</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:userTask id="DokumenteHochladenForm" name="Dokumente hochladen" camunda:formKey="embedded:app:forms/DokumenteHochladenForm.html" camunda:assignee="${meldePflichtiger}">
+      <bpmn:documentation>Info-Hinweis "Scannen Sie die für Sie zutreffenden Dokumente und laden Sie sie hoch."
+
+Für jedes Element in documents.municipalityDocumentUploadedFiles ein Input-Feld vom Typ file und ein Label, welches den Dokument-Namen (z.B. Heiratsurkunde) und die Bedingung (z.B. "falls verheiratet") enthält.
+
+Der eigentliche Upload geschieht in einer eigenen Funktion, wo der Dateiname als auch die Datei selbst (als DataUrl) in den Variablen fileName und fileDataUrl gespeichert werden.
+</bpmn:documentation>
       <bpmn:incoming>DokumenteVorhanden</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1k753gz</bpmn:outgoing>
     </bpmn:userTask>

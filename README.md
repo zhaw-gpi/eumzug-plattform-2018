@@ -23,9 +23,9 @@ Die **Haupt-Komponenten und ihr Zusammenspiel** sind in der untenstehenden Grafi
 Die **Farben** bedeuten dabei:
 - **Weiss/farblos**: Die eigentliche Umzugsplattform mit dem Hauptprozess, welche als Camunda Spring Boot-Applikation implementiert ist. Service Tasks, welche nicht eingefärbt sind, werden über JavaDelegates implementiert, User Tasks über Embedded Forms, die in der Camunda Webapp Tasklist eingebettet sind.
 - **Blau**: Implementation als eigener Prozess innerhalb der Umzugsplattform, welcher über eine [Call Activity](https://docs.camunda.org/manual/7.9/reference/bpmn20/subprocesses/call-activity/) aufgerufen wird
-- **Violett**: Implementation als Microservice-Applikation, welche die Umzugsplattform selbst auch als Camunda Spring Boot-Applikation implementiert ist.  Die Einbindung in den Hauptprozess geschieht über das [External Task Pattern](https://docs.camunda.org/manual/7.9/user-guide/process-engine/external-tasks/).
+- **Violett**: Implementation als Microservice-Applikation, welche wie die Umzugsplattform selbst auch als Camunda Spring Boot-Applikation implementiert ist.  Die Einbindung in den Hauptprozess geschieht über das [External Task Pattern](https://docs.camunda.org/manual/7.9/user-guide/process-engine/external-tasks/).
 - **Grün**: Implementation als Microservice-Applikation, welche jedoch ohne Process Engine auskommen, sondern lediglich simple Spring Boot-Applikationen sind.
-- **Rot**: Die rot eingezeichneten Systeme sind in einer produktiven Umgebung komplett in einer anderen Verantwortung als beim Kanton Bern, sprich bei den Gemeinden (Einwohnerkontrollsysteme EKS), dem Bund (GWR) oder einer anderen Kantonsstelle (Personenregister). Sie könnten entsprechend in irgendeiner Technologie implementiert sein. Für die Umzugsplattform relevant ist lediglich, dass diese über definierte Schnittstellen erreichbar sind, konkret über SOAP-Schnittstellen gemäss eCH-Standards oder über REST (beim VeKa-Center-Auskunftsdienst).
+- **Rot und Orange**: Die rot eingezeichneten Systeme sind in einer produktiven Umgebung komplett in einer anderen Verantwortung als beim Kanton Bern, sprich bei den Gemeinden (Einwohnerkontrollsysteme EKS), dem Bund (GWR), einer anderen Kantonsstelle (Personenregister), einem privaten Anbieter mit öffentlichem Auftrag (VeKa-Center) oder einem komplett privaten Anbieter (Stripe). Sie könnten entsprechend in irgendeiner Technologie implementiert sein. Für die Umzugsplattform relevant ist lediglich, dass diese über definierte Schnittstellen erreichbar sind, konkret über SOAP-Schnittstellen (Rot) gemäss eCH-Standards oder über REST (Orange).
 
 Im Folgenden werden die einzelnen **Komponenten der Architektur aufgelistet und ihre Implementation begründet**:
 1. **Umzug melden**: Dies ist der Hauptprozess, enthalten in der Umzugsplattform. Da wir auf eine eigene Tasklist-Applikation verzichten und stattdessen die Camunda Webapp Tasklist benutzen, muss der Benutzer bereits an dieser angemeldet sein, um überhaupt diesen Prozess starten zu können. Dies wäre in einer produktiven Applikation wohl nicht sinnvoll, würde aber aktuell wohl am ehesten dem Modell des Kantons Zürich mit den ZH Services entsprechen, wo man die Steuererklärung auch erst ausfüllen kann, wenn man sich an der Plattform angemeldet hat.
@@ -42,3 +42,11 @@ Im Folgenden werden die einzelnen **Komponenten der Architektur aufgelistet und 
 3. Camunda Process Engine, REST API und Webapps (Tasklist, Cockpit, Admin) in der Version 7.9.2 (Enterprise Edition)
 4. H2-Datenbank-Unterstützung (von Camunda Engine benötigt)
 5. "Sinnvolle" Grundkonfiguration in application.properties für Camunda, Datenbank und Tomcat
+
+
+## Wie können Studierende Bonus-Punkte sammeln
+1. **Zahlungsprozess fortgeschritten**: Statt bloss Kreditkarten soll auch SEPA unterstützt werden, was aber einen Rattenschwanz an Konsequenzen mit sich bringt aufgrund des asynchronen Zahlungsvorgangs:
+    1. Der Zahlungsvorgang muss rausgelöst werden aus "Umzugsmeldung erfassen und bezahlen" und parallel stattfinden mit "Mit EK-Systemen kommunizieren".
+    2. Es muss ein REST-Endpoint registriert werden, um die Stripe Webhook-Notifications empfangen zu können.
+    3. Falls von Stripe eine Ablehnung kommt, dann muss der Meldepflichtige benachrichtigt werden und ihm erneut ein User Task für einen neuen Zahlungsversuch angezeigt werden.
+    4. (Falls von den Einwohnergemeinden eine Ablehnung kommt, dann muss per Stripe eine Rückerstattung veranlasst werden)

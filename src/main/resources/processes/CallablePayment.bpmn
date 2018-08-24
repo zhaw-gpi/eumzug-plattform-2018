@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_09aeiya" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+  <bpmn:collaboration id="Collaboration_1dwe8bx">
+    <bpmn:participant id="ZahlungDurchfuehrenParticipant" name="Zahlung durchführen" processRef="ZahlungDurchfuehren" />
+    <bpmn:participant id="Participant_0x6scb7" name="Stripe Online-Bezahldienst" />
+    <bpmn:messageFlow id="MessageFlow_04rmci7" name="Zahlungsdetails" sourceRef="ErfassenDerZahlungsdetails" targetRef="Participant_0x6scb7" />
+    <bpmn:messageFlow id="MessageFlow_0e07psk" name="Token" sourceRef="Participant_0x6scb7" targetRef="ErfassenDerZahlungsdetails" />
+    <bpmn:messageFlow id="MessageFlow_0vdtecv" name="Token und&#10;Betrag" sourceRef="KartenbelastungVeranlassen" targetRef="Participant_0x6scb7" />
+    <bpmn:messageFlow id="MessageFlow_1ky54zj" name="Bestätigung&#10;oder Fehler" sourceRef="Participant_0x6scb7" targetRef="KartenbelastungVeranlassen" />
+  </bpmn:collaboration>
+  <bpmn:process id="ZahlungDurchfuehren" name="ZahlungDurchfuehren" isExecutable="true">
+    <bpmn:startEvent id="GebuehrenZuBezahlen" name="Betrag zu bezahlen">
+      <bpmn:documentation>Dieses Prozesstartereignis wird aufgerufen vom Prozess 'Umzugsmeldung erfassen und bezahlen' und ist nicht gedacht, um unabhängig davon (z.B. aus der Tasklist) aufgerufen zu werden.</bpmn:documentation>
+      <bpmn:outgoing>SequenceFlow_09zi3j6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="ErfassenDerZahlungsdetails" name="Erfassen der Zahlungsdetails" camunda:formKey="embedded:app:forms/ErfassenDerZahlungsdetailsForm.html" camunda:assignee="${meldePflichtiger}">
+      <bpmn:documentation>Info-Hinweis "Bitte geben Sie Ihre Kreditkartenangaben im untenstehenden Formular ein. Diese Angaben gehen verschlüsselt direkt an den etablierten Online-Bezahldienst Stripe. Auf diese Weise sehen wir als Betreiber der Umzugsplattform nie Ihre Eingaben."
+
+Checkout
+
+</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_158uvnj</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ygtjw5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="BetragBezahlt" name="Betrag&#10;bezahlt">
+      <bpmn:incoming>SequenceFlow_1ucel9t</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_01fnu1t">
+      <bpmn:incoming>SequenceFlow_09zi3j6</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0z6f99f</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_158uvnj</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="ZahlungFehlgeschlagen" name="Zahlung fehlgeschlagen">
+      <bpmn:incoming>SequenceFlow_11atuyd</bpmn:incoming>
+      <bpmn:errorEventDefinition errorRef="Error_036by43" />
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="VierundzwanzigStundenVerstrichen" name="24 h&#10;verstrichen" attachedToRef="ErfassenDerZahlungsdetails">
+      <bpmn:outgoing>SequenceFlow_11atuyd</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT24H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_11atuyd" sourceRef="VierundzwanzigStundenVerstrichen" targetRef="ZahlungFehlgeschlagen" />
+    <bpmn:sequenceFlow id="SequenceFlow_09zi3j6" sourceRef="GebuehrenZuBezahlen" targetRef="ExclusiveGateway_01fnu1t" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ygtjw5" sourceRef="ErfassenDerZahlungsdetails" targetRef="KartenbelastungVeranlassen" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ucel9t" sourceRef="KartenbelastungVeranlassen" targetRef="BetragBezahlt" />
+    <bpmn:sequenceFlow id="SequenceFlow_158uvnj" sourceRef="ExclusiveGateway_01fnu1t" targetRef="ErfassenDerZahlungsdetails" />
+    <bpmn:sequenceFlow id="SequenceFlow_0z6f99f" sourceRef="KartenbelastungFehlgeschlagen" targetRef="ExclusiveGateway_01fnu1t" />
+    <bpmn:serviceTask id="KartenbelastungVeranlassen" name="Kartenbelastung veranlassen" camunda:delegateExpression="#{createChargeAdapter}">
+      <bpmn:documentation>Zahlungsanfrage an Stripe senden und synchrone Antwort auswerten
+
+Der Senden-Teil umfasst ...
+
+Synchron kommt nun eine Antwort von Stripe zurück, entweder eine erfolgreiche Belastung der Kreditkarte oder ein Error. Im ersten Fall erhält der Benutzer eine Bestätigung, im anderen Fall muss er es erneut versuchen. Falls er dies nicht innert 24 h erledigt, wird der Zahlungsvorgang als fehlgeschlagen gekennzeichnet (was zum Prozessabruch führt). 
+</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_1ygtjw5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ucel9t</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="KartenbelastungFehlgeschlagen" name="Kartenbelastung fehlgeschlagen" attachedToRef="KartenbelastungVeranlassen">
+      <bpmn:outgoing>SequenceFlow_0z6f99f</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_10250lm" camunda:errorMessageVariable="chargingErrorMessage" />
+    </bpmn:boundaryEvent>
+  </bpmn:process>
+  <bpmn:error id="Error_036by43" name="ErrorZahlungFehlgeschlagen" errorCode="ZahlungFehlgeschlagenWegenZeitueberschreitung" />
+  <bpmn:error id="Error_10250lm" name="ErrorKartenbelastungFehlgeschlagen" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1dwe8bx">
+      <bpmndi:BPMNShape id="Participant_1bksfhv_di" bpmnElement="ZahlungDurchfuehrenParticipant">
+        <dc:Bounds x="-2" y="124" width="623" height="259" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="GebuehrenZuBezahlen">
+        <dc:Bounds x="68" y="259" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="62" y="302" width="48" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_09zi3j6_di" bpmnElement="SequenceFlow_09zi3j6">
+        <di:waypoint x="104" y="277" />
+        <di:waypoint x="150" y="277" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0pr5ex6_di" bpmnElement="ErfassenDerZahlungsdetails">
+        <dc:Bounds x="246" y="237" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_035220p_di" bpmnElement="Participant_0x6scb7">
+        <dc:Bounds x="-2" y="-1" width="625" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_04rmci7_di" bpmnElement="MessageFlow_04rmci7">
+        <di:waypoint x="281" y="237" />
+        <di:waypoint x="281" y="59" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="192" y="92" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_0e07psk_di" bpmnElement="MessageFlow_0e07psk">
+        <di:waypoint x="309" y="59" />
+        <di:waypoint x="309" y="237" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="323" y="94" width="29" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ygtjw5_di" bpmnElement="SequenceFlow_1ygtjw5">
+        <di:waypoint x="346" y="277" />
+        <di:waypoint x="396" y="277" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1686xgk_di" bpmnElement="BetragBezahlt">
+        <dc:Bounds x="546" y="259" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="546" y="302" width="37" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ucel9t_di" bpmnElement="SequenceFlow_1ucel9t">
+        <di:waypoint x="496" y="277" />
+        <di:waypoint x="546" y="277" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_1hz3dlx_di" bpmnElement="KartenbelastungFehlgeschlagen">
+        <dc:Bounds x="412" y="299" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="439" y="333" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_01fnu1t_di" bpmnElement="ExclusiveGateway_01fnu1t" isMarkerVisible="true">
+        <dc:Bounds x="150" y="252" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_158uvnj_di" bpmnElement="SequenceFlow_158uvnj">
+        <di:waypoint x="200" y="277" />
+        <di:waypoint x="246" y="277" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0z6f99f_di" bpmnElement="SequenceFlow_0z6f99f">
+        <di:waypoint x="430" y="335" />
+        <di:waypoint x="430" y="360" />
+        <di:waypoint x="175" y="360" />
+        <di:waypoint x="175" y="302" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_12y69b1_di" bpmnElement="VierundzwanzigStundenVerstrichen">
+        <dc:Bounds x="328" y="219" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="351" y="189" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_11atuyd_di" bpmnElement="SequenceFlow_11atuyd">
+        <di:waypoint x="346" y="219" />
+        <di:waypoint x="346" y="166" />
+        <di:waypoint x="546" y="166" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0v6vdex_di" bpmnElement="ZahlungFehlgeschlagen">
+        <dc:Bounds x="546" y="148" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="528" y="191" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_0vdtecv_di" bpmnElement="MessageFlow_0vdtecv">
+        <di:waypoint x="446" y="237" />
+        <di:waypoint x="446" y="59" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="385" y="83" width="50" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_1ky54zj_di" bpmnElement="MessageFlow_1ky54zj">
+        <di:waypoint x="470" y="59" />
+        <di:waypoint x="470" y="237" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="487" y="82" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_16o60qh_di" bpmnElement="KartenbelastungVeranlassen">
+        <dc:Bounds x="396" y="237" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
