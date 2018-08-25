@@ -2,11 +2,21 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_09aeiya" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
   <bpmn:collaboration id="Collaboration_1dwe8bx">
     <bpmn:participant id="ZahlungDurchfuehrenParticipant" name="Zahlung durchführen" processRef="ZahlungDurchfuehren" />
-    <bpmn:participant id="Participant_0x6scb7" name="Stripe Online-Bezahldienst" />
-    <bpmn:messageFlow id="MessageFlow_04rmci7" name="Zahlungsdetails" sourceRef="ErfassenDerZahlungsdetails" targetRef="Participant_0x6scb7" />
-    <bpmn:messageFlow id="MessageFlow_0e07psk" name="Token" sourceRef="Participant_0x6scb7" targetRef="ErfassenDerZahlungsdetails" />
-    <bpmn:messageFlow id="MessageFlow_0vdtecv" name="Token und&#10;Betrag" sourceRef="KartenbelastungVeranlassen" targetRef="Participant_0x6scb7" />
-    <bpmn:messageFlow id="MessageFlow_1ky54zj" name="Bestätigung&#10;oder Fehler" sourceRef="Participant_0x6scb7" targetRef="KartenbelastungVeranlassen" />
+    <bpmn:participant id="StripeOnlineBezahldienstParticipant" name="Stripe Online-Bezahldienst" />
+    <bpmn:messageFlow id="Zahlungsdetails" name="Zahlungsdetails" sourceRef="ErfassenDerZahlungsdetails" targetRef="StripeOnlineBezahldienstParticipant">
+      <bpmn:documentation>Wird über die Stripe Checkout-Bibliothek gesendet. Angaben sind:
+- Kreditkartennummer
+- Ablaufdatum
+- E-Mail-Adresse
+- CVC-Code
+</bpmn:documentation>
+    </bpmn:messageFlow>
+    <bpmn:messageFlow id="Token" name="Token" sourceRef="StripeOnlineBezahldienstParticipant" targetRef="ErfassenDerZahlungsdetails">
+      <bpmn:documentation>Wird über die Stripe Checkout-Bibliothek empfangen und an das Embedded Form zurück gegeben. Angaben sind:
+- Token als JSON-Objekt</bpmn:documentation>
+    </bpmn:messageFlow>
+    <bpmn:messageFlow id="TokenUndBetrag" name="Token und&#10;Betrag" sourceRef="KartenbelastungVeranlassen" targetRef="StripeOnlineBezahldienstParticipant" />
+    <bpmn:messageFlow id="BestaetigungOderFehler" name="Bestätigung&#10;oder Fehler" sourceRef="StripeOnlineBezahldienstParticipant" targetRef="KartenbelastungVeranlassen" />
   </bpmn:collaboration>
   <bpmn:process id="ZahlungDurchfuehren" name="ZahlungDurchfuehren" isExecutable="true">
     <bpmn:startEvent id="GebuehrenZuBezahlen" name="Betrag zu bezahlen">
@@ -14,10 +24,40 @@
       <bpmn:outgoing>SequenceFlow_09zi3j6</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:userTask id="ErfassenDerZahlungsdetails" name="Erfassen der Zahlungsdetails" camunda:formKey="embedded:app:forms/ErfassenDerZahlungsdetailsForm.html" camunda:assignee="${meldePflichtiger}">
-      <bpmn:documentation>Info-Hinweis "Bitte geben Sie Ihre Kreditkartenangaben im untenstehenden Formular ein. Diese Angaben gehen verschlüsselt direkt an den etablierten Online-Bezahldienst Stripe. Auf diese Weise sehen wir als Betreiber der Umzugsplattform nie Ihre Eingaben."
+      <bpmn:documentation>ÜBERBLICK
+==========
+Im aufgerufenen Prozess erfasst der Meldepflichtige die Zahlungsdetails (z.B. Kreditkartennummer) in einem mit Stripe Checkout-Formular. Die Zahlungsdetails werden direkt an den Stripe-Server gesendet, also so, dass nur Stripe diese Zahlungsdetails erhält und somit die Umzugsplattform automatisch PCI compliant ist. Im Normalfall erhält Stripe Checkout ein Token zurück und übergibt dieses dem Umzugsplattform-Client. Dieser sendet das Token für die weitere Verarbeitung als Prozessvariable an die Process Engine. 
 
-Checkout
+MELDUNGEN
+===========
+Info-Meldung, welche initial angezeigt wird: "Bitte klicken Sie auf Zahlungsdetails erfassen und geben Sie dann Ihre Kreditkartenangaben im erscheinenden Formular ein und klicken Sie auf Bezahlen.
+Diese Angaben gehen verschlüsselt direkt an den Online-Bezahldienst Stripe. Auf diese Weise sehen wir als Betreiber der Umzugsplattform nie Ihre Kreditkartendaten.       
 
+Wenn alles klappt, schliesst das Formular und nach einigen Sekunden wird dieser Text durch einen grün hinterlegten Bestätigungstext ersetzt"
+
+Erfolgsmeldung, welche angezeigt wird, wenn ein Token erhalten wurde: "Besten Dank für die Zahlungsdetails, welche formal erfolgreich geprüft werden konnten.    
+Klicken Sie nun auf Complete, um die Zahlung mit diesen Angaben zu veranlassen. Einige Sekunden danach sollten Sie entweder eine Zahlungsbestätigung sehen oder erneut zu diesem Formular geführt werden, falls die Zahlung nicht geklappt hat."
+
+Warnmeldung, die angezeigt wird, wenn das Formular angezeigt wird, nachdem ein Charge nicht erfolgreich durchgeführt werden konnte: "Die Zahlung konnte leider nicht erfolgreich durchgeführt werden.       
+Stripe hat folgenden Grund angegeben: {{chargingErrorMessage}}.
+
+Versuchen Sie es innerhalb der nächsten 24 Stunden erneut, beispielsweise mit einer anderen Kreditkarte. Andernfalls bricht der Zahlungsvorgang als fehlgeschlagen gekennzeichnet ab."
+
+
+STEUERELEMENTE
+================
+Grosse Schaltfläche, welche beim Klick darauf das Stripe Checkout-Formular lädt
+
+
+JAVASCRIPT
+===========
+- Einbinden der Javascript-Bibliothek von Stripe, welche die ganze client-seitige Checkout-Funktionalität enthält
+- Prozessvariablen laden und AngularJS-Scope-Variablen zuweisen: feeMapSerialized, feesTotal, emailAddress und chargingErrorMessage
+- Für Checkout-Formular einen String zusammensetzen, welcher die Gebührenbeschreibungen aus feeMapSerialized enthält
+- Stripe-Checkout-Formular konfigurieren (Publishable Key, Bild, Sprache, usw.
+- Callback-Funktion bei erfolgreichem Erhalten eines Tokens, welche die Erfolgreich-Meldung anzeigt, die Zahlungsschaltfläche ausblendet und das Token in einer Scope-Variable speichert
+- EventListener-Funktion, welche auf das Klicken auf die Zahlungsschaltfläche reagiert und dabei das Stripe Checkout-Formular öffnet
+- Funkton, welche vor dem Submit des Formulars den von Stripe erhaltenen Token, respektive dessen Id in einer neuen Prozessvariable stripeToken speichert und damit an die Process Engine übergibt
 </bpmn:documentation>
       <bpmn:incoming>SequenceFlow_158uvnj</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ygtjw5</bpmn:outgoing>
@@ -31,10 +71,18 @@ Checkout
       <bpmn:outgoing>SequenceFlow_158uvnj</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:endEvent id="ZahlungFehlgeschlagen" name="Zahlung fehlgeschlagen">
+      <bpmn:documentation>Der Zahlung durchführen-Prozess endet als Fehler mit dem Code ZahlungFehlgeschlagenWegenZeitueberschreitung.</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_11atuyd</bpmn:incoming>
       <bpmn:errorEventDefinition errorRef="Error_036by43" />
     </bpmn:endEvent>
     <bpmn:boundaryEvent id="VierundzwanzigStundenVerstrichen" name="24 h&#10;verstrichen" attachedToRef="ErfassenDerZahlungsdetails">
+      <bpmn:documentation>Es kann verschiedene Gründe geben, wieso 24 h verstrichen sind, bevor eine erfolgreiche Zahlung durchgeführt wurde und damit der Zahlungsprozess mit einem Fehlerendereignis endet:
+- Der Meldepflichtige will nun doch nicht zahlen
+- Der Meldepflichtige hat schon mehrere Versuche mit seiner/n Kreditkarte/n gemacht, ohne dass erfolgreich gewesen wäre und hat nun aufgegeben
+- Die Integration mit Stripe klappt aus einem technischen Grund nicht
+
+Bei den letzten zwei Gründen sollte der Prozess (Umzugsmeldung) eigentlich nicht komplett enden, da der Benutzer hier vermutlich nichts dafür kann. In diesem Fall würde er sich beim Admin melden und der würde die Prozessinstanz wieder an einen anderen Punkt setzen.
+</bpmn:documentation>
       <bpmn:outgoing>SequenceFlow_11atuyd</bpmn:outgoing>
       <bpmn:timerEventDefinition>
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT24H</bpmn:timeDuration>
@@ -47,11 +95,11 @@ Checkout
     <bpmn:sequenceFlow id="SequenceFlow_158uvnj" sourceRef="ExclusiveGateway_01fnu1t" targetRef="ErfassenDerZahlungsdetails" />
     <bpmn:sequenceFlow id="SequenceFlow_0z6f99f" sourceRef="KartenbelastungFehlgeschlagen" targetRef="ExclusiveGateway_01fnu1t" />
     <bpmn:serviceTask id="KartenbelastungVeranlassen" name="Kartenbelastung veranlassen" camunda:delegateExpression="#{createChargeAdapter}">
-      <bpmn:documentation>Zahlungsanfrage an Stripe senden und synchrone Antwort auswerten
+      <bpmn:documentation>Zahlungsanfrage an den StripeClientService senden und synchrone Antwort auswerten
 
-Der Senden-Teil umfasst ...
+Es wird eine Kartenbelastungsanfrage an den StripeClientService mit dem Token und dem zu bezahlenden Betrag aus den Prozessvariablen übergeben.
 
-Synchron kommt nun eine Antwort von Stripe zurück, entweder eine erfolgreiche Belastung der Kreditkarte oder ein Error. Im ersten Fall erhält der Benutzer eine Bestätigung, im anderen Fall muss er es erneut versuchen. Falls er dies nicht innert 24 h erledigt, wird der Zahlungsvorgang als fehlgeschlagen gekennzeichnet (was zum Prozessabruch führt). 
+Synchron kommt von diesem Service eine Antwort zurück, entweder eine erfolgreiche Belastung der Kreditkarte (Charge) oder ein Error (StripeException). Im ersten Fall passiert in dieser Delegate-Klasse nichts mehr, im anderen Fall wird ein BPMN-Fehler geworfen.
 </bpmn:documentation>
       <bpmn:incoming>SequenceFlow_1ygtjw5</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ucel9t</bpmn:outgoing>
@@ -81,17 +129,17 @@ Synchron kommt nun eine Antwort von Stripe zurück, entweder eine erfolgreiche B
       <bpmndi:BPMNShape id="UserTask_0pr5ex6_di" bpmnElement="ErfassenDerZahlungsdetails">
         <dc:Bounds x="246" y="237" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Participant_035220p_di" bpmnElement="Participant_0x6scb7">
+      <bpmndi:BPMNShape id="Participant_035220p_di" bpmnElement="StripeOnlineBezahldienstParticipant">
         <dc:Bounds x="-2" y="-1" width="625" height="60" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="MessageFlow_04rmci7_di" bpmnElement="MessageFlow_04rmci7">
+      <bpmndi:BPMNEdge id="MessageFlow_04rmci7_di" bpmnElement="Zahlungsdetails">
         <di:waypoint x="281" y="237" />
         <di:waypoint x="281" y="59" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="192" y="92" width="77" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="MessageFlow_0e07psk_di" bpmnElement="MessageFlow_0e07psk">
+      <bpmndi:BPMNEdge id="MessageFlow_0e07psk_di" bpmnElement="Token">
         <di:waypoint x="309" y="59" />
         <di:waypoint x="309" y="237" />
         <bpmndi:BPMNLabel>
@@ -148,14 +196,14 @@ Synchron kommt nun eine Antwort von Stripe zurück, entweder eine erfolgreiche B
           <dc:Bounds x="528" y="191" width="73" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="MessageFlow_0vdtecv_di" bpmnElement="MessageFlow_0vdtecv">
+      <bpmndi:BPMNEdge id="MessageFlow_0vdtecv_di" bpmnElement="TokenUndBetrag">
         <di:waypoint x="446" y="237" />
         <di:waypoint x="446" y="59" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="385" y="83" width="50" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="MessageFlow_1ky54zj_di" bpmnElement="MessageFlow_1ky54zj">
+      <bpmndi:BPMNEdge id="MessageFlow_1ky54zj_di" bpmnElement="BestaetigungOderFehler">
         <di:waypoint x="470" y="59" />
         <di:waypoint x="470" y="237" />
         <bpmndi:BPMNLabel>

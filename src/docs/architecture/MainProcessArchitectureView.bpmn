@@ -10,7 +10,7 @@
     <bpmn:messageFlow id="MessageFlow_07jo1ze" name="Versicherten-Angaben (REST)" sourceRef="Participant_1as34mt" targetRef="Participant_02je86n" />
     <bpmn:messageFlow id="MessageFlow_1od53vh" name="Prüfergebnis (REST)" sourceRef="Participant_02je86n" targetRef="Participant_1as34mt" />
     <bpmn:messageFlow id="MessageFlow_191pd7r" name="Zahlungsanfrage mit Token (REST)" sourceRef="Participant_1as34mt" targetRef="Participant_18s7cj7" />
-    <bpmn:messageFlow id="MessageFlow_0e1l6xs" name="Zahlungsantwort als Webhook (REST)" sourceRef="Participant_18s7cj7" targetRef="Participant_1as34mt" />
+    <bpmn:messageFlow id="MessageFlow_0e1l6xs" name="Zahlungsantwort (REST)" sourceRef="Participant_18s7cj7" targetRef="Participant_1as34mt" />
   </bpmn:collaboration>
   <bpmn:process id="Process_1st0wpe" isExecutable="false">
     <bpmn:startEvent id="StartEvent_1rqqxuj" name="Umzugsmeldung gestartet">
@@ -274,7 +274,7 @@
         <di:waypoint x="192" y="711" />
         <di:waypoint x="192" y="662" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="206" y="668" width="82" height="40" />
+          <dc:Bounds x="201" y="675" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

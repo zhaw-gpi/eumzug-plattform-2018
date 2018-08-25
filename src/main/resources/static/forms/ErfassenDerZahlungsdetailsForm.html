@@ -18,19 +18,18 @@ Formular zum UserTask "Erfassen der Zahlungsdetails"
     <!-- Warnmeldung, die angezeigt wird, wenn das Formular angezeigt wird, nachdem ein Charge nicht erfolgreich durchgeführt werden konnte -->
     <div class="alert alert-warning" ng-show="infoAfterChargingError">
         <p>Die Zahlung konnte leider nicht erfolgreich durchgeführt werden.</p>
-        <p>Stripe hat folgenden Grund angegeben: {{chargingErrorMessage}}</p>
-        <p>Versuchen Sie es innerhalb der nächsten 24 Stunden erneut, beispielsweise mit einer anderen Kreditkarte</p>
+        <p>Stripe hat folgenden Grund angegeben: {{chargingErrorMessage}}.</p>
+        <p>Versuchen Sie es innerhalb der nächsten 24 Stunden erneut, beispielsweise mit einer anderen Kreditkarte. Andernfalls bricht der Zahlungsvorgang als fehlgeschlagen gekennzeichnet ab.</p>
     </div>
     
     <!-- Grosse Schaltfläche, welche beim Klick darauf das Stripe Checkout-Formular lädt -->
     <button type="button" class="btn btn-primary btn-lg" id="payButton" ng-hide="hidePayButton">Zahlungsdetails erfassen</button>
     
-    <!-- Laden der Javascript-Datei von Stripe, welche die ganze client-seitige Checkout-Funktionalität enthält -->
+    <!-- Einbinden der Javascript-Bibliothek von Stripe, welche die ganze client-seitige Checkout-Funktionalität enthält -->
     <script src="https://checkout.stripe.com/checkout.js"></script>
 
 
     <script cam-script type="text/form-script">
-        //debugger;
         // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
         // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
         // folgenden Funktionen
@@ -80,7 +79,7 @@ Formular zum UserTask "Erfassen der Zahlungsdetails"
         });
         
         // Konfiguration von Stripe Checkout gemäss https://stripe.com/docs/checkout#integration
-        var handler = StripeCheckout.configure({
+        var stripeCheckoutHandler = StripeCheckout.configure({
             // Publishable Key als Identifikation des Stripe-Kontos: müsste streng genommen dynamisch ausgelesen werden, aber das würde nur recht schwierig gehen, weil man es ja am einfachsten aus einer Prozessvariable lesen würde, aber die StripeCheckout.configure-Funktion wird aufgerufen, bevor der Camunda Form Lifecycle beginnt.
             key: 'pk_test_YM8GGxfywicmmBgtFcOjEm00',
             // Kanton Bern-Bild ("geklaut" von Fahnenfabrik
@@ -112,7 +111,7 @@ Formular zum UserTask "Erfassen der Zahlungsdetails"
         // Event-Listener registrieren für die Zahlungsschaltläche, welche ausgeführt wird, wenn auf diese geklickt wird
         document.getElementById('payButton').addEventListener('click', function(e) {
             // Das Checkout-Formular mit weiteren Parametern öffnen
-            handler.open({
+            stripeCheckoutHandler.open({
                 // Gebührentotal * 100, da Stripe die Angabe in Rappen möchte
                 amount: $scope.total * 100,
                 email: $scope.emailAddress,
@@ -123,7 +122,7 @@ Formular zum UserTask "Erfassen der Zahlungsdetails"
 
         // Hilfsfunktion, damit ein allfällig offenes Checkout-Formular geschlossen wird, wenn der Benutzer von der Seite wegnavigiert
         window.addEventListener('popstate', function() {
-            handler.close();
+            stripeCheckoutHandler.close();
         });
         
         // Speichert den von Stripe erhaltenen Token, respektive dessen Id in einer neuen Prozessvariable stripeToken
