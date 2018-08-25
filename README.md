@@ -2,32 +2,65 @@
 
 > Autoren der Dokumentation: Björn Scheppler
 
-> Dokumentation letztmals aktualisiert: 14.8.2018
+> Dokumentation letztmals aktualisiert: 25.8.2018
 
 > TOC erstellt mit https://ecotrust-canada.github.io/markdown-toc/
 
-In diesem Projekt ist eine mögliche Lösung für den [UmzugsmeldepProzess](https://www.egovernment.ch/de/umsetzung/schwerpunktplan/e-umzug-schweiz/) entwickelt.
+In diesem Projekt ist eine mögliche Lösung für den [UmzugsmeldeProzess](https://www.egovernment.ch/de/umsetzung/schwerpunktplan/e-umzug-schweiz/) entwickelt.
 
-Die Lösung entstand im Rahmen des Moduls Geschäftsprozesssintegration im Studiengang Wirtschaftsinformatik an der ZHAW School of Management and Law basierend auf der Lösung vom HS 2017, aber architektonisch und technisch auf den Stand für HS 2018 gebracht.
+Die Lösung entstand im Rahmen des **Moduls Geschäftsprozesssintegration im Studiengang Wirtschaftsinformatik** an der ZHAW School of Management and Law basierend auf der Lösung vom HS 2017, aber architektonisch und technisch auf den Stand für HS 2018 gebracht.
 
 ## Inhaltsverzeichnis
+  - [eUmzug-Plattform 2018 (eumzug-plattform-2018)](#eumzug-plattform-2018--eumzug-plattform-2018-)
+  * [Inhaltsverzeichnis](#inhaltsverzeichnis)
+  * [Anforderungsspezifikation und Aufgabenstellung](#anforderungsspezifikation-und-aufgabenstellung)
+    + [Wie können Studierende Bonus-Punkte sammeln (in Aufgabenstellung verschieben)](#wie-k-nnen-studierende-bonus-punkte-sammeln--in-aufgabenstellung-verschieben-)
   * [Architektur der Umzugsplattform inklusive Umsystemen](#architektur-der-umzugsplattform-inklusive-umsystemen)
-  * [Komponenten und Funktionalitäten der Umzugsplattform](#komponenten-und-funktionalitaeten-der-umzugsplattform)
+    + [Haupt-Komponenten und ihr Zusammenspiel](#haupt-komponenten-und-ihr-zusammenspiel)
+    + [Umzugsplattform](#umzugsplattform)
+    + [Personenregister sowie Gebäude- und Wohnungsregister](#personenregister-sowie-geb-ude--und-wohnungsregister)
+    + [VeKa-Center-Auskunftsdienst](#veka-center-auskunftsdienst)
+    + [Stripe-Online-Bezahldienst](#stripe-online-bezahldienst)
+    + [Einwohnerkontrollsysteme (EKS)](#einwohnerkontrollsysteme--eks-)
+    + [EKS-Kommunikationsservice](#eks-kommunikationsservice)
+    + [Kantonaler Benachrichtigungsdienst](#kantonaler-benachrichtigungsdienst)
+  * [(Technische) Komponenten der Umzugsplattform](#-technische--komponenten-der-umzugsplattform)
+  * [Erforderliche Schritte für das Testen der Applikation](#erforderliche-schritte-f-r-das-testen-der-applikation)
+    + [Voraussetzungen](#voraussetzungen)
+    + [Deployment](#deployment)
+  * [Nutzung (Testing) der Applikation](#nutzung--testing--der-applikation)
+    + [Manuelles Testen](#manuelles-testen)
+    + [Semi-Manuelles Testen](#semi-manuelles-testen)
+    + [Automatisiertes Testen](#automatisiertes-testen)
+  * [Prototypische Vereinfachungen](#prototypische-vereinfachungen)
+  * [TODOs](#todos)
+  * [Mitwirkende](#mitwirkende)
+
+## Anforderungsspezifikation und Aufgabenstellung
+Dieses Projekt ist die Musterlösung für eine Aufgabenstellung, welche den Studierenden gestellt wurde. Die Aufgabenstellung (PDF), das BPMN-Modell der im nächsten Kapitel abgebildeten Architektur sowie die originalen eCH-Anforderungsdokumente sind im Ordner **src/docs** abgelegt.
+
+### Wie können Studierende Bonus-Punkte sammeln (in Aufgabenstellung verschieben)
+1. **Zahlungsprozess fortgeschritten**: Statt bloss Kreditkarten soll auch SEPA unterstützt werden, was aber einen Rattenschwanz an Konsequenzen mit sich bringt aufgrund des asynchronen Zahlungsvorgangs:
+    1. Der Zahlungsvorgang muss rausgelöst werden aus "Umzugsmeldung erfassen und bezahlen" und parallel stattfinden mit "Mit EK-Systemen kommunizieren".
+    2. Es muss ein REST-Endpoint registriert werden, um die Stripe Webhook-Notifications empfangen zu können.
+    3. Falls von Stripe eine Ablehnung kommt, dann muss der Meldepflichtige benachrichtigt werden und ihm erneut ein User Task für einen neuen Zahlungsversuch angezeigt werden.
+    4. (Falls von den Einwohnergemeinden eine Ablehnung kommt, dann muss per Stripe eine Rückerstattung veranlasst werden)
+2. **Persistierung fortgeschritten und WebApp für Mitarbeitende**: Wir könnten aber natürlich das auch etwas ausweiten, indem eine separate Applikation diese Persistierung vornimmt mit separater Datenbank (nicht Process Engine-DB) und dafür noch einem kleinen WebGUI, wo Angestellte der Verwaltung jederzeit für einen Meldepflichtigen seinen aktuellen Status anschauen können. Anderseits: Warum hierzu nicht einfach das Camunda Cockpit nutzen mit dem Filter nach einem bestimmten BusinessKey, welcher dem Benutzer auf dem "Abschlussbestätigung anzeigen"-Dialog angezeigt wird, damit er bei Telefonaten die richtige Id nennt?
 
 ## Architektur der Umzugsplattform inklusive Umsystemen
 Die Umzugsplattform benötigt für das Funktionieren verschiedene Komponenten, welche teilweise in der Umzugsplattform selbst (= das vorliegende Maven-Projekt) enthalten sind und teilweise extern.
 
 ### Haupt-Komponenten und ihr Zusammenspiel
-Die Haupt-Komponenten und ihr Zusammenspiel sind in der folgenden Grafik abgebildet. Was die unterschiedlichen Farben bedeuten wird unterhalb der Grafik erläutert. Im Anschluss daran wird jede Hauptkomponente etwas ausführlicher beschrieben und ihre Implementation begründet.
+Die Haupt-Komponenten und ihr Zusammenspiel sind in der folgenden Grafik abgebildet. Was die unterschiedlichen **Farben** bedeuten wird unterhalb der Grafik erläutert. Im Anschluss daran wird jede Hauptkomponente etwas ausführlicher beschrieben und ihre Implementation begründet.
 
 ![Abbildung Haupt-Komponenten](src/docs/architecture/MainProcessArchitectureView.png "Abbildung Haupt-Komponenten")
 
 Die **Farben** bedeuten dabei:
 - **Weiss/farblos**: Die eigentliche Umzugsplattform mit dem Hauptprozess, welche als Camunda Spring Boot-Applikation implementiert ist. Service Tasks, welche nicht eingefärbt sind, werden über JavaDelegates implementiert, User Tasks über Embedded Forms, die in der Camunda Webapp Tasklist eingebettet sind.
-- **Blau**: Implementation als eigener Prozess innerhalb der Umzugsplattform, welcher über eine [Call Activity](https://docs.camunda.org/manual/7.9/reference/bpmn20/subprocesses/call-activity/) aufgerufen wird
-- **Violett**: Implementation als Microservice-Applikation, welche wie die Umzugsplattform selbst auch als Camunda Spring Boot-Applikation implementiert ist.  Die Einbindung in den Hauptprozess geschieht über das [External Task Pattern](https://docs.camunda.org/manual/7.9/user-guide/process-engine/external-tasks/).
-- **Grün**: Implementation als Microservice-Applikation, welche jedoch ohne Process Engine auskommen, sondern lediglich simple Spring Boot-Applikationen sind.
-- **Rot und Orange**: Die rot eingezeichneten Systeme sind in einer produktiven Umgebung komplett in einer anderen Verantwortung als beim Kanton Bern, sprich bei den Gemeinden (Einwohnerkontrollsysteme EKS), dem Bund (GWR), einer anderen Kantonsstelle (Personenregister), einem privaten Anbieter mit öffentlichem Auftrag (VeKa-Center) oder einem komplett privaten Anbieter (Stripe). Sie könnten entsprechend in irgendeiner Technologie implementiert sein. Für die Umzugsplattform relevant ist lediglich, dass diese über definierte Schnittstellen erreichbar sind, konkret über SOAP-Schnittstellen (Rot) gemäss eCH-Standards oder über REST (Orange). Für Testzwecke sind diese Umsysteme gemocked, jeweils in einer eigenen Github-Repository verfügbar und dokumentiert.
+- **Blau (Aufrufprozesse)**: Implementation als eigener Prozess innerhalb der Umzugsplattform, welcher über eine [Call Activity](https://docs.camunda.org/manual/7.9/reference/bpmn20/subprocesses/call-activity/) aufgerufen wird
+- **Violett (Microservice mit Camunda)**: Implementation als Microservice-Applikation, welche wie die Umzugsplattform selbst auch als Camunda Spring Boot-Applikation implementiert ist.  Die Einbindung in den Hauptprozess geschieht über das [External Task Pattern](https://docs.camunda.org/manual/7.9/user-guide/process-engine/external-tasks/).
+- **Grün (Microservice ohne Camunda)**: Implementation als Microservice-Applikation, welche jedoch ohne Process Engine auskommen, sondern lediglich simple Spring Boot-Applikationen sind.
+- **Rot und Orange (Umsysteme per REST/SOAP)**: Die rot und orange eingezeichneten Systeme sind in einer produktiven Umgebung komplett in einer anderen Verantwortung als beim Kanton Bern, sprich bei den Gemeinden (Einwohnerkontrollsysteme EKS), dem Bund (GWR), einer anderen Kantonsstelle (Personenregister), einem privaten Anbieter mit öffentlichem Auftrag (VeKa-Center) oder einem komplett privaten Anbieter (Stripe). Sie könnten entsprechend in irgendeiner Technologie implementiert sein. Für die Umzugsplattform relevant ist lediglich, dass diese über definierte Schnittstellen erreichbar sind, konkret über SOAP-Schnittstellen (Rot) gemäss eCH-Standards oder über REST (Orange). Für Testzwecke sind diese Umsysteme gemocked, jeweils in einer eigenen Github-Repository verfügbar und dokumentiert.
 
 ### Umzugsplattform
 1. **Umzugsplattform insgesamt**: Der Einfachheit halber umfasst die Plattform alle folgende Komponenten in einer Applikation, die produktiv teilweise separat deployed würden:
@@ -55,11 +88,7 @@ Die **Farben** bedeuten dabei:
     2. Diese geschieht nicht direkt, sondern über einen Dienst (**EKS-Kommmunikationsservice**), welcher über das **External Task Pattern** eingebunden wird. Dabei wird lediglich festgehalten, dass Arbeit von einem bestimmten Typ zu erledigen ist. External Task Workers wie der genannte Dienst können sich bei der Umzugsplattform registrieren und die zu erledigende Arbeit durchführen.
 5. **External Tasks 'xyz mitteilen'**:
     1. In diesem Teil des Hauptprozesses (und auch teilweise in den aufgerufenen Prozessen) erfolgt die automatisierte **Ein-Weg-Kommunikation mit dem Meldepflichtigen**.
-    2. Aufgrund der **Komplexität** - es sollen nebst Mail-Benachrichtigung z.B. auch SMS-Benachrichtigung ermöglicht werden -, ist eine Implementation nur als JavaDelegate nicht sinnvoll.
-    3. Auch wäre eine in die Umzugsplattform eingebettete Komponente wenig sinnvoll, weil wohl nicht bloss im "Umzug melden"-Prozess Mitteilungen zu versenden sind, sondern **auch in anderen Prozessen des Kantons Bern**.
-    4. Umgekehrt ist der Benachrichtigungs**prozess trivial**, so dass eine eigene Process Engine nicht sinnvoll erscheint. Zumal ja schon im Hauptprozess nachvollziehbar persistiert wird, wer über was benachrichtigt wurde.
-    5. Aus diesem Grund wird eine "einfache" **Spring Boot-Applikation ohne Camunda als Microservice** entwickelt.
-    6. Die Kommunikation mit diesem Microservice geschieht analog zu den EKS über das **External Task Pattern**.
+    2. Diese geschieht nicht direkt, sondern über einen Dienst (**Kantonaler Benachrichtigungsdienst**), welcher ebenfalls über das **External Task Pattern** eingebunden wird.
 6. **JavaDelegate 'xyz persistieren'**:
     1. In diesem Teil des Hauptprozesses (und auch teilweise in den aufgerufenen Prozessen) erfolgt die automatisierte **Persistierung von Personendaten und Prozessstatus in der Umzugsplattform-Datenbank**.
     2. Da die Datenbank für Demo-Zwecke vereinfacht dieselbe ist wie für die Process Engine...
@@ -95,16 +124,56 @@ Die **Farben** bedeuten dabei:
 ### EKS-Kommunikationsservice
 1. Wie weiter oben erwähnt kommuniziert die Umzugsplattform nicht direkt mit den Einwohnerkontrollsystemen, sondern über einen **separaten Dienst**.
 2. Dies ist sinnvoll, weil es denkbar ist, dass nicht nur die Umzugsplattform mit den Einwohnerkontrollsystemen kommunizieren muss, sondern eine solche **auch in anderen Prozessen des Kantons** erforderlich ist (z.B. Einbürgerungsverfahren).
-2. Für unsere Demo-Zwecke mocken wir aber **nur den für die Umzugsplattform relevanten Teil**.
-2. Der Microservice ist aufgrund seiner Komplexität ebenfalls **als Camunda Spring Boot-Applikation implementiert**, wird vom Hauptprozess jedoch nicht aufgerufen, sondern über das **External Task Pattern** eingebunden, wie weiter oben erläutert.
-    4. Die Dokumentation des Microservices für die Umzugsplattform ist zu finden in folgendem **Github-Repository**: ??????????????
+3. Für unsere Demo-Zwecke mocken wir aber **nur den für die Umzugsplattform relevanten Teil**.
+4. Der Microservice ist aufgrund seiner Komplexität ebenfalls **als Camunda Spring Boot-Applikation implementiert**, wird vom Hauptprozess jedoch nicht aufgerufen, sondern über das **External Task Pattern** eingebunden, wie weiter oben erläutert.
+5. Die Dokumentation des Microservices für die Umzugsplattform ist zu finden in folgendem **Github-Repository**: ??????????????
 
-## Technische Komponenten und Funktionalitaeten der Umzugsplattform
-1. Spring Boot 2.0.2 konfiguriert für Tomcat
-2. Camunda Spring Boot Starter 3.0.0
-3. Camunda Process Engine, REST API und Webapps (Tasklist, Cockpit, Admin) in der Version 7.9.2 (Enterprise Edition)
-4. H2-Datenbank-Unterstützung (von Camunda Engine benötigt)
-5. "Sinnvolle" Grundkonfiguration in application.properties für Camunda, Datenbank und Tomcat
+### Kantonaler Benachrichtigungsdienst
+1. Aufgrund der **Komplexität** - es sollen nebst Mail-Benachrichtigung z.B. auch SMS-Benachrichtigung ermöglicht werden -, ist eine Implementation nur als JavaDelegate direkt in der Umzugsplattform nicht sinnvoll.
+2. Vor allem wäre eine in die Umzugsplattform eingebettete Komponente auch deshalb wenig sinnvoll, weil wohl nicht bloss im "Umzug melden"-Prozess Mitteilungen zu versenden sind, sondern **auch in anderen Prozessen des Kantons Bern**.
+3. Umgekehrt ist der Benachrichtigungs**prozess trivial**, so dass eine eigene Process Engine nicht sinnvoll erscheint. Zumal ja schon im Hauptprozess nachvollziehbar persistiert wird, wer über was benachrichtigt wurde.
+4. Aus diesem Grund wird eine "einfache" **Spring Boot-Applikation ohne Camunda als Microservice** entwickelt.
+5. Die Kommunikation mit diesem Microservice geschieht analog zu den EKS über das **External Task Pattern**.
+6. Die Dokumentation des kantonalen Benachrichtigungsdienstes ist zu finden in folgendem **Github-Repository**: ??????????????
+
+## (Technische) Komponenten der Umzugsplattform
+1. Camunda Spring Boot Starter 3.0.0 beinhaltend:
+    1. Spring Boot-Standardkonfiguration mit Tomcat als Applikations- und Webserver
+    2. Camunda Process Engine, REST API und Webapps (Tasklist, Cockpit, Admin) in der Version 7.9.2 (Enterprise Edition)
+    3. Main-Methode in EumzugPlattform2018Application-Klasse
+2. Prozess-Komponenten:
+    1. @EnableProcessApplication-Annotation in EumzugPlattform2018Application-Klasse
+    2. processes.xml mit minimaler Konfiguration der Prozessapplikation
+    3. Ordner processes mit allen BPMN-Modellen
+    4. Package processdata für POJOs, welche Objekte instanzieren, die nicht zu persistieren sind
+    5. Package delegates mit JavaDelegate-Klassen, die von den Prozessen aufgerufen werden, um entweder direkt etwas zu tun oder als Vermittler zu anderen Serivces & Co. zu dienen (z.B. zu LocalPersonIdGeneratorService).
+3. Persistierungs-Komponenten:
+    1. JDBC-Komponente als Treiber
+    2. H2-Datenbank-Unterstützung inklusive Console-Servlet über ApplicationConfiguration-Klasse
+    3. Java Persistence API (JPA) inklusive persistence.xml und EumzugPlattform2018Model.jpa-Diagramm (von Jeddict erstellt)
+    4. Package Repositories und Package entities für Municipality, Person, TransactionLog und Document
+    5. JavaDelegates GetDocumentsDelegate, GetFeesDelegate, GetMunicipalityListDelegate und PersistUserEntriesAndStatusDelegate
+    6. initialData.sql/xlsx in test/ressources, um die Datenbank initial mit sinnvollen Stammdaten zu füllen
+4. WebService (SOAP)-Komponenten:
+    1. Spring Boot Webservices-Komponenten für den Aufruf von SOAP-Services
+    2. GenericWebServiceClientConfiguration-Klasse
+    3. WebServiceHeaderActionCodeEnumeration-Klasse
+    4. Package webserviceclients
+    5. JAXB-Maven-Plugin, welches aus der Angabe der WSDL-URL automatisch Klassen generiert (eCH und gwr)
+    6. Package helpers mit Helferlein-Klassen
+    7. WebServiceHeaderActionCodeEnumeration-Klasse
+    8. Endpoint-Deklarationen für GWR und Personenregister in application.properties
+5. Zahlungsabwicklungs-Komponenten:
+    1. Stripe Java API Library für die server-seitige Kommunikation mit Stripe
+    2. StripeClientService-Klasse als Vermittler zwischen der API Library und ...
+    3. CreateChargeDelegate-Klasse
+    4. ErfassenDerZahlungsdetailsForm.html inklusive Verweis auf die Stripe Checkout JavaScript-Library
+6. Frontend-Komponenten:
+    1. Die bereits erwähnte Camunda Tasklist App, welche AngularJS, Bootstrap und das Camunda Forms SDK beinhaltet
+    2. Camunda Spin (inklusive Jackson), um von/nach JSON zu (de-)serialisieren
+    3. Ordner static/forms mit allen Embedded Forms-HTML-Dateien, welche den HTML-Code für die Forms sowie JavaScript-Code enthalten
+7. "Sinnvolle" Grundkonfiguration in application.properties für Camunda, Datenbank und Tomcat
+8. Ein soapUI-Testprojekt in test/ressources/EumzugPlattform2018Tests-soapui-project.xml
 
 ## Erforderliche Schritte für das Testen der Applikation
 ### Voraussetzungen
@@ -160,11 +229,42 @@ Die **Farben** bedeuten dabei:
 
 ### Automatisiertes Testen
 
+## Prototypische Vereinfachungen
+1. Session-Handling, Benutzerverwaltung, usw.: In der Realität müssen sich Melde pflichtige nicht anmelden (und damit zunächst registrieren), sondern können eine Meldung auch ohne Anmeldung starten. Unter Verwendung von Camunda Webapps mit User Tasks muss aber ein Benutzer angemeldet sein, damit er den Prozess starten kann und damit ihm Tasks zugewiesen werden können. Wir ignorieren dies und stattdessen ist der Meldepflichtige stets der Benutzer "a", was natürlich dann Probleme gibt, wenn gleichzeitig mehrere Prozessinstanzen laufen, denn dann werden diesem mehrere/verschiedene Aufgaben zugewiesen. Da Name, Vorname, AHV-Nummer, usw. pro Prozessinstanz unterschiedlich ist, sollte es aber dennoch möglich sein, das im Griff zu haben (siehe auch nächster Punkt).
+2. Page Flow vs. Process Flow: In der Realität würde der Meldepflichtige ein Formular nach dem anderen ausfüllen INNERHALB von einem einzigen User Task (oder einem Subprocess), denn verteilt über mehrere User Tasks würde ja bedeuten, dass jedes ausgefüllte Formular einen Eintrag in der Tasklist verursacht und der Benutzer dadurch überhaupt eine Tasklist braucht, was in der Realität nicht zwingend der Fall ist. Auch sollte man in der Realität natürlich im Browser zurück springen können zu einem vorherigen Formular. In der Realität könnte dies z.B. über einen JSF-PageFlow innerhalb des User Tasks gelöst werden. StephenOTT hat [hier](https://forum.camunda.org/t/chaining-user-tasks-to-create-an-interactive-flow-sort-of-a-wizard-style/613/9?u=scepbjoern) gut dargelegt, dass wenn es darum geht, Page Flows (Wizards) abzubilden, ein BPMN-Flow (wie hier umgesetzt) keine geeignete Form ist (allenfalls für das Dokumentieren, aber nicht ausführbar), sondern dann würde man eher eine Lösung wie den form.io-FormBuilder im wizard-Modus nutzen.
+3. Beim Umsystem Personenregister wird die municipalityId und municipalityName vermutlich deshalb mitgeliefert, weil eine Person in mehreren Gemeinden registriert sein kann (Hauptwohnsitz und Wochenaufenthalter). Das heisst, moveAllowed müsste eigentlich bei der Beziehungstabelle sein zwischen Municipality und Resident. Dies mit JPA umzusetzen, ist gar nicht so einfach, u.a. braucht es dann eine eigene Entität für diese Beziehungstabelle mit einem Pseudo-Primärschlüssel: https://www.thoughts-on-java.org/many-relationships-additional-properties/. Daher lassen wir dies weg.
+4. Schema Validation: Mit @SchemaValidation bei der Webservice-Endpoint-Klasse werden lediglich Standard-Fehlermeldungen ausgegeben, nicht aber benutzerdefinierte. Das ist ok bei einem Prototyp. Störender ist, dass XJC keine Annotations für die XSD-Restrictions hinzufügt (also, dass z.B. ein String nicht leer oder länger als 40 Zeichen sein darf). Es gibt teilweise Plugins, aber die sind seit mehreren Jahren nicht mehr aktualisiert => man müsste entweder ein eigenes Plugin schreiben oder aber die Annotations in den generierten Java-Klassen von Hand hinzufügen, aber dann wäre die Generierung im Build-Prozess natürlich nicht mehr opportun.
 
-## Wie können Studierende Bonus-Punkte sammeln
-1. **Zahlungsprozess fortgeschritten**: Statt bloss Kreditkarten soll auch SEPA unterstützt werden, was aber einen Rattenschwanz an Konsequenzen mit sich bringt aufgrund des asynchronen Zahlungsvorgangs:
-    1. Der Zahlungsvorgang muss rausgelöst werden aus "Umzugsmeldung erfassen und bezahlen" und parallel stattfinden mit "Mit EK-Systemen kommunizieren".
-    2. Es muss ein REST-Endpoint registriert werden, um die Stripe Webhook-Notifications empfangen zu können.
-    3. Falls von Stripe eine Ablehnung kommt, dann muss der Meldepflichtige benachrichtigt werden und ihm erneut ein User Task für einen neuen Zahlungsversuch angezeigt werden.
-    4. (Falls von den Einwohnergemeinden eine Ablehnung kommt, dann muss per Stripe eine Rückerstattung veranlasst werden)
-2. **Persistierung fortgeschritten und WebApp für Mitarbeitende**: Wir könnten aber natürlich das auch etwas ausweiten, indem eine separate Applikation diese Persistierung vornimmt mit separater Datenbank (nicht Process Engine-DB) und dafür noch einem kleinen WebGUI, wo Angestellte der Verwaltung jederzeit für einen Meldepflichtigen seinen aktuellen Status anschauen können. Anderseits: Warum hierzu nicht einfach das Camunda Cockpit nutzen mit dem Filter nach einem bestimmten BusinessKey, welcher dem Benutzer auf dem "Abschlussbestätigung anzeigen"-Dialog angezeigt wird, damit er bei Telefonaten die richtige Id nennt?
+## TODOs
+1. DokumenteHochladenForm: Bei mitumziehenden Personen muss nur die Hauptperson aktuell Dokumente hochladen
+2. Daten aufräumen: Auf keinen Fall sollen Prozessvariablen wie z.B MunicipalityList persistiert werden, welche Stammdaten enthalten oder nur Hilfsvariablen => aufräumen am Schluss (eigener Service Task) => allenfalls müssen aber sogar noch alte Aktivitäten gelöscht werden, weil ja schon zuvor diese Variablen persistiert wurden
+3. Aufruf des kantonalen Benachrichtigungsdienstes
+4. Aufruf des EKS-Kommunikationsdienstes
+5. Aktivitäten im Zusammenhang mit Grundversicherung prüfen
+6. "Angaben für Zusatzdienste erfassen" implementieren
+7. "Wohnverhältnis erfassen" implementieren
+
+## Mitwirkende
+1. Björn Scheppler: Hauptarbeit
+2. Peter Heinrich: Der stille Support im Hintergrund mit vielen Tipps sowie zuständig
+für den Haupt-Stack mit SpringBoot & Co.
+3. Raphael Schertenleib: Etliche Formulare
+4. Studierende aus dem Herbstsemester 2017:
+    1. Gruppe TZb02 (Bekim Kadrija, Jovica Rajic, Luca Belmonte, Simon Bärtschi, Sven 
+    Baumann):
+        1. Formulare: DatePicker mit Format TT.MM.JJJJ
+        2. Mitzuziehende Personen auswählen
+        3. Dokumente hochladen
+        4. PDF mit allen relevanten Informationen wird als E-Mail-Anhang mitgesendet
+        5. Kleinere Verbesserungen an der originalen Musterlösung
+    2. Gruppe TZa02 (Alessandro Paradiso, Davor Gavranic, Lars Günthardt, Luka Devcic,
+    Robin Chahal):
+        1. Wohnungen auswählen
+        2. Kleinere Verbesserungen an der originalen Musterlösung
+    3. Gruppe TZa03 (Christian Sonntag, Felix Huber, Lukas Brütsch, Tamara Wenk, Vladan 
+    Jankovic):
+        1. Formulare: Mehrspaltiges Layout
+        2. Formulare: Placeholders
+        3. Formulare: Bessere Alert- und Help Block-Texte
+    4. Gruppe TZb05 (Arbr Wagner, Christoffer Brunner, Leulinda Gutaj, Martin Schwab, 
+    Saskia Iwaniw): Formular "Alle Angaben prüfen"

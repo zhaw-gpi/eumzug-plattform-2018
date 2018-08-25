@@ -142,13 +142,6 @@
             <artifactId>camunda-engine-plugin-spin</artifactId>
         </dependency>
         
-        <!-- Importiert die Mail-Unterstützung für Spring Boot-Projekte. Sofern
-             keine Mails gesendet werden sollen, ist diese Abhängigkeit überflüssig -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-        
         <!-- Import den Stripe Java-Client -->
         <dependency>
             <groupId>com.stripe</groupId>
