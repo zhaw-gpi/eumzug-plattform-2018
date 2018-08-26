@@ -11,8 +11,6 @@ In diesem Projekt ist eine mögliche Lösung für den [UmzugsmeldeProzess](https
 Die Lösung entstand im Rahmen des **Moduls Geschäftsprozesssintegration im Studiengang Wirtschaftsinformatik** an der ZHAW School of Management and Law basierend auf der Lösung vom HS 2017, aber architektonisch und technisch auf den Stand für HS 2018 gebracht.
 
 ## Inhaltsverzeichnis
-  - [eUmzug-Plattform 2018 (eumzug-plattform-2018)](#eumzug-plattform-2018--eumzug-plattform-2018-)
-  * [Inhaltsverzeichnis](#inhaltsverzeichnis)
   * [Anforderungsspezifikation und Aufgabenstellung](#anforderungsspezifikation-und-aufgabenstellung)
     + [Wie können Studierende Bonus-Punkte sammeln (in Aufgabenstellung verschieben)](#wie-k-nnen-studierende-bonus-punkte-sammeln--in-aufgabenstellung-verschieben-)
   * [Architektur der Umzugsplattform inklusive Umsystemen](#architektur-der-umzugsplattform-inklusive-umsystemen)
@@ -137,24 +135,24 @@ Die **Farben** bedeuten dabei:
 6. Die Dokumentation des kantonalen Benachrichtigungsdienstes ist zu finden in folgendem **Github-Repository**: ??????????????
 
 ## (Technische) Komponenten der Umzugsplattform
-1. Camunda Spring Boot Starter 3.0.0 beinhaltend:
+1. **Camunda Spring Boot Starter** 3.0.0 beinhaltend:
     1. Spring Boot-Standardkonfiguration mit Tomcat als Applikations- und Webserver
     2. Camunda Process Engine, REST API und Webapps (Tasklist, Cockpit, Admin) in der Version 7.9.2 (Enterprise Edition)
     3. Main-Methode in EumzugPlattform2018Application-Klasse
-2. Prozess-Komponenten:
+2. **Prozess-Komponenten**:
     1. @EnableProcessApplication-Annotation in EumzugPlattform2018Application-Klasse
     2. processes.xml mit minimaler Konfiguration der Prozessapplikation
     3. Ordner processes mit allen BPMN-Modellen
     4. Package processdata für POJOs, welche Objekte instanzieren, die nicht zu persistieren sind
     5. Package delegates mit JavaDelegate-Klassen, die von den Prozessen aufgerufen werden, um entweder direkt etwas zu tun oder als Vermittler zu anderen Serivces & Co. zu dienen (z.B. zu LocalPersonIdGeneratorService).
-3. Persistierungs-Komponenten:
+3. **Persistierungs-Komponenten**:
     1. JDBC-Komponente als Treiber
     2. H2-Datenbank-Unterstützung inklusive Console-Servlet über ApplicationConfiguration-Klasse
     3. Java Persistence API (JPA) inklusive persistence.xml und EumzugPlattform2018Model.jpa-Diagramm (von Jeddict erstellt)
     4. Package Repositories und Package entities für Municipality, Person, TransactionLog und Document
     5. JavaDelegates GetDocumentsDelegate, GetFeesDelegate, GetMunicipalityListDelegate und PersistUserEntriesAndStatusDelegate
     6. initialData.sql/xlsx in test/ressources, um die Datenbank initial mit sinnvollen Stammdaten zu füllen
-4. WebService (SOAP)-Komponenten:
+4. **WebService (SOAP)-Komponenten**:
     1. Spring Boot Webservices-Komponenten für den Aufruf von SOAP-Services
     2. GenericWebServiceClientConfiguration-Klasse
     3. WebServiceHeaderActionCodeEnumeration-Klasse
@@ -163,17 +161,17 @@ Die **Farben** bedeuten dabei:
     6. Package helpers mit Helferlein-Klassen
     7. WebServiceHeaderActionCodeEnumeration-Klasse
     8. Endpoint-Deklarationen für GWR und Personenregister in application.properties
-5. Zahlungsabwicklungs-Komponenten:
+5. **Zahlungsabwicklungs-Komponenten**:
     1. Stripe Java API Library für die server-seitige Kommunikation mit Stripe
     2. StripeClientService-Klasse als Vermittler zwischen der API Library und ...
     3. CreateChargeDelegate-Klasse
     4. ErfassenDerZahlungsdetailsForm.html inklusive Verweis auf die Stripe Checkout JavaScript-Library
-6. Frontend-Komponenten:
+6. **Frontend-Komponenten**:
     1. Die bereits erwähnte Camunda Tasklist App, welche AngularJS, Bootstrap und das Camunda Forms SDK beinhaltet
     2. Camunda Spin (inklusive Jackson), um von/nach JSON zu (de-)serialisieren
     3. Ordner static/forms mit allen Embedded Forms-HTML-Dateien, welche den HTML-Code für die Forms sowie JavaScript-Code enthalten
-7. "Sinnvolle" Grundkonfiguration in application.properties für Camunda, Datenbank und Tomcat
-8. Ein soapUI-Testprojekt in test/ressources/EumzugPlattform2018Tests-soapui-project.xml
+7. "Sinnvolle" **Grundkonfiguration** in application.properties für Camunda, Datenbank und Tomcat
+8. Ein **soapUI-Testprojekt** in test/ressources/EumzugPlattform2018Tests-soapui-project.xml
 
 ## Erforderliche Schritte für das Testen der Applikation
 ### Voraussetzungen
@@ -230,10 +228,10 @@ Die **Farben** bedeuten dabei:
 ### Automatisiertes Testen
 
 ## Prototypische Vereinfachungen
-1. Session-Handling, Benutzerverwaltung, usw.: In der Realität müssen sich Melde pflichtige nicht anmelden (und damit zunächst registrieren), sondern können eine Meldung auch ohne Anmeldung starten. Unter Verwendung von Camunda Webapps mit User Tasks muss aber ein Benutzer angemeldet sein, damit er den Prozess starten kann und damit ihm Tasks zugewiesen werden können. Wir ignorieren dies und stattdessen ist der Meldepflichtige stets der Benutzer "a", was natürlich dann Probleme gibt, wenn gleichzeitig mehrere Prozessinstanzen laufen, denn dann werden diesem mehrere/verschiedene Aufgaben zugewiesen. Da Name, Vorname, AHV-Nummer, usw. pro Prozessinstanz unterschiedlich ist, sollte es aber dennoch möglich sein, das im Griff zu haben (siehe auch nächster Punkt).
-2. Page Flow vs. Process Flow: In der Realität würde der Meldepflichtige ein Formular nach dem anderen ausfüllen INNERHALB von einem einzigen User Task (oder einem Subprocess), denn verteilt über mehrere User Tasks würde ja bedeuten, dass jedes ausgefüllte Formular einen Eintrag in der Tasklist verursacht und der Benutzer dadurch überhaupt eine Tasklist braucht, was in der Realität nicht zwingend der Fall ist. Auch sollte man in der Realität natürlich im Browser zurück springen können zu einem vorherigen Formular. In der Realität könnte dies z.B. über einen JSF-PageFlow innerhalb des User Tasks gelöst werden. StephenOTT hat [hier](https://forum.camunda.org/t/chaining-user-tasks-to-create-an-interactive-flow-sort-of-a-wizard-style/613/9?u=scepbjoern) gut dargelegt, dass wenn es darum geht, Page Flows (Wizards) abzubilden, ein BPMN-Flow (wie hier umgesetzt) keine geeignete Form ist (allenfalls für das Dokumentieren, aber nicht ausführbar), sondern dann würde man eher eine Lösung wie den form.io-FormBuilder im wizard-Modus nutzen.
-3. Beim Umsystem Personenregister wird die municipalityId und municipalityName vermutlich deshalb mitgeliefert, weil eine Person in mehreren Gemeinden registriert sein kann (Hauptwohnsitz und Wochenaufenthalter). Das heisst, moveAllowed müsste eigentlich bei der Beziehungstabelle sein zwischen Municipality und Resident. Dies mit JPA umzusetzen, ist gar nicht so einfach, u.a. braucht es dann eine eigene Entität für diese Beziehungstabelle mit einem Pseudo-Primärschlüssel: https://www.thoughts-on-java.org/many-relationships-additional-properties/. Daher lassen wir dies weg.
-4. Schema Validation: Mit @SchemaValidation bei der Webservice-Endpoint-Klasse werden lediglich Standard-Fehlermeldungen ausgegeben, nicht aber benutzerdefinierte. Das ist ok bei einem Prototyp. Störender ist, dass XJC keine Annotations für die XSD-Restrictions hinzufügt (also, dass z.B. ein String nicht leer oder länger als 40 Zeichen sein darf). Es gibt teilweise Plugins, aber die sind seit mehreren Jahren nicht mehr aktualisiert => man müsste entweder ein eigenes Plugin schreiben oder aber die Annotations in den generierten Java-Klassen von Hand hinzufügen, aber dann wäre die Generierung im Build-Prozess natürlich nicht mehr opportun.
+1. **Session-Handling, Benutzerverwaltung, usw.**: In der Realität müssen sich Melde pflichtige nicht anmelden (und damit zunächst registrieren), sondern können eine Meldung auch ohne Anmeldung starten. Unter Verwendung von Camunda Webapps mit User Tasks muss aber ein Benutzer angemeldet sein, damit er den Prozess starten kann und damit ihm Tasks zugewiesen werden können. Wir ignorieren dies und stattdessen ist der Meldepflichtige stets der Benutzer "a", was natürlich dann Probleme gibt, wenn gleichzeitig mehrere Prozessinstanzen laufen, denn dann werden diesem mehrere/verschiedene Aufgaben zugewiesen. Da Name, Vorname, AHV-Nummer, usw. pro Prozessinstanz unterschiedlich ist, sollte es aber dennoch möglich sein, das im Griff zu haben (siehe auch nächster Punkt).
+2. **Page Flow vs. BPMN Flow**: In der Realität würde der Meldepflichtige ein Formular nach dem anderen ausfüllen INNERHALB von einem einzigen User Task (oder einem Subprocess), denn verteilt über mehrere User Tasks würde ja bedeuten, dass jedes ausgefüllte Formular einen Eintrag in der Tasklist verursacht und der Benutzer dadurch überhaupt eine Tasklist braucht, was in der Realität nicht zwingend der Fall ist. Auch sollte man in der Realität natürlich im Browser zurück springen können zu einem vorherigen Formular. In der Realität könnte dies z.B. über einen JSF-PageFlow innerhalb des User Tasks gelöst werden. StephenOTT hat [hier](https://forum.camunda.org/t/chaining-user-tasks-to-create-an-interactive-flow-sort-of-a-wizard-style/613/9?u=scepbjoern) gut dargelegt, dass wenn es darum geht, Page Flows (Wizards) abzubilden, ein BPMN-Flow (wie hier umgesetzt) keine geeignete Form ist (allenfalls für das Dokumentieren, aber nicht ausführbar), sondern dann würde man eher eine Lösung wie den form.io-FormBuilder im wizard-Modus nutzen.
+3. Beim Umsystem **Personenregister** wird die municipalityId und municipalityName vermutlich deshalb mitgeliefert, weil eine Person in mehreren Gemeinden registriert sein kann (Hauptwohnsitz und Wochenaufenthalter). Das heisst, moveAllowed müsste eigentlich bei der Beziehungstabelle sein zwischen Municipality und Resident. Dies mit JPA umzusetzen, ist gar nicht so einfach, u.a. braucht es dann eine eigene Entität für diese Beziehungstabelle mit einem Pseudo-Primärschlüssel: https://www.thoughts-on-java.org/many-relationships-additional-properties/. Daher lassen wir dies weg.
+4. **Schema Validation**: Mit @SchemaValidation bei der Webservice-Endpoint-Klasse werden lediglich Standard-Fehlermeldungen ausgegeben, nicht aber benutzerdefinierte. Das ist ok bei einem Prototyp. Störender ist, dass XJC keine Annotations für die XSD-Restrictions hinzufügt (also, dass z.B. ein String nicht leer oder länger als 40 Zeichen sein darf). Es gibt teilweise Plugins, aber die sind seit mehreren Jahren nicht mehr aktualisiert => man müsste entweder ein eigenes Plugin schreiben oder aber die Annotations in den generierten Java-Klassen von Hand hinzufügen, aber dann wäre die Generierung im Build-Prozess natürlich nicht mehr opportun.
 
 ## TODOs
 1. DokumenteHochladenForm: Bei mitumziehenden Personen muss nur die Hauptperson aktuell Dokumente hochladen
@@ -242,7 +240,6 @@ Die **Farben** bedeuten dabei:
 4. Aufruf des EKS-Kommunikationsdienstes
 5. Aktivitäten im Zusammenhang mit Grundversicherung prüfen
 6. "Angaben für Zusatzdienste erfassen" implementieren
-7. "Wohnverhältnis erfassen" implementieren
 
 ## Mitwirkende
 1. Björn Scheppler: Hauptarbeit

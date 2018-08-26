@@ -138,7 +138,12 @@ Vorbedingungen: Personenregister, GWR und Umzugsplattform müssen auf localhost 
                            "arrivalDate": {"value": "2017-01-02T00:00:00.000+0100", "type": "Date"},
                            "apartmentIdMoveIn": {"value":"393123456780","type":"String"},
                            "phoneNumber": {"value": "0980987766", "type": "String"},
-                           "emailAddress": {"value": "scep@zhaw.ch", "type": "String"}
+                           "emailAddress": {"value": "scep@zhaw.ch", "type": "String"},
+                           "housingSituationType": {"value": "2", "type": "String"},
+                           "nameHousingSituation": {"value": "BearRent", "type": "String"},
+                           "streetHousingSituation": {"value": "Am Bäreneck", "type": "String"},
+                           "swissZipCodeHousingSituation": {"value": "3006", "type": "String"},
+                           "townHousingSituation": {"value": "Bern", "type": "String"}
              }
 }</con:request><con:originalUri>http://localhost/rest/process-definition/key/RelocationReportingProcess/start</con:originalUri><con:credentials><con:username xsi:nil="true"/><con:password xsi:nil="true"/><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request></con:method><con:method name="AfterPersonIdentifizieren" id="1ca86041-7534-4677-91c5-626d2630e329" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:star="http://localhost/rest/process-definition/key/RelocationReportingProcess/start">star:Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>500</con:status><con:params/><con:element xmlns:star="http://localhost/rest/process-definition/key/RelocationReportingProcess/start">star:Fault</con:element></con:representation><con:request name="Adresse existiert, Person exisitiert nicht" id="6012de8c-719b-481c-a599-8b3acdcff334" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8081</con:endpoint><con:request>{
 	"businessKey": "",

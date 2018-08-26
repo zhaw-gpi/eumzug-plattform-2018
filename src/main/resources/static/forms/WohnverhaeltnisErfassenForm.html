@@ -1,0 +1,111 @@
+<!--
+Formular zum UserTask "Wohnverhältnis erfassen"
+-->
+<form role="form" name="camundaForm">
+    <div class="alert alert-info">      
+        <p>Erfassen Sie Ihr Verhältnis zum neuen Wohnobjekt. Falls Sie Mieter oder Untermieter sind, benötigen wir auch Angaben zu Ihrem Vermieter.</p>
+    </div>
+    
+    <!-- Typ des Wohnverhältnisses-Auswahl-Box -->
+    <div class="form-group row">
+        <div class="col-xs-6">
+            <label>Wohnverhältnis*</label>
+            <select class="form-control" 
+                    name="housingSituationType" 
+                    cam-variable-type="String" 
+                    cam-variable-name="housingSituationType" 
+                    required>
+                <!-- Die drei zur Verfügung stehenden Optionen, welche als String "1", 2 oder 3 abgespeichert werden
+                     Die Warnung von Netbeans, dass ein erster Empty-Value zur Verfügung gestellt werden soll,
+                     kann ignoriert werden, weil AngularJS eine solche Option automatisch zur Laufzeit einfügt 
+                     Bug: https://app.camunda.com/jira/browse/CAM-4289
+                -->
+                <option/>
+                <option value="1">Eigentümer</option>
+                <option value="2">Mieter</option>
+                <option value="3">Untermieter</option>
+            </select>
+        </div>
+    </div>
+    
+    <!-- Vermieter-Angaben-Panel (nur falls nicht Eigentümer) -->
+    <div class="panel panel-default" ng-show="housingSituationType === '2' || housingSituationType === '3'">
+        <div class="panel-heading">
+            <b>Angaben zum Vermieter</b>
+        </div>
+        <div class="panel-body">
+            
+            <!-- Vorname Nachname oder Firmenname -->
+            <div class="form-group row">
+                <div class="col-xs-12">
+                    <label>Vorname Nachname oder Firmenname*</label>
+                    <input type="text" 
+                           name="nameHousingSituation" 
+                           class="form-control" 
+                           cam-variable-name="nameHousingSituation" 
+                           cam-variable-type="String" 
+                           placeholder="Immobilienfirma Muster"
+                           ng-required="housingSituationType === '2' || housingSituationType === '3'"
+                           maxlength="100">
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <div class="col-xs-8">
+                    <label>Strasse*</label>
+                    <input type="text" 
+                           name="streetHousingSituation" 
+                           class="form-control" 
+                           cam-variable-name="streetHousingSituation" 
+                           cam-variable-type="String" 
+                           placeholder="Fantasiestrasse"
+                           ng-required="housingSituationType === '2' || housingSituationType === '3'"
+                           maxlength="60">
+                </div>
+
+                <div class="col-xs-4">
+                    <label>Hausnummer</label>
+                    <input type="text" 
+                           name="houseNumberHousingSituation" 
+                           class="form-control" 
+                           cam-variable-name="houseNumberHousingSituation" 
+                           cam-variable-type="String"
+                           placeholder="1"
+                           maxlength="12">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-xs-5">
+                    <label>PLZ*</label>
+                    <input type="number" 
+                           name="swissZipCodeHousingSituation" 
+                           class="form-control" 
+                           cam-variable-name="swissZipCodeHousingSituation" 
+                           cam-variable-type="Integer" 
+                           placeholder="3000"
+                           ng-required="housingSituationType === '2' || housingSituationType === '3'"
+                           min="0" 
+                           max="9999">
+                    <!-- Die Meldung mit dem PLZ-Bereich soll nur angezeigt werden, wenn der Benutzer schon etwas eingegeben hat
+                         Alternative $error.max oder $error.min nutzen -->
+                    <p class="help-block" ng-show="camundaForm.swissZipCodeHousingSituation.$invalid && camundaForm.swissZipCodeHousingSituation.$dirty">
+                        Geben Sie eine PLZ im Bereich von 0 bis 9999 ein.
+                    </p>
+                </div>
+
+                <div class="col-xs-7">
+                    <label>Ort*</label>
+                    <input type="text" 
+                           name="townHousingSituation" 
+                           class="form-control" 
+                           cam-variable-name="townHousingSituation" 
+                           cam-variable-type="String"
+                           placeholder="Bern"
+                           ng-required="housingSituationType === '2' || housingSituationType === '3'"
+                           maxlength="40">
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

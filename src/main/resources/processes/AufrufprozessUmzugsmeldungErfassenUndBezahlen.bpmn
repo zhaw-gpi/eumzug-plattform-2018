@@ -136,41 +136,27 @@ Für jedes Objekt wird die relevante Gebühr (Zuzug, Wegzug oder Umzug) ausgeles
         <bpmn:outgoing>SequenceFlow_12mko98</bpmn:outgoing>
       </bpmn:serviceTask>
       <bpmn:userTask id="AlleAngabenPruefen" name="Alle Angaben prüfen" camunda:formKey="embedded:app:forms/AlleAngabenPruefenForm.html" camunda:assignee="${meldePflichtiger}">
-        <bpmn:documentation>Alle Angaben ab dem UserTask neue Adresse und Umzugsdaten erfassen werden in einer HTML Form ausgelsesen und dargestellt. Sollte es in der Auflistung Fehler der eigenen Angaben haben, kann man diese korrigieren. Danach wird man wieder zum UserTask verwiesen. 
+        <bpmn:documentation>Alle vom Meldepflichtigen gemachten Angaben werden dargestellt. Die Angaben werden in folgenden Panels gruppiert:
+
+- Gebühren (sofern das Total grösser als 0 Franken beträgt). Ausgabe als Tabelle mit Gebührentyp und Gebührenhöhe
+- Personalien
+- Mitumziehende Personen (nur Vornamen)
+- Dokumente (wenn grundsätzlich überhaupt Dokumente hätten hochgeladen werden können):
+  - Ausgabe als Tabelle
+  - Spalte 1 enthält Name des Dokuments (z.B. Heiratsurkunde)
+  - Spalte 2 enthält entweder "Kein Dokument hochgeladen" oder der Dateiname der hochgeladenen Datei mit einem Download-Link
+- Kontaktangaben
+- Wegzugsinformationen
+- Zuzugsinformationen
+- Wohnverhältnis-Informationen
 
 
-Folgende Daten werden in der HTML Form ausgelsen und dargestellt:
+Zuunterst zwei Checkboxes:
 
-Angaben Zuzugsort
-Zuzugsadresse Hausnummer
-Zuzugsadresse PLZ
-  eCH-0010:swissZipCodeMoveIn
-Zuzugsadresse Ort
-  eCH-0010:townMoveIn
-Zuzugsadresse Politische Gemeinde
-  eCH-0007:municipalityIdMoveIn
-Wegzugsdatum
-  eCH-0194:departureDate
-Zuzugsdatum
-  eCH-0194:arrivalDate
+- Checkbox "Alle Angaben sind korrekt" (allDataCorrect), default-mässig angehakt. Ist sie nicht angehakt, soll ein Info-Alert angezeigt werden: "Sie werden zurück zum ersten Formular geführt, womit Sie in jedem Formular Ihre Angaben nochmals korrigieren können. Bestehende Eingaben bleiben erhalten."
 
-Kontaktangaben
-Telefonnummer
-  eCH-0185:phoneNumber
-E-Mailadresse
-  eCH-0185:emailAddress
-
-Zahlungsinformationen
-Karteninhaber
-  cardOwner
-Kreditkartennummer
-  cardNumber
-CCV
-  cardCcv
-Ablaufmonat
-  cardExpirationMonth
-Ablaufjahr
-  cardExpirationYear</bpmn:documentation>
+- Checkbox "Ich akzeptiere, die Gebühr von Fr. {{total}}.- zu bezahlen" (feesAccepted) -&gt; default-mässig angehakt. Ist sie nicht angehakt, soll ein Danger-Alert angezeigt werden: "Sind Sie sicher? Hierdurch werden alle Ihre Angaben aus Gründen der Nachvollziehbarkeit in der Umzugsplattform-Datenbank gespeichert, aber nicht an die Weg- und Zuzugsgemeinden weiter geleitet. Das heisst, Sie müssen in jedem Fall den Umzug persönlich am Schalter der Weg- und Zuzugsgemeinde melden."
+</bpmn:documentation>
         <bpmn:incoming>SequenceFlow_12mko98</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_15e28af</bpmn:outgoing>
       </bpmn:userTask>
@@ -289,8 +275,7 @@ Nur falls Gebühren existieren: "Die Zahlung wurde erfolgreich durchgeführt."
 
 Immer: "Sobald Sie auf Complete drücken, werden wir Ihre Angaben an die zuständigen Einwohnergemeinde(n) weiterleiten und Ihnen zudem eine Bestätigung zukommen lassen.
 
-Je nach Antwortzeiten der Gemeinden werden Sie dann in den nächsten Stunden oder Tagen von uns über die Entscheidungen der Gemeinde(n) benachrichtigt."
-</bpmn:documentation>
+Je nach Antwortzeiten der Gemeinden werden Sie dann in den nächsten Stunden oder Tagen von uns über die Entscheidungen der Gemeinde(n) benachrichtigt."</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_1y8ukhh</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0mh6vb8</bpmn:outgoing>
     </bpmn:userTask>
@@ -323,8 +308,7 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
 
 In einem Service Task wird nun eine Kartenbelastungsanfrage an Stripe mit dem Token gesendet. Synchron kommt nun eine Antwort von Stripe zurück, entweder eine erfolgreiche Belastung der Kreditkarte oder ein Error. Im ersten Fall endet damit der Bezahlvorgang, im anderen Fall muss er es erneut versuchen. Falls er dies nicht innert 24 h erledigt, wird der Zahlungsvorgang als fehlgeschlagen gekennzeichnet, ein Fehler, der über das angeheftete Fehlerzwischenereignis abgefangen wird über eine Persistierung der wichtigsten Daten und dem Abbruch des ganzen Meldeprozesses. 
 
-Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger) und die Gebührentabelle (feeMapSerialized) übergeben und umgekehrt keine Variablen zurück genommen. Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.
-</bpmn:documentation>
+Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger) und die Gebührentabelle (feeMapSerialized) übergeben und umgekehrt keine Variablen zurück genommen. Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:in businessKey="#{execution.processBusinessKey}" />
         <camunda:in source="meldePflichtiger" target="meldePflichtiger" />
@@ -347,8 +331,7 @@ Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtige
     <bpmn:boundaryEvent id="DreiMinutenVerstrichen" name="3 Minuten verstrichen" attachedToRef="AbschlussBestaetigungAnzeigen">
       <bpmn:documentation>Es soll vermieden werden, dass Prozessinstanzen ewig hängen bleiben, weil ein Meldepflichtiger das letzte Bestätigungsformular nie absendet (Complete), sondern z.B. den Browser vorher schliesst. Daher ein Timeout von 3 Minuten (PT3M). So kurz, weil er ja entweder unmittelbar nach dem Zahlungsvorgang diesen Bildschirm anschaut oder es ansonsten bleiben lässt und ohnehin asynchron benachrichtigt wird.
 
-Der Prozess soll allerdings anschliessend ganz normal weiter gehen, wie wenn er auf Complete gedrückt hätte.
-</bpmn:documentation>
+Der Prozess soll allerdings anschliessend ganz normal weiter gehen, wie wenn er auf Complete gedrückt hätte.</bpmn:documentation>
       <bpmn:outgoing>SequenceFlow_01v74w3</bpmn:outgoing>
       <bpmn:timerEventDefinition>
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT3M</bpmn:timeDuration>

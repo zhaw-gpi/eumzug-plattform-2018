@@ -216,6 +216,45 @@
             </table>
         </div>
     </div>
+        
+    <!-- WOHNVERHÄLTNIS-INFORMATIONEN-Panel -->
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Wohnverhältnis-Informationen</b></div>
+        <div class="panel-body">
+            <table class="table" style="margin-bottom: 0">
+                <tbody>
+                    <tr>
+                        <th class="col-md-6" scope="row">Typ des Wohnverhältnisses</th>
+                        <td class="col-md-6">
+                            <span ng-show="housingSituationType === '1'">Eigentümer</span>
+                            <span ng-show="housingSituationType === '2'">Mieter</span>
+                            <span ng-show="housingSituationType === '3'">Untermieter</span>
+                        </td>
+                    </tr>
+                    <tr ng-show="housingSituationType !== '1'">
+                        <th scope="row">Name des Vermieters</th>
+                        <td>{{nameHousingSituation}}</td>
+                    </tr>
+                    <tr ng-show="housingSituationType !== '1'">
+                        <th class="col-md-6" scope="row">Strasse des Vermieters</th>
+                        <td class="col-md-6">{{streetHousingSituation}}</td>
+                    </tr>
+                    <tr ng-show="housingSituationType !== '1' && houseNumberHousingSituation">
+                        <th scope="row">Hausnummer des Vermieters</th>
+                        <td>{{houseNumberHousingSituation}}</td>
+                    </tr>
+                    <tr ng-show="housingSituationType !== '1'">
+                        <th scope="row">PLZ des Vermieters</th>
+                        <td>{{swissZipCodeHousingSituation}}</td>
+                    </tr>
+                    <tr ng-show="housingSituationType !== '1'">
+                        <th scope="row">Ort des Vermieters</th>
+                        <td>{{townHousingSituation}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <!-- CHECKBOXES und WARNHINWEISE -->
     <!-- Checkbox und zugehörige Warnung, dass alle Angaben in Ordnung sind -->
@@ -293,6 +332,13 @@
             
             variableManager.fetchVariable('documents');
             variableManager.fetchVariable('documentsExist');
+            
+            variableManager.fetchVariable('housingSituationType');
+            variableManager.fetchVariable('nameHousingSituation');
+            variableManager.fetchVariable('streetHousingSituation');
+            variableManager.fetchVariable('houseNumberHousingSituation');
+            variableManager.fetchVariable('swissZipCodeHousingSituation');
+            variableManager.fetchVariable('townHousingSituation');
         });
 
         // Sobald alle Variablen client-seitig zur Verfügung stehen, wird zum einen
@@ -328,6 +374,13 @@
             $scope.apartmentIdMoveIn = variableManager.variableValue('apartmentIdMoveIn');
             $scope.municipalityNameMoveIn = variableManager.variableValue('municipalityNameMoveIn');
             $scope.arrivalDate = variableManager.variableValue('arrivalDate');
+            
+            $scope.housingSituationType = variableManager.variableValue('housingSituationType');
+            $scope.nameHousingSituation = variableManager.variableValue('nameHousingSituation');
+            $scope.streetHousingSituation = variableManager.variableValue('streetHousingSituation');
+            $scope.houseNumberHousingSituation = variableManager.variableValue('houseNumberHousingSituation');
+            $scope.swissZipCodeHousingSituation = variableManager.variableValue('swissZipCodeHousingSituation');
+            $scope.townHousingSituation = variableManager.variableValue('townHousingSituation');
 
             // GEBÜHREN AUSLESEN
             // Totalgebühr initial auf 0 und feesInfoText auf "" setzen

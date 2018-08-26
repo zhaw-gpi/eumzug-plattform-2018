@@ -78,21 +78,21 @@ Diese Antwort wird in personHealthInsuranceList eingepflegt, indem person.health
       <bpmn:incoming>SequenceFlow_0gaq5kd</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1yo21lf</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="WohnverhaeltnisErfassen" name="Wohnverhältnis erfassen" camunda:assignee="${meldePflichtiger}">
-      <bpmn:documentation>Wohnverhältnis-Typ
+    <bpmn:userTask id="WohnverhaeltnisErfassen" name="Wohnverhältnis erfassen" camunda:formKey="embedded:app:forms/WohnverhaeltnisErfassenForm.html" camunda:assignee="${meldePflichtiger}">
+      <bpmn:documentation>Wohnverhältnis
   eCH-0185:housingSituationType
  String
   select (1=Eigentümer, 2=Mieter, 3=Untermieter, Pflicht)
 
-Folgende Felder sollen nur angezeigt werden, wenn housingSituationType={2,3}:
+Panel "Angaben zum Vermieter" mit folgenden Feldern soll nur angezeigt werden, wenn housingSituationType={2,3}:
 
-Name des Vermieters (bei housingSituationType=2)/Mieters (housingSituationType=3)
-  eCH-0185:name
+Vorname Nachname oder Firmenname  (Achtung bei diesen und weiteren Attributen, die es sowohl bei Wegzug als auch Zuzug gibt und beim Wohnverhältnis: Es wurde an die eCH-Bezeichnung jeweils noch HousingSituation angehängt)
+  eCH-0185:nameHousingSituation
   String
   input text (max. 100 Zeichen, Pflicht)
-Adresse des Vermieters (bei housingSituationType=2)/Mieters (housingSituationType=3) bestehend aus folgenden Feldern:
+
 Strasse
-  eCH-0010:streetHousingSituation (Achtung bei diesen und weiteren Attributen, die es sowohl bei Wegzug als auch Zuzug gibt und beim Wohnverhältnis: Es wurde an die eCH-Bezeichnung jeweils noch HousingSituation angehängt)
+  eCH-0010:streetHousingSituation
   String
   input text (max. 60 Zeichen, Pflicht)
 Hausnummer (optional)
@@ -106,7 +106,8 @@ PLZ
 Ort
   eCH-0010:townHousingSituation
   String
-  input text (max. 40 Zeichen, Pflicht)</bpmn:documentation>
+  input text (max. 40 Zeichen, Pflicht)
+</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_04fd0dv</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0gaq5kd</bpmn:outgoing>
     </bpmn:userTask>
