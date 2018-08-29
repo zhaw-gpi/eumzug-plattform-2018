@@ -10,8 +10,6 @@ import java.util.Optional;
 import javax.inject.Named;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.camunda.bpm.engine.variable.Variables;
-import org.camunda.bpm.engine.variable.value.ObjectValue;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -52,11 +50,11 @@ public class GetDocumentsDelegate implements JavaDelegate {
         // Variable für MunicipalityDocumentRelationEntity-Objekte initialisieren
         List<MunicipalityDocumentRelationEntity> municipalityDocuments;
 
-        // Die Variable ObjectValue wird mit null initialisiert
-        ObjectValue documents = null;
-
         // Die Variable documentsExist wird mit false initialisiert
         Boolean documentsExist = false;
+        
+        // Ein Dokumenten-Liste-Objekt instanzieren
+        DocumentList documentList = new DocumentList();
 
         // Prüfen, ob auch wirklich ein Result zurückgegeben wurde
         if (moveInMunicipalityResult.isPresent()) {
@@ -65,25 +63,18 @@ public class GetDocumentsDelegate implements JavaDelegate {
 
             // Prüfen ob die municipalityDocuments Liste nicht null und nicht leer ist. 
             // Nur falls mind. 1 Dokument in der Liste vorhanden ist, wird die Variable documentsExist 
-            // auf true gesetzt und die Liste mittels Camunda Spin ins JSON-Format serialisiert
-            if (municipalityDocuments != null && municipalityDocuments.size() > 0) {
-                DocumentList documentList = new DocumentList();
-                
+            // auf true gesetzt und die documentList gefüllt
+            if (municipalityDocuments != null && municipalityDocuments.size() > 0) {                
                 for (MunicipalityDocumentRelationEntity municipalityDocument : municipalityDocuments) {
                     MunicipalityDocumentUploadedFile municipalityDocumentUploadedFile = new MunicipalityDocumentUploadedFile();
                     municipalityDocumentUploadedFile.setMunicipalityDocumentRelationEntity(municipalityDocument);
                     documentList.addMunicipalityDocumentUploadedFile(municipalityDocumentUploadedFile);
                 }
-                // Diese Liste mittels Camunda Spin ins JSON-Format serialisieren
-                documents = Variables.objectValue(documentList)
-                        .serializationDataFormat(Variables.SerializationDataFormats.JSON)
-                        .create();
-                documentsExist = true;
             }
         } // Falls nicht, dann muss nichts gemacht werden, weil die entsprechenden Variablen schon gesetzt sind
 
-        // Die serialisierte Dokumentenliste einer Prozessvariable zuweisen
-        execution.setVariable("documents", documents);
+        // Die Dokumentenliste einer Prozessvariable zuweisen
+        execution.setVariable("documents", documentList);
         // Die Variable documentsExists einer Prozessvariable zuweisen
         execution.setVariable("documentsExist", documentsExist);
     }

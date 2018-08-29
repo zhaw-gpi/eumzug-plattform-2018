@@ -20,9 +20,9 @@
     <bpmn:startEvent id="UmzugsmeldungGestartet" name="Umzugsmeldung gestartet">
       <bpmn:documentation>Dieses Prozesstartereignis wird aufgerufen vom Prozess 'UmzugsmeldungErfassenUndBezahlen' und ist nicht gedacht, um unabhängig davon (z.B. aus der Tasklist) aufgerufen zu werden.
 
-Ein End-Listener ruft die JavaDelegate-Klasse 'GetMunicipalityListDelegate' auf mit folgender Aufgabe: Serialisierte Prozessvariable municipalityListSerialized mit allen Gemeinden in der Umzugsplattform-Datenbank erstellen
+Ein End-Listener ruft die JavaDelegate-Klasse 'GetMunicipalityListDelegate' auf mit folgender Aufgabe: Prozessvariable municipalityList mit allen Gemeinden in der Umzugsplattform-Datenbank erstellen
 
-Über ein JPA-Repository sollen alle Municipality-Objekte aus der Datenbank in ein List-Objekt eingelesen werden. Diese Objekte werden mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable municipalityListSerialized zugewiesen.</bpmn:documentation>
+Über ein JPA-Repository sollen alle Municipality-Objekte aus der Datenbank in ein List-Objekt eingelesen werden. Diese Objekte werden mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable municipalityList zugewiesen.</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:executionListener delegateExpression="#{getMunicipalityListAdapter}" event="end" />
       </bpmn:extensionElements>
@@ -56,7 +56,7 @@ Geburtsdatum
 Wegzugsadresse Politische Gemeinde
   eCH-0007:municipalityIdMoveOut
   Integer
-  select (basierend auf municipalityListSerialized (siehe unten), wobei municipalityName angezeigt wird)</bpmn:documentation>
+  select (basierend auf municipalityList (siehe unten), wobei municipalityName angezeigt wird)</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:formData />
       </bpmn:extensionElements>

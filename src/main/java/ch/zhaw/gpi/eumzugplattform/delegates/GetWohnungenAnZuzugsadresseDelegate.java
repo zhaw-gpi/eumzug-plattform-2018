@@ -8,8 +8,6 @@ import java.util.List;
 import javax.inject.Named;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.camunda.bpm.engine.variable.Variables;
-import org.camunda.bpm.engine.variable.value.ObjectValue;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -26,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 
  * Mit der AdresseType-Klasse kann nun der GwrWebServiceClient die Methode wohnungenInGebaeudeOperation ausführen, welche als Antwort ein Objekt der Klasse WohnungenAntwortType zurückgibt.
  * 
- * Womit wir bei der zweiten Aufgabe dieser Klasse sind, nämlich dem Interpretieren der WohnungenAntwortType: Die darin enthaltene Methode getWohnungenAntwort() liefert eine Liste von verfügbaren Wohnungen zurück. Diese Liste wird mit Camunda Spin serialisiert und der Prozessvariable wohnungenListSerialized übergeben.
+ * Womit wir bei der zweiten Aufgabe dieser Klasse sind, nämlich dem Interpretieren der WohnungenAntwortType: Die darin enthaltene Methode getWohnungenAntwort() liefert eine Liste von verfügbaren Wohnungen zurück. Diese Liste wird mit Camunda Spin serialisiert und der Prozessvariable wohnungenList übergeben.
  * 
  */
 @Named("getWohnungenAnZuzugsadresseAdapter")
@@ -70,14 +68,8 @@ public class GetWohnungenAnZuzugsadresseDelegate implements JavaDelegate {
             wohnungenGefunden = true;
         }
 
-        // Diese Liste mittels Camunda Spin ins JSON-Format serialisieren
-        ObjectValue wohnungenListSerialized = Variables
-                .objectValue(wohnungenList)
-                .serializationDataFormat(Variables.SerializationDataFormats.JSON)
-                .create();
-
-        // Die serialisierte Wohnungsliste einer Prozessvariable zuweisen
-        execution.setVariable("wohnungenListSerialized", wohnungenListSerialized);
+        // Die  Wohnungsliste einer Prozessvariable zuweisen
+        execution.setVariable("wohnungenList", wohnungenList);
         
         execution.setVariable("wohnungenGefunden", wohnungenGefunden);
     }

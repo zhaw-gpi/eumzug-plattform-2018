@@ -17,21 +17,21 @@ Formular zum UserTask "Abschlussbestätigung anzeigen"
     var variableManager = camForm.variableManager;
 
     // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
-    // die Prozessvariablen feeMapSerialized von der Process Engine (Server) 
+    // die Prozessvariablen feeMap von der Process Engine (Server) 
     // in das variableManager-Objekt (Client)
     camForm.on('form-loaded', function() {
-        variableManager.fetchVariable('feeMapSerialized');
+        variableManager.fetchVariable('feeMap');
     });
 
     // Sobald alle Variablen client-seitig zur Verfügung stehen, wird zum einen
-    // die feeMapSerialized einer Variable im AngularJS-Scope-Objekt übergeben
+    // die feeMap einer Variable im AngularJS-Scope-Objekt übergeben
     // Zudem wird das Total aller Gebühren berechnet
     camForm.on('variables-fetched', function() {
-        $scope.feeMapSerialized = variableManager.variableValue('feeMapSerialized');
+        $scope.feeMap = variableManager.variableValue('feeMap');
 
         $scope.feesExist = false;
         
-        if($scope.feeMapSerialized !== null){
+        if($scope.feeMap !== null){
             $scope.feesExist = true;
         }
     });

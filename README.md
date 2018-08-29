@@ -2,7 +2,7 @@
 
 > Autoren der Dokumentation: Björn Scheppler
 
-> Dokumentation letztmals aktualisiert: 25.8.2018
+> Dokumentation letztmals aktualisiert: 29.8.2018
 
 > TOC erstellt mit https://ecotrust-canada.github.io/markdown-toc/
 
@@ -44,6 +44,7 @@ Dieses Projekt ist die Musterlösung für eine Aufgabenstellung, welche den Stud
     3. Falls von Stripe eine Ablehnung kommt, dann muss der Meldepflichtige benachrichtigt werden und ihm erneut ein User Task für einen neuen Zahlungsversuch angezeigt werden.
     4. (Falls von den Einwohnergemeinden eine Ablehnung kommt, dann muss per Stripe eine Rückerstattung veranlasst werden)
 2. **Persistierung fortgeschritten und WebApp für Mitarbeitende**: Wir könnten aber natürlich das auch etwas ausweiten, indem eine separate Applikation diese Persistierung vornimmt mit separater Datenbank (nicht Process Engine-DB) und dafür noch einem kleinen WebGUI, wo Angestellte der Verwaltung jederzeit für einen Meldepflichtigen seinen aktuellen Status anschauen können. Anderseits: Warum hierzu nicht einfach das Camunda Cockpit nutzen mit dem Filter nach einem bestimmten BusinessKey, welcher dem Benutzer auf dem "Abschlussbestätigung anzeigen"-Dialog angezeigt wird, damit er bei Telefonaten die richtige Id nennt?
+3. **Grundversicherung prüfen extended**: Statt einer Multi-Instance-Activity soll ein einziger User Task "Grundversicherung prüfen" erstellt werden, welcher alle Personen und Versicherungs-Nummer-Formularfelder als Tabelle darstellt. Jedes Mal, wenn der Benutzer eine Versicherungsnummer erfasst und das Formularfeld verlässt, wird asynchron aus AngularJS heraus der REST-Service abgefragt (https://spring.io/guides/gs/consuming-rest-angularjs/) und das Resultat als Icon (Grüner Haken vs. Rotes Ausrufezeichen) angezeigt bei der jeweiligen Tabellenzeile als auch im Fall von Ausrufezeichen mit den Details als Text.
 
 ## Architektur der Umzugsplattform inklusive Umsystemen
 Die Umzugsplattform benötigt für das Funktionieren verschiedene Komponenten, welche teilweise in der Umzugsplattform selbst (= das vorliegende Maven-Projekt) enthalten sind und teilweise extern.
@@ -104,7 +105,7 @@ Die **Farben** bedeuten dabei:
 ### VeKa-Center-Auskunftsdienst
 1. Es gelten die Punkte 1 und 2 des vorherigen Kapitels.
 2. Im Unterschied dazu erfolgt hier die Kommunikation mit der Aussenwelt über REST.
-3. Die detaillierte Dokumentation ist zu finden in folgender **Github-Repository**: ??????????????
+3. Die detaillierte Dokumentation ist zu finden in folgender **Github-Repository**: https://github.com/zhaw-gpi/vekacenter
 
 ### Stripe-Online-Bezahldienst
 1. Mit **Stripe** existiert ein Bezahldienst, der für Entwickler **zum Testen gratis** genutzt werden kann.
@@ -212,16 +213,21 @@ Die **Farben** bedeuten dabei:
             1. Bahnhofstrasse 1
             2. Dorfstrasse 13a
     3. **E-Mail-Adresse bei Kontaktangaben**: Wenn man wirklich eine Mail erhalten möchte und mail.debug nicht auf true gesetzt ist, dann muss hier die eigene Mail-Adresse angegeben werden.
-    4. **Zahlungsdetails**:
+    4. **Grundversicherung prüfen**: Hinterlegt sind folgende vier Karten:
+        1. 36026946698526862: Gehört zu Hans Meier, ist aber 2016 abgelaufen.
+        2. 743794085316616163: Gehört zu Hans Meier und ist gültig
+        3. 78847589268403592: Gehört zu Anna Meier und ist gültig
+        4. 596947027238113990: Gehört zu Annaliese Meier und ist gültig
+    5. **Zahlungsdetails**:
         1. Für das Testen von Stripe Checkout kann man eine beliebige CVC verwenden und je nach gewünschtem Testergebnis ein Datum in der Zukunft oder Vergangenheit.
         2. Je nachdem, welches Testergebnis man wünscht, gibt es die verschiedensten Kartnnummern, welche [hier](https://stripe.com/docs/testing#cards) aufgelistet sind. Die wohl am häufigsten benötigten sind:
             1. 4000007560000009: Gültige in der Schweiz ausgestellte Visa-Karte
             2. 5555555555554444: Gültige amerikanische Mastercard-Karte
             3. 4100000000000019: Aus Sicht des Kartenherausgebers gültige Karte, die aber von Stripe aufgrund Betrugsverdacht blockierte Karte
             4. 4000000000000002: Vom Kartenherausgeber abgelehnte Karte ohne Angabe von Gründen
-    5. **Zahlungserfolg prüfen**: Um zu sehen, ob eine Zahlung auch "wirklich" durchgeführt wurde, bei Stripe anmelden und die [Events-Seite](https://dashboard.stripe.com/test/events) aufrufen.
-    6. **Persistierung prüfen**: Um zu sehen, ob ein Status im Transaktionslog der Umzugsdatenbank persistiert wurde, einen SELECT auf die Tabelle TRANSACTIONLOG durchführen wie beschrieben in ???????
-    7. **Prozessverlauf überwachen/nachvollziehen**: Um zu sehen, wo der Prozess momentan steckt (Runtime) oder wo abgeschlossene Instanzen durchliefen (History) kann die Cockpit-Webapplikation genutzt werden unter http://localhost:8081.
+    6. **Zahlungserfolg prüfen**: Um zu sehen, ob eine Zahlung auch "wirklich" durchgeführt wurde, bei Stripe anmelden und die [Events-Seite](https://dashboard.stripe.com/test/events) aufrufen.
+    7. **Persistierung prüfen**: Um zu sehen, ob ein Status im Transaktionslog der Umzugsdatenbank persistiert wurde, einen SELECT auf die Tabelle TRANSACTIONLOG durchführen wie beschrieben in ???????
+    8. **Prozessverlauf überwachen/nachvollziehen**: Um zu sehen, wo der Prozess momentan steckt (Runtime) oder wo abgeschlossene Instanzen durchliefen (History) kann die Cockpit-Webapplikation genutzt werden unter http://localhost:8081.
 
 ### Semi-Manuelles Testen
 
@@ -238,8 +244,7 @@ Die **Farben** bedeuten dabei:
 2. Daten aufräumen: Auf keinen Fall sollen Prozessvariablen wie z.B MunicipalityList persistiert werden, welche Stammdaten enthalten oder nur Hilfsvariablen => aufräumen am Schluss (eigener Service Task) => allenfalls müssen aber sogar noch alte Aktivitäten gelöscht werden, weil ja schon zuvor diese Variablen persistiert wurden
 3. Aufruf des kantonalen Benachrichtigungsdienstes
 4. Aufruf des EKS-Kommunikationsdienstes
-5. Aktivitäten im Zusammenhang mit Grundversicherung prüfen
-6. "Angaben für Zusatzdienste erfassen" implementieren
+5. "Angaben für Zusatzdienste erfassen" implementieren
 
 ## Mitwirkende
 1. Björn Scheppler: Hauptarbeit

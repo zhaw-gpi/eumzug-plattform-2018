@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_09aeiya" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_09aeiya" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
   <bpmn:collaboration id="Collaboration_1dwe8bx">
     <bpmn:participant id="ZahlungDurchfuehrenParticipant" name="Zahlung durchführen" processRef="ZahlungDurchfuehren" />
     <bpmn:participant id="StripeOnlineBezahldienstParticipant" name="Stripe Online-Bezahldienst" />
@@ -8,8 +8,7 @@
 - Kreditkartennummer
 - Ablaufdatum
 - E-Mail-Adresse
-- CVC-Code
-</bpmn:documentation>
+- CVC-Code</bpmn:documentation>
     </bpmn:messageFlow>
     <bpmn:messageFlow id="Token" name="Token" sourceRef="StripeOnlineBezahldienstParticipant" targetRef="ErfassenDerZahlungsdetails">
       <bpmn:documentation>Wird über die Stripe Checkout-Bibliothek empfangen und an das Embedded Form zurück gegeben. Angaben sind:
@@ -52,13 +51,12 @@ Grosse Schaltfläche, welche beim Klick darauf das Stripe Checkout-Formular läd
 JAVASCRIPT
 ===========
 - Einbinden der Javascript-Bibliothek von Stripe, welche die ganze client-seitige Checkout-Funktionalität enthält
-- Prozessvariablen laden und AngularJS-Scope-Variablen zuweisen: feeMapSerialized, feesTotal, emailAddress und chargingErrorMessage
-- Für Checkout-Formular einen String zusammensetzen, welcher die Gebührenbeschreibungen aus feeMapSerialized enthält
+- Prozessvariablen laden und AngularJS-Scope-Variablen zuweisen: feeMap, feesTotal, emailAddress und chargingErrorMessage
+- Für Checkout-Formular einen String zusammensetzen, welcher die Gebührenbeschreibungen aus feeMap enthält
 - Stripe-Checkout-Formular konfigurieren (Publishable Key, Bild, Sprache, usw.
 - Callback-Funktion bei erfolgreichem Erhalten eines Tokens, welche die Erfolgreich-Meldung anzeigt, die Zahlungsschaltfläche ausblendet und das Token in einer Scope-Variable speichert
 - EventListener-Funktion, welche auf das Klicken auf die Zahlungsschaltfläche reagiert und dabei das Stripe Checkout-Formular öffnet
-- Funkton, welche vor dem Submit des Formulars den von Stripe erhaltenen Token, respektive dessen Id in einer neuen Prozessvariable stripeToken speichert und damit an die Process Engine übergibt
-</bpmn:documentation>
+- Funkton, welche vor dem Submit des Formulars den von Stripe erhaltenen Token, respektive dessen Id in einer neuen Prozessvariable stripeToken speichert und damit an die Process Engine übergibt</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_158uvnj</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ygtjw5</bpmn:outgoing>
     </bpmn:userTask>
@@ -81,8 +79,7 @@ JAVASCRIPT
 - Der Meldepflichtige hat schon mehrere Versuche mit seiner/n Kreditkarte/n gemacht, ohne dass erfolgreich gewesen wäre und hat nun aufgegeben
 - Die Integration mit Stripe klappt aus einem technischen Grund nicht
 
-Bei den letzten zwei Gründen sollte der Prozess (Umzugsmeldung) eigentlich nicht komplett enden, da der Benutzer hier vermutlich nichts dafür kann. In diesem Fall würde er sich beim Admin melden und der würde die Prozessinstanz wieder an einen anderen Punkt setzen.
-</bpmn:documentation>
+Bei den letzten zwei Gründen sollte der Prozess (Umzugsmeldung) eigentlich nicht komplett enden, da der Benutzer hier vermutlich nichts dafür kann. In diesem Fall würde er sich beim Admin melden und der würde die Prozessinstanz wieder an einen anderen Punkt setzen.</bpmn:documentation>
       <bpmn:outgoing>SequenceFlow_11atuyd</bpmn:outgoing>
       <bpmn:timerEventDefinition>
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT24H</bpmn:timeDuration>
@@ -99,8 +96,7 @@ Bei den letzten zwei Gründen sollte der Prozess (Umzugsmeldung) eigentlich nich
 
 Es wird eine Kartenbelastungsanfrage an den StripeClientService mit dem Token und dem zu bezahlenden Betrag aus den Prozessvariablen übergeben.
 
-Synchron kommt von diesem Service eine Antwort zurück, entweder eine erfolgreiche Belastung der Kreditkarte (Charge) oder ein Error (StripeException). Im ersten Fall passiert in dieser Delegate-Klasse nichts mehr, im anderen Fall wird ein BPMN-Fehler geworfen.
-</bpmn:documentation>
+Synchron kommt von diesem Service eine Antwort zurück, entweder eine erfolgreiche Belastung der Kreditkarte (Charge) oder ein Error (StripeException). Im ersten Fall passiert in dieser Delegate-Klasse nichts mehr, im anderen Fall wird ein BPMN-Fehler geworfen.</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_1ygtjw5</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ucel9t</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -113,104 +109,104 @@ Synchron kommt von diesem Service eine Antwort zurück, entweder eine erfolgreic
   <bpmn:error id="Error_10250lm" name="ErrorKartenbelastungFehlgeschlagen" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1dwe8bx">
-      <bpmndi:BPMNShape id="Participant_1bksfhv_di" bpmnElement="ZahlungDurchfuehrenParticipant">
+      <bpmndi:BPMNShape id="Participant_1bksfhv_di" bpmnElement="ZahlungDurchfuehrenParticipant" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="-2" y="124" width="623" height="259" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="GebuehrenZuBezahlen">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="GebuehrenZuBezahlen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="68" y="259" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="62" y="302" width="48" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_09zi3j6_di" bpmnElement="SequenceFlow_09zi3j6">
+      <bpmndi:BPMNEdge id="SequenceFlow_09zi3j6_di" bpmnElement="SequenceFlow_09zi3j6" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <di:waypoint x="104" y="277" />
         <di:waypoint x="150" y="277" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_0pr5ex6_di" bpmnElement="ErfassenDerZahlungsdetails">
+      <bpmndi:BPMNShape id="UserTask_0pr5ex6_di" bpmnElement="ErfassenDerZahlungsdetails" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="246" y="237" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Participant_035220p_di" bpmnElement="StripeOnlineBezahldienstParticipant">
+      <bpmndi:BPMNShape id="Participant_035220p_di" bpmnElement="StripeOnlineBezahldienstParticipant" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="-2" y="-1" width="625" height="60" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="MessageFlow_04rmci7_di" bpmnElement="Zahlungsdetails">
+      <bpmndi:BPMNEdge id="MessageFlow_04rmci7_di" bpmnElement="Zahlungsdetails" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <di:waypoint x="281" y="237" />
         <di:waypoint x="281" y="59" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="192" y="92" width="77" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="MessageFlow_0e07psk_di" bpmnElement="Token">
+      <bpmndi:BPMNEdge id="MessageFlow_0e07psk_di" bpmnElement="Token" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <di:waypoint x="309" y="59" />
         <di:waypoint x="309" y="237" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="323" y="94" width="29" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1ygtjw5_di" bpmnElement="SequenceFlow_1ygtjw5">
+      <bpmndi:BPMNEdge id="SequenceFlow_1ygtjw5_di" bpmnElement="SequenceFlow_1ygtjw5" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <di:waypoint x="346" y="277" />
         <di:waypoint x="396" y="277" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_1686xgk_di" bpmnElement="BetragBezahlt">
+      <bpmndi:BPMNShape id="EndEvent_1686xgk_di" bpmnElement="BetragBezahlt" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="546" y="259" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="546" y="302" width="37" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1ucel9t_di" bpmnElement="SequenceFlow_1ucel9t">
+      <bpmndi:BPMNEdge id="SequenceFlow_1ucel9t_di" bpmnElement="SequenceFlow_1ucel9t" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <di:waypoint x="496" y="277" />
         <di:waypoint x="546" y="277" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BoundaryEvent_1hz3dlx_di" bpmnElement="KartenbelastungFehlgeschlagen">
+      <bpmndi:BPMNShape id="BoundaryEvent_1hz3dlx_di" bpmnElement="KartenbelastungFehlgeschlagen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="412" y="299" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="439" y="333" width="81" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_01fnu1t_di" bpmnElement="ExclusiveGateway_01fnu1t" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="ExclusiveGateway_01fnu1t_di" bpmnElement="ExclusiveGateway_01fnu1t" isMarkerVisible="true" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="150" y="252" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_158uvnj_di" bpmnElement="SequenceFlow_158uvnj">
+      <bpmndi:BPMNEdge id="SequenceFlow_158uvnj_di" bpmnElement="SequenceFlow_158uvnj" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <di:waypoint x="200" y="277" />
         <di:waypoint x="246" y="277" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0z6f99f_di" bpmnElement="SequenceFlow_0z6f99f">
+      <bpmndi:BPMNEdge id="SequenceFlow_0z6f99f_di" bpmnElement="SequenceFlow_0z6f99f" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <di:waypoint x="430" y="335" />
         <di:waypoint x="430" y="360" />
         <di:waypoint x="175" y="360" />
         <di:waypoint x="175" y="302" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BoundaryEvent_12y69b1_di" bpmnElement="VierundzwanzigStundenVerstrichen">
+      <bpmndi:BPMNShape id="BoundaryEvent_12y69b1_di" bpmnElement="VierundzwanzigStundenVerstrichen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="328" y="219" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="351" y="189" width="53" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_11atuyd_di" bpmnElement="SequenceFlow_11atuyd">
+      <bpmndi:BPMNEdge id="SequenceFlow_11atuyd_di" bpmnElement="SequenceFlow_11atuyd" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <di:waypoint x="346" y="219" />
         <di:waypoint x="346" y="166" />
         <di:waypoint x="546" y="166" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_0v6vdex_di" bpmnElement="ZahlungFehlgeschlagen">
+      <bpmndi:BPMNShape id="EndEvent_0v6vdex_di" bpmnElement="ZahlungFehlgeschlagen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="546" y="148" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="528" y="191" width="73" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="MessageFlow_0vdtecv_di" bpmnElement="TokenUndBetrag">
+      <bpmndi:BPMNEdge id="MessageFlow_0vdtecv_di" bpmnElement="TokenUndBetrag" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <di:waypoint x="446" y="237" />
         <di:waypoint x="446" y="59" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="385" y="83" width="50" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="MessageFlow_1ky54zj_di" bpmnElement="BestaetigungOderFehler">
+      <bpmndi:BPMNEdge id="MessageFlow_1ky54zj_di" bpmnElement="BestaetigungOderFehler" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <di:waypoint x="470" y="59" />
         <di:waypoint x="470" y="237" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="487" y="82" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_16o60qh_di" bpmnElement="KartenbelastungVeranlassen">
+      <bpmndi:BPMNShape id="ServiceTask_16o60qh_di" bpmnElement="KartenbelastungVeranlassen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="396" y="237" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

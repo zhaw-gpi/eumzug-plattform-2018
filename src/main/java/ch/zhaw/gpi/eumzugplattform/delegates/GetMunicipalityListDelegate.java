@@ -6,8 +6,6 @@ import java.util.List;
 import javax.inject.Named;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.camunda.bpm.engine.variable.Variables;
-import org.camunda.bpm.engine.variable.value.ObjectValue;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -17,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Über ein JPA-Repository sollen alle MunicipalityEntity-Objekte aus der
  * Datenbank in ein List-Objekt eingelesen werden. Diese Objekte werden mittels
  * Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable
- * municipalityListSerialized zugewiesen.
+ * municipalityList zugewiesen.
  */
 @Named("getMunicipalityListAdapter")
 public class GetMunicipalityListDelegate implements JavaDelegate {
@@ -31,13 +29,11 @@ public class GetMunicipalityListDelegate implements JavaDelegate {
             // Alle Gemeinde-Objekte aus der Datenbank als Liste erhalten
             List<MunicipalityEntity> municipalityList = municipalityRepository.findAll();
 
-            // Diese Liste mittels Camunda Spin ins JSON-Format serialisieren
-            ObjectValue municipalityListSerialized = Variables
-                    .objectValue(municipalityList)
-                    .serializationDataFormat(Variables.SerializationDataFormats.JSON)
-                    .create();
-
-            // Die serialisierte Gemeindeliste einer Prozessvariable zuweisen
-            execution.setVariable("municipalityListSerialized", municipalityListSerialized);
+            // Die Gemeindeliste einer Prozessvariable zuweisen
+            // PS: Diese Variable wird in Formularen 
+            // in einer serialisierten (JSON)-Form benötigt. Dies wird im Hintergrund
+            // automatisch von Camunda Spin erledigt, weil in application.properties
+            // die Eigenschaft default-serialization-format auf application/json gesetzt ist
+            execution.setVariable("municipalityList", municipalityList);
         }
 }

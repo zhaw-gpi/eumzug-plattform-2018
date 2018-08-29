@@ -160,7 +160,7 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
         // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im 
         // variableManager-Objekt (Client)
         camForm.on('form-loaded', function() {
-            variableManager.fetchVariable('municipalityListSerialized');
+            variableManager.fetchVariable('municipalityList');
             variableManager.fetchVariable('municipalityIdMoveOut');            
             variableManager.fetchVariable('municipalityNameMoveOut');
             variableManager.fetchVariable("dateOfBirth");
@@ -170,7 +170,7 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
         // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
         // angezeigt werden können
         camForm.on('variables-fetched', function() {
-            $scope.municipalityList = variableManager.variableValue('municipalityListSerialized');
+            $scope.municipalityList = variableManager.variableValue('municipalityList');
             $scope.municipalityIdMoveOut = variableManager.variableValue('municipalityIdMoveOut');
             $scope.dateOfBirthUnformated = variableManager.variableValue("dateOfBirth");
             // Die Wegzugsgemeinde als Objekt wird gesucht innerhalb der serialisierten

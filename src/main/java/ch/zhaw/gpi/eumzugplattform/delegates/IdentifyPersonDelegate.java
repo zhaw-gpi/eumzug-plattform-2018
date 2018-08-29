@@ -7,8 +7,8 @@ import ch.ech.xmlns.ech_0044._4.PersonIdentificationType;
 import ch.ech.xmlns.ech_0194._1.PersonMoveRequest;
 import ch.ech.xmlns.ech_0194._1.PersonMoveResponse;
 import static ch.zhaw.gpi.eumzugplattform.helpers.DateConversionHelper.DateToXMLGregorianCalendar;
-import ch.zhaw.gpi.eumzugplattform.processdata.Relative;
-import ch.zhaw.gpi.eumzugplattform.processdata.RelativesList;
+import ch.zhaw.gpi.eumzugplattform.processdata.Person;
+import ch.zhaw.gpi.eumzugplattform.processdata.PersonList;
 import ch.zhaw.gpi.eumzugplattform.services.LocalPersonIdGeneratorService;
 import ch.zhaw.gpi.eumzugplattform.webserviceclients.ResidentRegisterWebServiceClient;
 import java.math.BigInteger;
@@ -18,8 +18,6 @@ import javax.inject.Named;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.camunda.bpm.engine.variable.Variables;
-import org.camunda.bpm.engine.variable.value.ObjectValue;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -98,49 +96,69 @@ public class IdentifyPersonDelegate implements JavaDelegate {
                 // Wenn Person umzugsberechtigt ist, dann muss moveAllowed von
                 // personMoveResponse den Wert 1 haben
                 Boolean moveAllowed = moveAllowedBigInteger.equals(BigInteger.valueOf(1L));
-                execution.setVariable("moveAllowed", moveAllowed);                
+                execution.setVariable("moveAllowed", moveAllowed);     
+                
+                // Es wird eine Liste initialisiert, um den Meldepflichtigen (und allenfalls mitumziehende Personen) aufzunehmen
+                PersonList personList = new PersonList();
+                
+                // Der Meldepflichtige wird als neue Person erfasst und der Liste hinzugefügt
+                Person meldePflichtiger = new Person();
+                meldePflichtiger
+                        .setDateOfBirth(dateOfBirth)
+                        .setFirstName(firstName)
+                        .setOfficialName(officialName)
+                        .setLocalPersonId(localPersonId)
+                        .setSex(sex)
+                        .setIsMainPerson(true);
+                personList.addPerson(meldePflichtiger);
 
-                /** Wenn Person umzugsberechtigt ist, werden die mitumziehenden Personen 
-                * ausgelesen, serializiert und in eine Prozessvariable gespeichert
-                * Leider muss dies über den Umweg einer Hilfsklasse RelativesList geschehen
-                * (siehe JavaDoc dort für Gründe). Das heisst, entsprechend müssen Eigenschaften
-                * aus der Liste der vom Personenregister zurück gegebenen mitumziehenden Personen
-                * ausgelesen und in die Einträge der Hilfsklasse übersetzt werden. */
+                /** 
+                 * Wenn Person umzugsberechtigt ist, werden die mitumziehenden Personen 
+                 * ausgelesen und ebenfalls der Liste hinzugefügt
+                 */
                 if(moveAllowed) {
-                    RelativesList relativesList = new RelativesList();
-                    
+                    // Auslesen der mitumziehenden Personen in eine temporäre Liste
                     List<PersonMoveResponse.RelatedPerson> relatedPersons = personMoveResponse.getRelatedPerson();
                     
+                    // Iterieren über jeden Eintrag in dieser Liste
                     for(PersonMoveResponse.RelatedPerson relatedPerson : relatedPersons){
-                        Relative relative = new Relative();
+                        // Ein neues Person-Objekt anlegen
+                        Person relative = new Person();
+                        
+                        // Die Eigenschaften dieser Person setzen
                         PersonIdentificationType personIdentificationType = relatedPerson.getPersonIdentification();
                         
-                        relative.setDateOfBirth(personIdentificationType.getDateOfBirth().getYearMonthDay().toGregorianCalendar().getTime());
-                        relative.setFirstName(personIdentificationType.getFirstName());
-                        relative.setOfficialName(personIdentificationType.getOfficialName());
-                        relative.setSex(personIdentificationType.getSex());
+                        relative
+                            .setDateOfBirth(personIdentificationType.getDateOfBirth().getYearMonthDay().toGregorianCalendar().getTime())
+                            .setFirstName(personIdentificationType.getFirstName())
+                            .setOfficialName(personIdentificationType.getOfficialName())
+                            .setSex(personIdentificationType.getSex());
+                        
                         // Die AHV-Nummer kann nicht direkt ausgelesen werden (BigInteger)
                         Long vnTemp = (personIdentificationType.getVn() != null ? personIdentificationType.getVn().longValue() : null);
                         // Die localPersonId wird generiert wie beim Meldepflichtigen mit dem localPersonIdGeneratorService
-                        relative.setLocalPersonId(localPersonIdGeneratorService.generateId(vnTemp, relative.getFirstName(), relative.getOfficialName(), relative.getDateOfBirth(), relative.getSex()));
+                        relative
+                            .setLocalPersonId(
+                                localPersonIdGeneratorService.generateId(
+                                    vnTemp, relative.getFirstName(), relative.getOfficialName(), relative.getDateOfBirth(), relative.getSex()
+                                ));
                         
-                        relativesList.addRelative(relative);
-                    }
-                    
-                    // Nun kommt die eigentliche Serialisierung und das Setzen der Variable relativesExist
-                    ObjectValue relatives = null;
-                    Boolean relativesExist = false;
+                        // Person der PersonenListe hinzufügen
+                        personList.addPerson(relative);
+                    }                    
 
-                    if(relativesList.getRelatives()!= null && !relativesList.getRelatives().isEmpty()) {
-                        relatives = Variables
-                                .objectValue(relativesList)
-                                .serializationDataFormat(Variables.SerializationDataFormats.JSON)
-                                .create();
+                    // Wenn nicht bloss der Meldepflichtige in der Liste ist, dann relativesExist auf wahr setzen
+                    Boolean relativesExist = false;
+                    if(personList.getPersons().size() > 1) {
                         relativesExist = true;
                     }
 
-                    // Schreiben der Prozessvariablen relativesList und relativesExist
-                    execution.setVariable("relativesList", relatives);
+                    // Schreiben der Prozessvariablen personList und relativesExist
+                    // PS: Diese Variable wird unter anderem in MitumziehendePersonenErfassenForm
+                    // in einer serialisierten (JSON)-Form benötigt. Dies wird im Hintergrund
+                    // automatisch von Camunda Spin erledigt, weil in application.properties
+                    // die Eigenschaft default-serialization-format auf application/json gesetzt ist
+                    execution.setVariable("personList", personList);
                     execution.setVariable("relativesExist", relativesExist);
                 }
             }

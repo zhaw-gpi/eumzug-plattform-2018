@@ -26,7 +26,7 @@ Formular zum User Task "Wohnung auswählen"
         // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im
         // variableManager-Objekt (Client)
         camForm.on('form-loaded', function() {
-            variableManager.fetchVariable("wohnungenListSerialized");
+            variableManager.fetchVariable("wohnungenList");
             variableManager.fetchVariable("apartmentIdMoveIn");
         });
         
@@ -34,7 +34,7 @@ Formular zum User Task "Wohnung auswählen"
         // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
         // angzeigt werden können
         camForm.on('variables-fetched', function() {
-            $scope.wohnungenList = variableManager.variableValue("wohnungenListSerialized");
+            $scope.wohnungenList = variableManager.variableValue("wohnungenList");
             $scope.apartmentIdMoveIn = variableManager.variableValue("apartmentIdMoveIn");
             $scope.apartmentMoveIn = $scope.wohnungenList.find(item => item.whgnr === $scope.apartmentIdMoveIn);
         });

@@ -21,10 +21,10 @@
                 <tbody>
                     <!-- 
                     ng-repeat entspricht einem foreach in Java. Das heisst, für jeden Gebühren-
-                    eintrag wird eine Zeile hinzugefügt. Da feeMapSerialized eine HashMap ist,
+                    eintrag wird eine Zeile hinzugefügt. Da feeMap eine HashMap ist,
                     können Gebührentyp als key und die Gebühr als value ausgelesen werden.
                     -->
-                    <tr ng-repeat="(key, value) in feeMapSerialized">
+                    <tr ng-repeat="(key, value) in feeMap">
                         <td>{{key}}</td>
                         <td>Fr. {{value}}.-</td>
                     </tr>
@@ -77,11 +77,11 @@
     <div class="panel panel-default">
         <div class="panel-heading"><b>Mitumziehende Personen</b></div>
         <div class="panel-body">
-            <!-- Die Vornamen der mitumziehenden Personen (moveAlong ist true) werden angezeigt.
+            <!-- Die Vornamen der mitumziehenden Personen werden angezeigt.
             Betreffend Sicherheitsproblemen bei dieser Lösung sowie der Bedeutung von track by
             siehe Kommentare in MitumziehendePersonenWaehlenForm.html -->
-            <p ng-repeat="relative in relatives track by relative.localPersonId" ng-show="relative.moveAlong">
-                {{relative.firstName}}
+            <p ng-repeat="person in persons track by person.localPersonId" ng-show="!person.isMainPerson">
+                {{person.firstName}}
             </p>
         </div>
     </div>
@@ -255,6 +255,29 @@
             </table>
         </div>
     </div>
+    
+    <!-- GRUNDVERSICHERUNGSPRÜFUNG-Panel -->
+    <div class="panel panel-default">
+        <div class="panel-heading"><b>Grundversicherungsprüfung</b></div>
+        <div class="panel-body">
+            <table class="table" style="margin-bottom: 0">
+                <!-- Die Grundversicherungspflicht-Ergebnisse wird als Tabelle ausgegeben. 
+                Die erste Spalte enthält den Vornamen, die zweite Spalte die Angabe
+                'Grundversichert' (grünes Ok-Zeichen) oder 'Prüfung nicht erfolgreich' (oranges Exclamation-Zeichen) -->
+                <tbody>
+                    <tr ng-repeat="person in persons track by person.localPersonId">
+                        <th class="col-md-6" scope="row">{{person.firstName}}</th>
+                        <td class="col-md-6">
+                            <div ng-switch on="person.checkBaseInsuranceResult">
+                                <span ng-switch-when="Yes" class="glyphicon glyphicon-ok" style="color:green"></span>
+                                <span ng-switch-default class="glyphicon glyphicon-exclamation-sign" style="color:orange"></span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <!-- CHECKBOXES und WARNHINWEISE -->
     <!-- Checkbox und zugehörige Warnung, dass alle Angaben in Ordnung sind -->
@@ -299,10 +322,10 @@
         var variableManager = camForm.variableManager;
 
         // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
-        // die Prozessvariablen feeMapSerialized von der Process Engine (Server) 
+        // die Prozessvariablen feeMap von der Process Engine (Server) 
         // in das variableManager-Objekt (Client)
         camForm.on('form-loaded', function() {
-            variableManager.fetchVariable('feeMapSerialized');
+            variableManager.fetchVariable('feeMap');
             
             variableManager.fetchVariable('vn');
             variableManager.fetchVariable('firstName');
@@ -313,7 +336,7 @@
             variableManager.fetchVariable('phoneNumber');
             variableManager.fetchVariable('emailAddress');
             
-            variableManager.fetchVariable('relativesList');
+            variableManager.fetchVariable('personList');
             
             variableManager.fetchVariable('streetMoveOut');
             variableManager.fetchVariable('houseNumberMoveOut');
@@ -342,10 +365,10 @@
         });
 
         // Sobald alle Variablen client-seitig zur Verfügung stehen, wird zum einen
-        // die feeMapSerialized einer Variable im AngularJS-Scope-Objekt übergeben
+        // die feeMap einer Variable im AngularJS-Scope-Objekt übergeben
         // Zudem wird das Total aller Gebühren berechnet
         camForm.on('variables-fetched', function() {
-            $scope.feeMapSerialized = variableManager.variableValue('feeMapSerialized');
+            $scope.feeMap = variableManager.variableValue('feeMap');
             $scope.documents = variableManager.variableValue('documents');
             $scope.documentsExist = variableManager.variableValue('documentsExist');
                         
@@ -358,7 +381,7 @@
             $scope.phoneNumber = variableManager.variableValue('phoneNumber');
             $scope.emailAddress = variableManager.variableValue('emailAddress');
             
-            $scope.relatives = variableManager.variableValue('relativesList').relatives;
+            $scope.persons = variableManager.variableValue('personList').persons;
             
             $scope.streetMoveOut = variableManager.variableValue('streetMoveOut');
             $scope.houseNumberMoveOut = variableManager.variableValue('houseNumberMoveOut');
@@ -388,18 +411,18 @@
             $scope.feesInfoText = "";
             
             // Prüfen, ob überhaupt Gebühren zu bezahlen sind
-            if($scope.feeMapSerialized !== null){
+            if($scope.feeMap !== null){
                 // Anzahl Gebührenelemente bestimmen
                 // Hierzu wird die Object.keys-Funktion genutzt (https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Object/keys)
-                var mapLength = Object.keys($scope.feeMapSerialized).length;              
+                var mapLength = Object.keys($scope.feeMap).length;              
 
                 // Für jedes Gebührenelement ...
                 for(var i = 0; i < mapLength; i++){
                 // Den Schlüssel (z.B. Umzugsgebühr) des i-ten Eintrags ermitteln
-                    var keyName = Object.keys($scope.feeMapSerialized)[i];
+                    var keyName = Object.keys($scope.feeMap)[i];
 
                     // Den Value (die Gebühr) des Gebührenelements mit dem gefundenen Key aus der HashMap auslesen
-                    var fee = $scope.feeMapSerialized[keyName];
+                    var fee = $scope.feeMap[keyName];
 
                     // Dem Total die gefundene Gebühr addieren
                     $scope.total += fee;

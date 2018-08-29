@@ -82,7 +82,7 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
             <select class="form-control" 
                     name="municipalityMoveIn"
                     ng-model="municipalityMoveIn"
-                    ng-options="ms.municipalityName for ms in municipalityListSerialized| orderBy:'municipalityName'">                    
+                    ng-options="ms.municipalityName for ms in municipalityList| orderBy:'municipalityName'">                    
             </select>
         </div>
     </div>
@@ -97,7 +97,7 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
         // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im 
         // variableManager-Objekt (Client)
         camForm.on('form-loaded', function() {
-        variableManager.fetchVariable('municipalityListSerialized');
+        variableManager.fetchVariable('municipalityList');
         variableManager.fetchVariable('municipalityIdMoveIn');
         variableManager.fetchVariable('municipalityNameMoveIn');            
         variableManager.fetchVariable('wohnungenGefunden');
@@ -108,13 +108,13 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
         // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
         // angezeigt werden können
         camForm.on('variables-fetched', function() {
-        $scope.municipalityListSerialized = variableManager.variableValue('municipalityListSerialized');
+        $scope.municipalityList = variableManager.variableValue('municipalityList');
         $scope.municipalityIdMoveIn = variableManager.variableValue('municipalityIdMoveIn');
         // Die Zuzugsgemeinde als Objekt wird gesucht innerhalb der serialisierten
         // Liste basierend auf der municipalityId, damit sie im select-Formularfeld
         // ausgewählt werden kann, sofern denn ein Element gefunden wurde (ist
         // nur der Fall, wenn das Formular zum zweiten Mal geöffnet wird)
-        $scope.municipalityMoveIn = $scope.municipalityListSerialized.find(item => item.municipalityId === $scope.municipalityIdMoveIn);
+        $scope.municipalityMoveIn = $scope.municipalityList.find(item => item.municipalityId === $scope.municipalityIdMoveIn);
         $scope.wohnungenGefunden = variableManager.variableValue('wohnungenGefunden');
         $scope.adresseUngueltigZaehler = variableManager.variableValue('adresseUngueltigZaehler');
         });        

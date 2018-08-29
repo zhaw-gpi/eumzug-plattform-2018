@@ -1,0 +1,64 @@
+<!--
+Formular zum UserTask "Versicherungs-Kartennummern erfassen"
+-->
+<form role="form" name="camundaForm">
+    <!-- Warnmeldung, falls die Prüfung nicht erfolgreich war -->
+    <div class="alert alert-warning" ng-show="person.checkBaseInsuranceResult === 'No' || person.checkBaseInsuranceResult === 'Unknown'">      
+        <p>Die Grundversicherungspflicht für diese Person konnte nicht erfolgreich geprüft werden. Details:</p>
+        <p>{{person.checkBaseInsuranceResultDetails}}</p>
+        <p>Prüfen Sie bitte nochmals, ob Sie die Nummer richtig erfasst haben.</p>
+        <p>Falls Sie korrekt ist, können Sie dieses Formular ohne Änderung erneut absenden. Der Prozess kann dennoch fortgesetzt werden, aber vermutlich müssen Sie auf der Zuzugsgemeinde persönlich vorbei gehen mit Ihrer Versichertenkarte</p>
+        <p>Falls Sie die Nummer falsch erfasst haben, geben Sie nun die korrekte Nummer ein und die Prüfung erfolgt dann erneut.</p>
+    </div>
+    
+    <!-- Formularfeld zum Erfassen der Versichertenkartennummer -->
+    <div class="form-group">
+        <label>Versichertenkartennummer für {{person.firstName}} {{person.officialName}}*</label>
+        <input type="number" 
+               name="baseInsuranceNumber" 
+               class="form-control"
+               ng-model="baseInsuranceNumber"
+               required>
+    </div>
+    
+    <script cam-script type="text/form-script">
+        // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
+        // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
+        // folgenden Funktionen
+        var variableManager = camForm.variableManager;
+
+        // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
+        // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im 
+        // variableManager-Objekt (Client)
+        camForm.on('form-loaded', function() {
+            variableManager.fetchVariable('checkBaseInsurance');       
+            variableManager.fetchVariable('personList');
+            variableManager.fetchVariable('loopCounter');
+        });
+
+        // Sobald alle Variablen client-seitig zur Verfügung stehen, werden diese 
+        // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
+        // angezeigt werden können
+        camForm.on('variables-fetched', function() {
+            // Personenliste
+            $scope.persons = variableManager.variableValue('personList').persons;
+            // Person = Element aus Personenliste gemäss Index (loopCounter)
+            $scope.person = $scope.persons[variableManager.variableValue('loopCounter')];
+            // Um feststellen zu können, ob der Benutzer die Kartennummer geändert hat, diese zwischenspeichern
+            $scope.baseInsuranceNumberOriginal = $scope.person.baseInsuranceNumber;
+            // Für die Formularfeld-Bindung die Versichertenkartennummer zuordnen
+            $scope.baseInsuranceNumber = $scope.person.baseInsuranceNumber;
+        });        
+
+        // Vor dem Absenden des Formulars ist zu prüfen, ob der Benutzer die 
+        // baseInsuranceNumber geändert hat. Falls checkBaseInsurance falsch ist 
+        // und der Benutzer etwas geändert hat, ist checkBaseInsurance auf Wahr zu setzen.
+        camForm.on('submit', function() {
+            $scope.person.baseInsuranceNumber = $scope.baseInsuranceNumber;
+            
+            if(!variableManager.variableValue('checkBaseInsurance') && $scope.person.baseInsuranceNumber !== $scope.baseInsuranceNumberOriginal){
+                variableManager.variableValue('checkBaseInsurance', true);
+            }
+        });
+    </script>
+</form>

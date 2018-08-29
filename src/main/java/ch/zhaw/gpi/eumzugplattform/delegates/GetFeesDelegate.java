@@ -7,8 +7,6 @@ import java.util.Map;
 import javax.inject.Named;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.camunda.bpm.engine.variable.Variables;
-import org.camunda.bpm.engine.variable.value.ObjectValue;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -24,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * ausgelesen und einer HashMap hinzugefügt inklusive Angabe, um welche Art von
  * Gebühr es sich handelt (z.B. "Wegzugsgebühr"). Falls mindestens eine Gebühr
  * anfällt, wird die HashMap mittels Camunda Spin in ein JSON-Objekt
- * serialisiert und der Prozessvariable feeMapSerialized zugewiesen, ansonsten
+ * serialisiert und der Prozessvariable feeMap zugewiesen, ansonsten
  * wird dieser Variable der Wert null zugewiesen.
  * 
  */
@@ -45,29 +43,20 @@ public class GetFeesDelegate implements JavaDelegate {
     public void execute(DelegateExecution execution) throws Exception {
         // ruft Methode auf um die Gebühren Map zu erhalten bekommen
         Map<String, Integer> feeMap = this.getFees(execution);
-
-        // feeMapSerialized wird initialisiert
-        ObjectValue feeMapSerialized = null;
         
         // Das Total der Gebühren wird auf 0 gesetzt
         Integer feesTotal = 0;
         
         // Wenn die Gebühren Map Daten enthält hat...
-        if (feeMap.size() > 0) {
-            // ... wird sie serialisiert 
-            feeMapSerialized = Variables
-                    .objectValue(feeMap)
-                    .serializationDataFormat(Variables.SerializationDataFormats.JSON)
-                    .create();
-            
-            // Das Total der Gebühren wird der Variable feesTotal zugewiesen
+        if (feeMap.size() > 0) {            
+            // ... wird das Total der Gebühren der Variable feesTotal zugewiesen
             for(Integer feeMapEntry : feeMap.values()){
                 feesTotal += feeMapEntry;
             }
         }
         
         // Die lokalen Variablen werden den Prozessvariablen zugewiesen
-        execution.setVariable("feeMapSerialized", feeMapSerialized);
+        execution.setVariable("feeMap", feeMap);
         execution.setVariable("feesTotal", feesTotal);
     }
 

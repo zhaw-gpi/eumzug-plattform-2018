@@ -20,7 +20,7 @@ Formular zum UserTask "Mitumziehende Personen wählen"
     "track by" wird benötigt, weil sonst ein $$hashKey-Attribut dem relatives-Objekt angehängt wird, was eine
     Deserialisierung verunmöglicht.
     -->
-    <div class="checkbox" ng-repeat="relative in relatives track by relative.localPersonId">
+    <div class="checkbox" ng-repeat="relative in relatives track by relative.localPersonId" ng-show="!relative.isMainPerson">
         <label>
             <input type="checkbox" id="{{relative.localPersonId}}" name="movingAlongPerson" value="{{relative}}">
             {{relative.firstName}}
@@ -38,7 +38,7 @@ Formular zum UserTask "Mitumziehende Personen wählen"
         // variableManager-Objekt (Client)
         camForm.on('form-loaded', function(){
             // Streng genommen geht das aus Datenschutzgründen nicht (Grund siehe erster Kommentar oben)
-            variableManager.fetchVariable("relativesList");
+            variableManager.fetchVariable("personList");
         });
 
         // Sobald alle Variablen client-seitig zur Verfügung stehen, werden diese
@@ -46,25 +46,34 @@ Formular zum UserTask "Mitumziehende Personen wählen"
         // angezeigt werden können.
         camForm.on('variables-fetched', function(){
             // Die eigentliche Liste wird ausgegeben
-            $scope.relatives = variableManager.variableValue("relativesList").relatives;
+            $scope.relatives = variableManager.variableValue("personList").persons;
         });
 
-        // Vor dem Submit wird geprüft, welche Personen ausgewählt wurden. Für diese
-        // wird die Eigenschaft moveAlong auf true gesetzt
+        // Vor dem Submit wird geprüft, welche Personen ausgewählt wurden. Alle
+        // übrigen (ausser der Meldepflichtige) werden aus der Personenliste
+        // entfernt
         camForm.on('submit', function(){
-            // JQuery-Funktion, um über alle angehakten Einträge zu iterieren
-            $("input:checkbox[name=movingAlongPerson]:checked").each(function(){
-                // Für jeden ausgewählten Eintrag über jeden relative iterieren...
-                for(var i=0;i<$scope.relatives.length;i++){
-                    // ... und falls die id des ausgewählten Elements mit der localPersonId übereinstimmt ...
-                    if(this.id == $scope.relatives[i].localPersonId){
-                        // ... dann die moveAlong-Eigenschaft auf true setzen
-                        $scope.relatives[i].moveAlong = true;
-                        // ... und die for-Schleife verlassen
-                        break;
+            // Leider kann man nicht direkt mehrere Elemente in einem Array entfernen
+            // Daher zunächst bestimmen, welche Elemente zu entfernen sind...
+            var indexesToRemove = [];
+            
+            $scope.relatives.forEach(function(item, index){
+                if(!item.isMainPerson){
+                    var inputElement = document.getElementById(item.localPersonId);
+                    if(!inputElement.checked){
+                        indexesToRemove.push(index);
                     }
                 }
             });
+            
+            // ... dann diese Elemente tatsächlich entfernen. Die Indizes des verbleibenden
+            // Arrays verändern sich dadurch => bei jedem Durchgang ist der zu entfernende
+            // Index um 1 zu verringern
+            var removedCounter = 0;
+            for(var i=0;i<indexesToRemove.length;i++){
+                $scope.relatives.splice(indexesToRemove[i] - removedCounter, 1);
+                removedCounter++;
+            }
         });
     </script> 
 </form>

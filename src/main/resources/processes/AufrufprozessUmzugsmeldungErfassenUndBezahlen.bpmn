@@ -86,7 +86,7 @@ Theoretisch: Dem Prozess wird der BusinessKey und der Benutzername (meldePflicht
       <bpmn:callActivity id="WeitereAngabenErfassen" name="Weitere Angaben erfassen" calledElement="WeitereAngabenErfassen">
         <bpmn:documentation>Im aufgerufenen Prozess erfasst der Meldepflichtige das Datum für Weg-/Zuzug, das zukünftige Wohnverhältnis (housingSituationMoveInMunicipallity), seine Kontaktangaben und für alle mitumziehenden Personen die Krankenkassen-Versichertennummer. Über einen REST-Service des VeKa-Centers wird geprüft, ob für die Personen eine Krankengrundversicherung abgeschlossen wurde (healthInsuranceData). Der Prozess geht allerdings auch weiter, wenn die Prüfung nicht erfolgreich ist.
 
-Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger), eine personList (enthält Meldepflichtigen plus umziehende Personen) übergeben und umgekehrt folgende Variablen zurück genommen: departureDate, arrivalDate, personHealthInsuranceList (jeder Eintrag enthält ein Person-Objekt mit der zusätzlichen Eigenschaft healthInsuranceData) und housingSituationMoveInMunicipallity. Praktisch: Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
+Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger), eine personList (enthält Meldepflichtigen plus umziehende Personen), municipalityIdMoveIn und municipalityIdMoveOut übergeben und umgekehrt folgende Variablen zurück genommen: departureDate, arrivalDate, personHealthInsuranceList (jeder Eintrag enthält ein Person-Objekt mit der zusätzlichen Eigenschaft healthInsuranceData) und housingSituationMoveInMunicipallity. Praktisch: Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
         <bpmn:extensionElements>
           <camunda:in businessKey="#{execution.processBusinessKey}" />
           <camunda:in source="meldePflichtiger" target="meldePflichtiger" />
@@ -98,6 +98,8 @@ Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtige
           <camunda:out source="healthInsuranceDataList" target="healthInsuranceDataList" />
           <camunda:out source="housingSituationMoveInMunicipallity" target="housingSituationMoveInMunicipallity" />
           <camunda:out variables="all" />
+          <camunda:in source="municipalityIdMoveIn" target="municipalityIdMoveIn" />
+          <camunda:in source="municipalityIdMoveOut" target="municipalityIdMoveOut" />
         </bpmn:extensionElements>
         <bpmn:incoming>SequenceFlow_120w2r2</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_001pwxn</bpmn:outgoing>
@@ -131,7 +133,7 @@ Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtige
 
 Zunächst wird geprüft, ob es sich um Wegzug/Zuzug oder Umzug handelt. Je nachdem werden dann über ein JPA-Repository eine oder zwei Gemeinde-Objekte aus der Datenbank geladen.
 
-Für jedes Objekt wird die relevante Gebühr (Zuzug, Wegzug oder Umzug) ausgelesen und einer HashMap hinzugefügt inklusive Angabe, um welche Art von Gebühr es sich handelt (z.B. "Wegzugsgebühr"). Falls mindestens eine Gebühr anfällt, wird die HashMap mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable feeMapSerialized zugewiesen, ansonsten wird dieser Variable der Wert null zugewiesen.</bpmn:documentation>
+Für jedes Objekt wird die relevante Gebühr (Zuzug, Wegzug oder Umzug) ausgelesen und einer HashMap hinzugefügt inklusive Angabe, um welche Art von Gebühr es sich handelt (z.B. "Wegzugsgebühr"). Falls mindestens eine Gebühr anfällt, wird die HashMap mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable feeMap zugewiesen, ansonsten wird dieser Variable der Wert null zugewiesen.</bpmn:documentation>
         <bpmn:incoming>SequenceFlow_0e292zc</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_12mko98</bpmn:outgoing>
       </bpmn:serviceTask>
@@ -155,8 +157,7 @@ Zuunterst zwei Checkboxes:
 
 - Checkbox "Alle Angaben sind korrekt" (allDataCorrect), default-mässig angehakt. Ist sie nicht angehakt, soll ein Info-Alert angezeigt werden: "Sie werden zurück zum ersten Formular geführt, womit Sie in jedem Formular Ihre Angaben nochmals korrigieren können. Bestehende Eingaben bleiben erhalten."
 
-- Checkbox "Ich akzeptiere, die Gebühr von Fr. {{total}}.- zu bezahlen" (feesAccepted) -&gt; default-mässig angehakt. Ist sie nicht angehakt, soll ein Danger-Alert angezeigt werden: "Sind Sie sicher? Hierdurch werden alle Ihre Angaben aus Gründen der Nachvollziehbarkeit in der Umzugsplattform-Datenbank gespeichert, aber nicht an die Weg- und Zuzugsgemeinden weiter geleitet. Das heisst, Sie müssen in jedem Fall den Umzug persönlich am Schalter der Weg- und Zuzugsgemeinde melden."
-</bpmn:documentation>
+- Checkbox "Ich akzeptiere, die Gebühr von Fr. {{total}}.- zu bezahlen" (feesAccepted) -&gt; default-mässig angehakt. Ist sie nicht angehakt, soll ein Danger-Alert angezeigt werden: "Sind Sie sicher? Hierdurch werden alle Ihre Angaben aus Gründen der Nachvollziehbarkeit in der Umzugsplattform-Datenbank gespeichert, aber nicht an die Weg- und Zuzugsgemeinden weiter geleitet. Das heisst, Sie müssen in jedem Fall den Umzug persönlich am Schalter der Weg- und Zuzugsgemeinde melden."</bpmn:documentation>
         <bpmn:incoming>SequenceFlow_12mko98</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_15e28af</bpmn:outgoing>
       </bpmn:userTask>
@@ -308,11 +309,11 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
 
 In einem Service Task wird nun eine Kartenbelastungsanfrage an Stripe mit dem Token gesendet. Synchron kommt nun eine Antwort von Stripe zurück, entweder eine erfolgreiche Belastung der Kreditkarte oder ein Error. Im ersten Fall endet damit der Bezahlvorgang, im anderen Fall muss er es erneut versuchen. Falls er dies nicht innert 24 h erledigt, wird der Zahlungsvorgang als fehlgeschlagen gekennzeichnet, ein Fehler, der über das angeheftete Fehlerzwischenereignis abgefangen wird über eine Persistierung der wichtigsten Daten und dem Abbruch des ganzen Meldeprozesses. 
 
-Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger) und die Gebührentabelle (feeMapSerialized) übergeben und umgekehrt keine Variablen zurück genommen. Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
+Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger) und die Gebührentabelle (feeMap) übergeben und umgekehrt keine Variablen zurück genommen. Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:in businessKey="#{execution.processBusinessKey}" />
         <camunda:in source="meldePflichtiger" target="meldePflichtiger" />
-        <camunda:in source="feeMapSerialized" target="feeMapSerialized" />
+        <camunda:in source="feeMap" target="feeMap" />
         <camunda:in variables="all" />
         <camunda:out variables="all" />
       </bpmn:extensionElements>
@@ -339,12 +340,12 @@ Der Prozess soll allerdings anschliessend ganz normal weiter gehen, wie wenn er 
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="SequenceFlow_04m4p8a" sourceRef="ZahlungDurchfuehren" targetRef="ExclusiveGateway_175tgn6" />
     <bpmn:sequenceFlow id="GebuehrenFallenNichtAn" name="nein" sourceRef="ExclusiveGateway_1t9zc0d" targetRef="ExclusiveGateway_175tgn6">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${feeMapSerialized==null}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${feeMap==null}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_1y8ukhh" sourceRef="ExclusiveGateway_175tgn6" targetRef="AbschlussBestaetigungAnzeigen" />
     <bpmn:sequenceFlow id="SequenceFlow_0mh6vb8" sourceRef="AbschlussBestaetigungAnzeigen" targetRef="ExclusiveGateway_08sma34" />
     <bpmn:sequenceFlow id="GebuehrenFallenAn" name="ja" sourceRef="ExclusiveGateway_1t9zc0d" targetRef="ZahlungDurchfuehren">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${feeMapSerialized!=null}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${feeMap!=null}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_1d0k5r8" sourceRef="ZahlungFehlgeschlagen" targetRef="FehlgeschlageneZahlungPersistieren" />
     <bpmn:sequenceFlow id="SequenceFlow_1vi0gkw" sourceRef="FehlgeschlageneZahlungPersistieren" targetRef="WegenFehlgeschlagenerZahlungAbgebrochen" />

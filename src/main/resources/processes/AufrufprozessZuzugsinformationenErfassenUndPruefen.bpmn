@@ -23,9 +23,9 @@
     <bpmn:startEvent id="WegzugsadressPruefungErfolgreichAbgeschlossen" name="Wegzugsadress-prüfung erfolgreich abgeschlossen">
       <bpmn:documentation>In einem End-Listener wird eine Zählervariable adresseUngueltigZaehler mit 0 initialisiert, welche verwendet wird, um zu zählen, wie oft der Benutzer eine ungültige Adresse erfasst hat.
 
-Ein End-Listener ruft die JavaDelegate-Klasse 'GetMunicipalityListDelegate' auf mit folgender Aufgabe: Serialisierte Prozessvariable municipalityListSerialized mit allen Gemeinden in der Umzugsplattform-Datenbank erstellen
+Ein End-Listener ruft die JavaDelegate-Klasse 'GetMunicipalityListDelegate' auf mit folgender Aufgabe: Serialisierte Prozessvariable municipalityList mit allen Gemeinden in der Umzugsplattform-Datenbank erstellen
 
-Über ein JPA-Repository sollen alle Municipality-Objekte aus der Datenbank in ein List-Objekt eingelesen werden. Diese Objekte werden mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable municipalityListSerialized zugewiesen.
+Über ein JPA-Repository sollen alle Municipality-Objekte aus der Datenbank in ein List-Objekt eingelesen werden. Diese Objekte werden mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable municipalityList zugewiesen.
 </bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:executionListener event="end">
@@ -61,7 +61,7 @@ Zuzugsadresse Ort
 Zuzugsadresse Politische Gemeinde
   eCH-0007:municipalityIdMoveIn
   Integer
-  select (basierend auf municipalityListSerialized, wobei municipalityName angezeigt wird)</bpmn:documentation>
+  select (basierend auf municipalityList, wobei municipalityName angezeigt wird)</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_0fooiee</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1n0ru7f</bpmn:outgoing>
     </bpmn:userTask>
@@ -74,7 +74,7 @@ Der Web Service-Client wird mit org.springframework.ws.client implementiert, Das
 
 Für den Request an den Web Service müssen die Prozessvariablen houseNumberMoveIn, swissZipCodeMoveIn und streetMoveIn den passenden Eigenschaften der AddresseType-Klasse zugewiesen werden.
 
-Die Response ist vom Typ WohnungenAntwortType. Die darin enthaltene Methode getWohnungenAntwort() liefert eine Liste von verfügbaren Wohnungen zurück. Diese Liste wird mit Camunda Spin serialisiert und der Prozessvariable wohnungenListSerialized übergeben. Zudem wird die Prozessvariable wohnungenGefunden indirekt generiert.</bpmn:documentation>
+Die Response ist vom Typ WohnungenAntwortType. Die darin enthaltene Methode getWohnungenAntwort() liefert eine Liste von verfügbaren Wohnungen zurück. Diese Liste wird mit Camunda Spin serialisiert und der Prozessvariable wohnungenList übergeben. Zudem wird die Prozessvariable wohnungenGefunden indirekt generiert.</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_1n0ru7f</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_04ncg2b</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -110,7 +110,7 @@ execution.setVariable("adresseUngueltigZaehler", adresseUngueltigZaehler + 1);</
       <bpmn:documentation>Wohnung
   eCH-0010:apartmentMoveIn
   String
-  select (basierend auf wohnungenListSerialized, wobei whgnr angezeigt wird)</bpmn:documentation>
+  select (basierend auf wohnungenList, wobei whgnr angezeigt wird)</bpmn:documentation>
       <bpmn:incoming>MindestensEineWohnungGefunden</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0sag684</bpmn:outgoing>
     </bpmn:userTask>
