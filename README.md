@@ -245,6 +245,7 @@ Die **Farben** bedeuten dabei:
 3. Aufruf des kantonalen Benachrichtigungsdienstes
 4. Aufruf des EKS-Kommunikationsdienstes
 5. "Angaben für Zusatzdienste erfassen" implementieren
+6. Die vereinfachten GWR/Personenregister-Services anzapfen (sollte streng genommen keine Anpassung erfordern)
 
 ## Mitwirkende
 1. Björn Scheppler: Hauptarbeit

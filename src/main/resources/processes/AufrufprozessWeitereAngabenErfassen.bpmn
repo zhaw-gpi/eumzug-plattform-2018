@@ -2,12 +2,12 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1t06bdh" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
   <bpmn:collaboration id="Collaboration_1p945p5">
     <bpmn:participant id="WeitereAngabenErfassenParticipant" name="Weitere Angaben erfassen" processRef="WeitereAngabenErfassen" />
-    <bpmn:participant id="VeKaCenterAuskunftsdienst" name="VeKa-Center-Auskunftsdienst" />
-    <bpmn:messageFlow id="VersichertenDaten" name="Versicherten-Daten&#10;" sourceRef="GrundversicherungPruefen" targetRef="VeKaCenterAuskunftsdienst">
-      <bpmn:documentation>eCH-0185:cardNumber, firstName, officialName, dateOfBirth</bpmn:documentation>
+    <bpmn:participant id="VeKaCenterAuskunftsdienstParticipant" name="VeKa-Center-Auskunftsdienst" />
+    <bpmn:messageFlow id="VersichertenDaten" name="Versicherten-Daten&#10;" sourceRef="GrundversicherungPruefen" targetRef="VeKaCenterAuskunftsdienstParticipant">
+      <bpmn:documentation>baseInsuranceNumber, firstName, officialName, dateOfBirth</bpmn:documentation>
     </bpmn:messageFlow>
-    <bpmn:messageFlow id="Pruefergebnis" name="Prüfergebnis" sourceRef="VeKaCenterAuskunftsdienst" targetRef="GrundversicherungPruefen">
-      <bpmn:documentation>eCH-0185:healthInsuranceDataType:checkResult</bpmn:documentation>
+    <bpmn:messageFlow id="Pruefergebnis" name="Prüfergebnis" sourceRef="VeKaCenterAuskunftsdienstParticipant" targetRef="GrundversicherungPruefen">
+      <bpmn:documentation>checkBaseInsuranceResult und checkBaseInsuranceResultDetails</bpmn:documentation>
     </bpmn:messageFlow>
     <bpmn:textAnnotation id="TextAnnotation_0fwhown">
       <bpmn:text>In dieser Farbe sind im HS 2017 nicht oder nur teilweise oder anders implementierte Elemente markiert</bpmn:text>
@@ -69,20 +69,19 @@ Skripte:
       <bpmn:serviceTask id="GrundversicherungPruefen" name="Grund-versicherung prüfen" camunda:delegateExpression="#{checkBaseInsuranceAdapter}">
         <bpmn:documentation>Grundversicherungsprüfung pro umziehender Person im Auskunftsdienst des VeKa-Centers
 
-Die Methode checkBaseInsurance des RESTful Web Services VeKa-Center-Auskunftsdienst (http://localhost:8070/veka-api/check-base-insurance) wird synchron aufgerufen und zwar pro umziehender Person (zu lösen per Multi-Instance Service Task).
+Die Methode checkBaseInsurance des RESTful Web Services VeKa-Center-Auskunftsdienst (http://localhost:8070/vekaapi/checkbaseinsurance) wird synchron aufgerufen.
 
 Der Web Service wird konsumiert mit spring-web und jackson-databind (https://spring.io/guides/gs/consuming-rest/).
 
-Für den Request an den Web Service müssen aus person in der Prozessvariable personHealthInsuranceList die Eigenschaften baseInsuranceNumber, firstName, officialName und dateOfBirth in ein JSON-Body für den Request an die Methode checkBaseInsurance aufbereitet werden.
+Für den Request an den Web Service müssen aus person in der Prozessvariable die Eigenschaften baseInsuranceNumber, firstName, officialName und dateOfBirth in ein JSON-Body für den Request an die Methode checkBaseInsurance aufbereitet werden.
 
 In der Realität müsste man sich beim Service authentifizieren, was wir für den Prototypen weglassen.
 
-Die JSON-Response enthält eine einzige Variable checkResult, die positiv (Yes, Person ist grundversichert), negativ (No, Person ist nicht grundversichert) oder unklar (Unknown, die Prüfung konnte nicht durchgeführt werden. Einerseits sind nicht alle Versicherungen abfragbar (Bsp.: Helsana) oder die Versichertenkartennum-mer konnte nicht gefunden werden.)
+Die JSON-Response enthält ein VeKaResponse-Objekt mit zwei String-Variablen: checkBaseInsuranceResult, die positiv (Yes, Person ist grundversichert), negativ (No, Person ist nicht grundversichert) oder unklar (Unknown, die Prüfung konnte nicht durchgeführt werden. Einerseits sind nicht alle Versicherungen abfragbar (Bsp.: Helsana) oder die Versichertenkartennum-mer konnte nicht gefunden werden.) sein kann. checkBaseInsuranceResultDetails mit weiteren Erläuterungen.
 
-Diese Antwort wird in personHealthInsuranceList eingepflegt, indem person.healthInsuranceData.checkResult in personHealthInsuranceList gesetzt wird.
+Diese Antwort wird in den gleich lautenden Eigenschaften des Person-Objekts übergeben.
 
-
-End Listener</bpmn:documentation>
+In einem End Listener wird die Variable checkBaseInsurance auf false gesetzt. Begründung siehe im Kommentar zum GrundversicherungPruefenStartEvent.</bpmn:documentation>
         <bpmn:extensionElements>
           <camunda:executionListener event="end">
             <camunda:script scriptFormat="JavaScript">execution.setVariable("checkBaseInsurance", false);</camunda:script>
@@ -268,7 +267,7 @@ E-Mailadresse
         <di:waypoint x="427" y="33" />
         <di:waypoint x="252" y="-24" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Participant_02v5zqt_di" bpmnElement="VeKaCenterAuskunftsdienst" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+      <bpmndi:BPMNShape id="Participant_02v5zqt_di" bpmnElement="VeKaCenterAuskunftsdienstParticipant" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <dc:Bounds x="863" y="368" width="300" height="60" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="MessageFlow_0gi7zs3_di" bpmnElement="VersichertenDaten">
