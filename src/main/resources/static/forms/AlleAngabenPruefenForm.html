@@ -214,6 +214,7 @@
                     </tr>
                 </tbody>
             </table>
+            <div id="mapMoveIn" style="height:300px; margin-top: 1rem" ng-show="showMapMoveIn"></div>
         </div>
     </div>
         
@@ -432,6 +433,47 @@
                     $scope.feesInfoText = " und allfällige Gebühren";
                 }
             }
+            
+            /**
+             * Google Maps-Integration für Wegzugsadresse
+             * 
+             * Bedingt, dass nicht die normale Camunda Webapps, sondern die Customized verwendet wird, konkret
+             * BEservices Plattform, weil dort in der app/tasklist/config.js Google Maps
+             * als Dependency in require.js aufgeführt ist
+             * 
+             * Der Code selbst besteht aus:
+             * 1. Adresse zusammensetzen aus den Zuzugsinformationen
+             * 2. Karte initialisieren auf Winterthur Stadtmitte
+             * 3. Adresse geocodieren
+             * 4. Bei erfolgreichem Resultat einen Marker an der Position setzen und Karte dorthin zentrieren
+             * 5. Bei fehlgeschlagenem Resultat nichts tun (dadurch wird Karte auch nicht angezeigt)
+             */ 
+            var geocoder;
+            var map;
+            var address = $scope.streetMoveIn + " " + $scope.houseNumberMoveIn + ", " + $scope.swissZipCodeMoveIn + " " + $scope.townMoveIn;
+            $scope.showMapMoveIn = false;
+            
+            var map = new google.maps.Map(document.getElementById('mapMoveIn'), {
+                zoom: 14,
+                center: {lat: 47.500193, lng: 8.725137}
+            });
+            geocoder = new google.maps.Geocoder();
+            codeAddress(geocoder, map);
+
+            function codeAddress(geocoder, map) {
+                geocoder.geocode({'address': address}, function(results, status) {
+                    if (status === 'OK') {
+                        map.setCenter(results[0].geometry.location);
+                        var marker = new google.maps.Marker({
+                            map: map,
+                            position: results[0].geometry.location
+                        });
+                        $scope.showMapMoveIn = true;
+                    } else {
+                        console.log('Geocode was not successful for the following reason: ' + status);
+                    }
+                });
+            }
         });
         
         
@@ -479,5 +521,9 @@
                 }
             }  
         };
+        
+        function fMap1() {
+            
+        }
     </script>
 </form>

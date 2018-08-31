@@ -24,10 +24,6 @@ Formular zum UserTask "Erfassen der Zahlungsdetails"
     
     <!-- Grosse Schaltfläche, welche beim Klick darauf das Stripe Checkout-Formular lädt -->
     <button type="button" class="btn btn-primary btn-lg" id="payButton" ng-hide="hidePayButton">Zahlungsdetails erfassen</button>
-    
-    <!-- Einbinden der Javascript-Bibliothek von Stripe, welche die ganze client-seitige Checkout-Funktionalität enthält -->
-    <script src="https://checkout.stripe.com/checkout.js"></script>
-
 
     <script cam-script type="text/form-script">
         // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
@@ -79,6 +75,8 @@ Formular zum UserTask "Erfassen der Zahlungsdetails"
         });
         
         // Konfiguration von Stripe Checkout gemäss https://stripe.com/docs/checkout#integration
+        // Erfordert, dass in der Customized Camunda Webapp (BEservices Plattform) in
+        // app/tasklist/config.js Stripe Checkout als custom script eingetragen ist
         var stripeCheckoutHandler = StripeCheckout.configure({
             // Publishable Key als Identifikation des Stripe-Kontos: müsste streng genommen dynamisch ausgelesen werden, aber das würde nur recht schwierig gehen, weil man es ja am einfachsten aus einer Prozessvariable lesen würde, aber die StripeCheckout.configure-Funktion wird aufgerufen, bevor der Camunda Form Lifecycle beginnt.
             key: 'pk_test_YM8GGxfywicmmBgtFcOjEm00',

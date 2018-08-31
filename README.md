@@ -2,7 +2,7 @@
 
 > Autoren der Dokumentation: Björn Scheppler
 
-> Dokumentation letztmals aktualisiert: 29.8.2018
+> Dokumentation letztmals aktualisiert: 31.8.2018
 
 > TOC erstellt mit https://ecotrust-canada.github.io/markdown-toc/
 
@@ -67,7 +67,7 @@ Die **Farben** bedeuten dabei:
     2. **Process Engine**: Darin eingebettet wird die Camunda Process Engine als Applikation ausgeführt und ist per REST von aussen zugreifbar. Sie umfasst nebst der BPMN Core Engine auch einen Job Executor für das Erledigen asynchroner Aufgaben (z.B. Timer).
     3. **Process Engine-Datenbank**: Da eine Process Engine eine State Machine ist, muss sie irgendwo den Status laufender als auch abgeschlossener Prozessinstanzen persistieren können. Dies geschieht über eine File-basierte H2-Datenbank.
     4. **Umzugsplattform-Datenbank**: Gewisse Stammdaten (z.B. Liste aller Gemeinden) als auch ausgewählte Bewegungsdaten erfolgreich oder fehlgeschlagen abgeschlossener Prozessinstanzen sollen in einer Umzugsplattform-Datenbank gehalten werden. Der Einfachheit halber wird hierfür dieselbe Datenbank verwendet wie für die Process Engine.
-    5. **Tasklist-Applikation**: Damit der Meldepflichtige seine Meldung erfassen kann, wird eine Client-Applikation benötigt, die im Browser ausgeführt werden kann. Hierfür wird die ebenfalls im Applikations- und Webserver Tomcat eingebettete Camunda Tasklist WebApp eingesetzt. In einer produktiven Lösung würde diese sicher separat deployed oder sogar durch eine spezifisch für den Kanton Bern entwickelte Tasklist-Applikation ersetzt, welche über REST mit der Process Engine kommuniziert.
+    5. **Tasklist-Applikation**: Damit der Meldepflichtige seine Meldung erfassen kann, wird eine Client-Applikation benötigt, die im Browser ausgeführt werden kann. Hierfür wird die ebenfalls im Applikations- und Webserver Tomcat eingebettete Camunda Tasklist WebApp eingesetzt. In einer produktiven Lösung würde diese sicher separat deployed oder sogar durch eine spezifisch für den Kanton Bern entwickelte Tasklist-Applikation ersetzt, welche über REST mit der Process Engine kommuniziert. Immerhin wurde die Tasklist-Webapp (und die übrigen Webapps) angepasst (deutsche Übersetzung, Logo und Farben, Google Maps API und Stripe Checkout integriert) in einem eigenen WebJAR-Projekt. Details hierzu siehe https://github.com/zhaw-gpi/be-services-plattform
     6. **Cockpit-Applikation**: Damit der Systemadministrator bei technischen Problemen und der Prozessverantwortliche aus Gründen des Monitorings und Controllings die laufenden und vergangenen Prozessinstanzen verwalten kann, wird die ebenfalls im Applikations- und Webserver Tomcat eingebettete Camunda Cockpit Webapp genutzt. In einer produktiven Lösung würde diese vermutlich zwar genutzt, würde aber auch die Daten von anderen Process Engines (der Microservices) enthalten, damit alle Daten an einem Ort eingesehen werden können.
 2. **Hauptprozess 'Umzug melden'**:
     1. Dies ist der Hauptprozess (End-to-End), welcher aus der Tasklist-Applikation heraus vom Meldepflichtigen gestartet wird.
@@ -81,7 +81,8 @@ Die **Farben** bedeuten dabei:
         1.  **Person identifizieren**: Hier geschieht eine Kommunikation mit der Komponente **Personenregister** über SOAP, implementiert über die Spring Webservice-Komponenten.
         2.  **Wegzugsadresse prüfen** und **Wohnungen an Zuzugsadresse bestimmen**: Hier geschieht eine Kommmunikation mit der Komponente **Gebäude- und Wohnungsregister GWR**, ebenfalls über SOAP.
         3.  **Grundversicherung prüfen**: Hier geschieht eine Kommunikation mit der Komponente **VeKa-Center-Auskunftsdienst** über REST, implementiert über den Camunda HTTP-Connector.
-        4.  **Zahlung durchführen**: Hier geschieht eine Kommunikation mit dem **Online-Bezahldienst Stripe**. Die Kommunikation geschieht über REST, implementiert einerseits client-seitig über die Stripe Checkout JavaScript-Library und server-seitig über die Stripe Java API Library.
+        4. **Alle Angaben prüfen**: Hier wird die Google Maps API aufgerufen, um die Zuzugsadresse zu suchen und falls sie gefunden wurde, diese auf einer Google Maps-Karte anzuzeigen.
+        5.  **Zahlung durchführen**: Hier geschieht eine Kommunikation mit dem **Online-Bezahldienst Stripe**. Die Kommunikation geschieht über REST, implementiert einerseits client-seitig über die Stripe Checkout JavaScript-Library und server-seitig über die Stripe Java API Library.
 4. **External Task 'Mit EK-Systemen kommunizieren'**:
     1. In diesem Teil des Hauptprozesses erfolgt die automatisierte Kommunikation mit den **Einwohner-Kontrollsystemen** der Wegzugs-/Umzugs-/Zuzugsgemeinden.
     2. Diese geschieht nicht direkt, sondern über einen Dienst (**EKS-Kommmunikationsservice**), welcher über das **External Task Pattern** eingebunden wird. Dabei wird lediglich festgehalten, dass Arbeit von einem bestimmten Typ zu erledigen ist. External Task Workers wie der genannte Dienst können sich bei der Umzugsplattform registrieren und die zu erledigende Arbeit durchführen.
@@ -107,9 +108,13 @@ Die **Farben** bedeuten dabei:
 2. Im Unterschied dazu erfolgt hier die Kommunikation mit der Aussenwelt über REST.
 3. Die detaillierte Dokumentation ist zu finden in folgender **Github-Repository**: https://github.com/zhaw-gpi/vekacenter
 
+### Google Maps
+1. Hier können wir die **Google Maps Javascript API** nutzen, die mindestens für nur wenige Aufrufe kostenlos ist.
+2. Entsprechend müssen wir hier nichts selbst implementieren, sondern können diesen Geocoder- und Kartendienst nutzen.
+
 ### Stripe-Online-Bezahldienst
 1. Mit **Stripe** existiert ein Bezahldienst, der für Entwickler **zum Testen gratis** genutzt werden kann.
-2. Entsprechend müssen wir hier nichts selbst implementieren, sondern können den **realen Bezahldienst** out-of-the-box nutzen.
+2. Entsprechend müssen wir auch hier nichts selbst implementieren, sondern können den **realen Bezahldienst** out-of-the-box nutzen.
 3. Nebst Stripe gäbe es auch **andere Anbieter und Architekturen**, welche z.B. [hier](https://medium.com/get-ally/how-to-architect-online-payment-processing-system-for-an-online-store-6dc84350a39) und [hier](https://dreamproduction.com/kreditkarten-ihrem-onlineshop-zahlungsloesungen-und-payment-anbieter-im-vergleich/) beschrieben sind. Stripe hat den Vorteil, dass es relativ einfach zu implementieren ist.
 
 ### Einwohnerkontrollsysteme (EKS)
@@ -138,7 +143,7 @@ Die **Farben** bedeuten dabei:
 ## (Technische) Komponenten der Umzugsplattform
 1. **Camunda Spring Boot Starter** 3.0.0 beinhaltend:
     1. Spring Boot-Standardkonfiguration mit Tomcat als Applikations- und Webserver
-    2. Camunda Process Engine, REST API und Webapps (Tasklist, Cockpit, Admin) in der Version 7.9.2 (Enterprise Edition)
+    2. Camunda Process Engine, REST API und Webapps (Tasklist, Cockpit, Admin) in der Version 7.9.2 (Enterprise Edition), wobei für die Webapps zusätzlich ein eigenes WebJAR-Projekt aus dem lokalen Maven-Repository geladen wird.
     3. Main-Methode in EumzugPlattform2018Application-Klasse
 2. **Prozess-Komponenten**:
     1. @EnableProcessApplication-Annotation in EumzugPlattform2018Application-Klasse
@@ -186,6 +191,7 @@ Die **Farben** bedeuten dabei:
     5. In der [API Keys-Seite](https://dashboard.stripe.com/account/apikeys) die beiden Schlüssel herauskopieren
     6. Den Publishable Key in /src/main/ressources/static.forms/ErfassenDerZahlungsdetailsForm.html im Code unter `var stripeCheckoutHandler = StripeCheckout.configure({` beim Parameter key einfügen
     7. Den Secret Key als Umgebungsvariable hinzufügen, wie dies in /src/main/ressources/application.properties beim Eintrag `stripe.apiKey` im Kommentar beschrieben ist.
+4. **Angepasste Camunda Webapps**: Das Projekt https://github.com/zhaw-gpi/be-services-plattform muss gemäss der dort aufgeführten Anleitung konfiguriert und gebuilded sein, damit es im lokalen Maven-Repository zur Verfügung steht.
 
 ### Deployment
 1. Wenn man die **Enterprise Edition** von Camunda verwenden will, benötigt man die Zugangsdaten zum Nexus Repository und eine gültige Lizenz. Wie man diese "installiert", steht in den Kommentaren im pom.xml.
@@ -209,9 +215,10 @@ Die **Farben** bedeuten dabei:
         3. **Nicht umzugsberechtigt** ist: Ruth, Meier, 1.1.1980, weiblich
     2. **Adressen im Gebäude- und Wohnungsregister**:
         1. Entweder selbst nachschlagen in der **H2-Datenbank-Konsole** oder folgende Werte verwenden.
-        2. Für jede PLZ im Kanton Bern (z.B. 1797 Murten oder 3084 Köniz) sind zwei Adressen erfasst:
-            1. Bahnhofstrasse 1
-            2. Dorfstrasse 13a
+        2. Für jede PLZ im Kanton Bern (z.B. 3127 Lohnstorf oder 3073 Gümligen) sind zwei Adressen erfasst:
+            1. **Bahnhofstrasse 1**
+            2. **Dorfstrasse 13a**
+        3. Wenn man möchte, dass in "Alle Angaben prüfen" eine Google Maps-Karte für die Zuzugsadresse verwendet wird, muss diese Adresse in der Realität natürlich auch existieren, das ist z.B. der Fall für **Bahnhofstrasse 1, 3073 Gümligen**
     3. **E-Mail-Adresse bei Kontaktangaben**: Wenn man wirklich eine Mail erhalten möchte und mail.debug nicht auf true gesetzt ist, dann muss hier die eigene Mail-Adresse angegeben werden.
     4. **Grundversicherung prüfen**: Hinterlegt sind folgende vier Karten:
         1. 36026946698526862: Gehört zu Hans Meier, ist aber 2016 abgelaufen.

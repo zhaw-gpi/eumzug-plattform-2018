@@ -8,7 +8,7 @@
     <groupId>ch.zhaw.gpi</groupId>
     <artifactId>eumzug-plattform-2018</artifactId>
     <name>eUmzug Plattform 2018</name>
-    <version>3.0.2</version>
+    <version>3.0.3</version>
     
     <!-- Konfiguration des Maven-Projekts -->
     <properties>
@@ -76,11 +76,30 @@
         <!-- Importiert eine für die Spring Boot-Umgebung konfigurierte Camunda-
         Umgebung, beinhaltend: Spring-Framework, Tomcat-Server, Camunda Process
         Engine, Camunda Webapps (Tasklist, Cockpit, Admin), Camunda Spin
-        https://mvnrepository.com/artifact/org.camunda.bpm.springboot/camunda-bpm-spring-boot-starter-webapp/3.0.0 -->
+        https://mvnrepository.com/artifact/org.camunda.bpm.springboot/camunda-bpm-spring-boot-starter-webapp/3.0.0
+        
+        Allerdings werden angepasste Webapps benötigt (z.B. Übersetzung auf Deutsch,
+        anderes Logo, usw.). Damit dies funktioniert, ist das Webjar-Artifakt nicht
+        vom Spring Boot Starter-Projekt zu nehmen (exclusion), sondern das eigene
+        angepasste Webjar-Projekt zu verwenden (be-services-webapp-webjar(-ee).
+        Details hierzu in https://github.com/zhaw-gpi/be-services-plattform
+        -->
         <dependency>
             <groupId>org.camunda.bpm.springboot</groupId>
             <artifactId>camunda-bpm-spring-boot-starter-webapp${camunda.enable.ee}</artifactId>
             <version>${camunda-bpm-spring-boot-starter.version}</version>
+            
+            <exclusions>
+                <exclusion>
+                    <groupId>org.camunda.bpm.webapp</groupId>
+                    <artifactId>camunda-webapp-webjar${camunda.enable.ee}</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>        
+        <dependency>
+            <groupId>ch.zhaw.gpi</groupId>
+            <artifactId>be-services-webapp-webjar</artifactId>
+            <version>${camunda.version}${camunda.enable.ee}</version>
         </dependency>
         
         <!-- Importiert die REST API als weiterer Zugang für die Camunda Process Engine
