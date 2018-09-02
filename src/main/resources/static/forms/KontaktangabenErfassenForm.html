@@ -11,6 +11,27 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
     </div>
     
     <div class="form-group">
+        <label>E-Mailadresse*</label>
+        <input type="email" 
+               name="emailAddress" 
+               class="form-control" 
+               cam-variable-name="emailAddress" 
+               cam-variable-type="String"
+               placeholder="hans.muster@domain.ch">
+        <p class="help-block" ng-show="camundaForm.emailAddress.$invalid">
+            Geben Sie Ihre E-Mail-Adresse im Format name@beispiel.org ein.
+        </p>
+        <!-- Nicht zu verändernde Checkbox für Benachrichtigung per Mail -->
+        <label style="margin-top: 0.5rem">
+            <input name="enableMailNotification"
+                   type="checkbox"
+                   checked
+                   disabled>
+            <span style="font-weight:normal">Ich möchte per E-Mail über den Verlauf des Meldeprozesses informiert werden</span>
+        </label>
+    </div>
+    
+    <div class="form-group">
         <label>Telefonnummer*</label>
         <input type="text" 
                name="phoneNumber" 
@@ -23,19 +44,14 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
         <p class="help-block" ng-show="camundaForm.phoneNumber.$invalid">
             Geben Sie Ihre Telefonnummer im Bereich von 10 bis 20 Zeichen ein.
         </p>
+        <!-- Checkbox für Benachrichtigung per SMS -->
+        <label style="margin-top: 0.5rem">
+            <input name="enableSmsNotification"
+                   type="checkbox"
+                   cam-variable-name="enableSmsNotification"
+                   cam-variable-type="Boolean">
+            <span style="font-weight:normal">Ich möchte zusätzlich per SMS über den Verlauf des Meldeprozesses informiert werden</span>
+        </label>
     </div>
-    
-    <div class="form-group">
-        <label>E-Mailadresse*</label>
-        <input type="email" 
-               name="emailAddress" 
-               class="form-control" 
-               cam-variable-name="emailAddress" 
-               cam-variable-type="String"
-               placeholder="hans.muster@domain.ch">
-        <p class="help-block" ng-show="camundaForm.emailAddress.$invalid">
-            Geben Sie Ihre E-Mail-Adresse im Format name@beispiel.org ein.
-        </p>
-    </div>  
 </form>
 

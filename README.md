@@ -2,7 +2,7 @@
 
 > Autoren der Dokumentation: Björn Scheppler
 
-> Dokumentation letztmals aktualisiert: 31.8.2018
+> Dokumentation letztmals aktualisiert: 2.9.2018
 
 > TOC erstellt mit https://ecotrust-canada.github.io/markdown-toc/
 
@@ -45,6 +45,15 @@ Dieses Projekt ist die Musterlösung für eine Aufgabenstellung, welche den Stud
     4. (Falls von den Einwohnergemeinden eine Ablehnung kommt, dann muss per Stripe eine Rückerstattung veranlasst werden)
 2. **Persistierung fortgeschritten und WebApp für Mitarbeitende**: Wir könnten aber natürlich das auch etwas ausweiten, indem eine separate Applikation diese Persistierung vornimmt mit separater Datenbank (nicht Process Engine-DB) und dafür noch einem kleinen WebGUI, wo Angestellte der Verwaltung jederzeit für einen Meldepflichtigen seinen aktuellen Status anschauen können. Anderseits: Warum hierzu nicht einfach das Camunda Cockpit nutzen mit dem Filter nach einem bestimmten BusinessKey, welcher dem Benutzer auf dem "Abschlussbestätigung anzeigen"-Dialog angezeigt wird, damit er bei Telefonaten die richtige Id nennt?
 3. **Grundversicherung prüfen extended**: Statt einer Multi-Instance-Activity soll ein einziger User Task "Grundversicherung prüfen" erstellt werden, welcher alle Personen und Versicherungs-Nummer-Formularfelder als Tabelle darstellt. Jedes Mal, wenn der Benutzer eine Versicherungsnummer erfasst und das Formularfeld verlässt, wird asynchron aus AngularJS heraus der REST-Service abgefragt (https://spring.io/guides/gs/consuming-rest-angularjs/) und das Resultat als Icon (Grüner Haken vs. Rotes Ausrufezeichen) angezeigt bei der jeweiligen Tabellenzeile als auch im Fall von Ausrufezeichen mit den Details als Text.
+4. **Benutzerverwaltung**: Neue Benutzer sollen sich bei der BEservices-Plattform zunächst registrieren. Im Idealfall bedeutet dies:
+    1. Zusätzliche eigene "Webapp" mit Registrierungs-Formular
+    2. Über REST wird ein neuer Benutzer in Camunda angelegt
+    3. Eine Registrierung umfasst auch Telefon-Verifizierung mittels SMS (per Twilio) oder einfacher eine E-Mail-Verifizierung
+    4. Nach erfolgreicher Registrierung wird der Benutzer an die Welcome-App von BEservices geleitet
+5. **PDF generieren mit Abschlussbestätigung**:
+    1. Nach dem erfolgreichen Erfassen und Zahlen soll ein PDF generiert werden mit allen Angaben (analog AlleAngabenPruefenForm).
+    2. Dieses soll bei der Aktivität "Erfolgreiche Umzugsmeldung-Erfasung mitteilen" in ein Base64-String serialisiert werden.
+    3. Dieser wird dem kantonalen Benachrichtigungsdienst übergeben, damit dieser das deserialisierte PDF der Mail anhängen kann.
 
 ## Architektur der Umzugsplattform inklusive Umsystemen
 Die Umzugsplattform benötigt für das Funktionieren verschiedene Komponenten, welche teilweise in der Umzugsplattform selbst (= das vorliegende Maven-Projekt) enthalten sind und teilweise extern.
@@ -138,7 +147,7 @@ Die **Farben** bedeuten dabei:
 3. Umgekehrt ist der Benachrichtigungs**prozess trivial**, so dass eine eigene Process Engine nicht sinnvoll erscheint. Zumal ja schon im Hauptprozess nachvollziehbar persistiert wird, wer über was benachrichtigt wurde.
 4. Aus diesem Grund wird eine "einfache" **Spring Boot-Applikation ohne Camunda als Microservice** entwickelt.
 5. Die Kommunikation mit diesem Microservice geschieht analog zu den EKS über das **External Task Pattern**.
-6. Die Dokumentation des kantonalen Benachrichtigungsdienstes ist zu finden in folgendem **Github-Repository**: ??????????????
+6. Die Dokumentation des kantonalen Benachrichtigungsdienstes ist zu finden in folgendem **Github-Repository**: https://github.com/zhaw-gpi/kantonaler-benachrichtigungsdienst
 
 ## (Technische) Komponenten der Umzugsplattform
 1. **Camunda Spring Boot Starter** 3.0.0 beinhaltend:
@@ -181,7 +190,7 @@ Die **Farben** bedeuten dabei:
 
 ## Erforderliche Schritte für das Testen der Applikation
 ### Voraussetzungen
-1. **Laufende Umsysteme**: Die Maven-Projekte Personenregister, Gebäude- und Wohnungsregister, Einwohnerkontrollsysteme, EKS-Kommunikationsservice sowie VeKa-Center-Auskunftsdienst müssen gestartet sein. Details hierzu siehe in den ReadMe der verlinkten Github-Repositories.
+1. **Laufende Umsysteme**: Die Maven-Projekte Personenregister, Gebäude- und Wohnungsregister, Einwohnerkontrollsysteme, EKS-Kommunikationsservice, Kantonaler Benachrichtigungsdienst sowie VeKa-Center-Auskunftsdienst müssen gestartet sein. Details hierzu siehe in den ReadMe der verlinkten Github-Repositories.
 2. **Camunda Enterprise**: Wenn man die Enterprise Edition von Camunda verwenden will, benötigt man die Zugangsdaten zum Nexus Repository und eine gültige Lizenz. Wie man diese "installiert", steht in den Kommentaren im pom.xml.
 3. **Stripe-Konto und -Konfiguration**: Damit man den Stripe-Online-Bezahldienst nutzen kann, benötigt man einen Public Key und einen Secret Key. Beides erhält man nur, wenn man ein kostenloses Konto bei Stripe eröffnet. Details stehen etwa [hier](https://medium.com/oril/easy-way-to-integrate-payments-with-stripe-into-your-spring-boot-angular-application-c4d03c7fc6e) beschrieben. Im Wesentlichen sind die Schritte:
     1. Konto erstellen mit einer gültigen E-Mail-Adresse.
@@ -249,10 +258,9 @@ Die **Farben** bedeuten dabei:
 ## TODOs
 1. DokumenteHochladenForm: Bei mitumziehenden Personen muss nur die Hauptperson aktuell Dokumente hochladen
 2. Daten aufräumen: Auf keinen Fall sollen Prozessvariablen wie z.B MunicipalityList persistiert werden, welche Stammdaten enthalten oder nur Hilfsvariablen => aufräumen am Schluss (eigener Service Task) => allenfalls müssen aber sogar noch alte Aktivitäten gelöscht werden, weil ja schon zuvor diese Variablen persistiert wurden
-3. Aufruf des kantonalen Benachrichtigungsdienstes
-4. Aufruf des EKS-Kommunikationsdienstes
-5. "Angaben für Zusatzdienste erfassen" implementieren
-6. Die vereinfachten GWR/Personenregister-Services anzapfen (sollte streng genommen keine Anpassung erfordern)
+3. Aufruf des EKS-Kommunikationsdienstes
+4. "Angaben für Zusatzdienste erfassen" implementieren
+5. Die vereinfachten GWR/Personenregister-Services anzapfen (sollte streng genommen keine Anpassung erfordern)
 
 ## Mitwirkende
 1. Björn Scheppler: Hauptarbeit

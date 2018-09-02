@@ -8,7 +8,7 @@
     <groupId>ch.zhaw.gpi</groupId>
     <artifactId>eumzug-plattform-2018</artifactId>
     <name>eUmzug Plattform 2018</name>
-    <version>3.0.3</version>
+    <version>3.0.4</version>
     
     <!-- Konfiguration des Maven-Projekts -->
     <properties>
@@ -48,6 +48,9 @@
         <!-- Java 8 soll genutzt werden beim Kompilieren -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        
+        <!-- Es sind keine Tests erforderlich -->
+        <skipTests>true</skipTests>
     </properties>
     
     <!-- Setzt Spring Boot als massgebend für die Verwaltung der Abhängigkeiten in Maven -->
