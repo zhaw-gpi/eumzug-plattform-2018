@@ -109,8 +109,8 @@ Die **Farben** bedeuten dabei:
 2. Sie enthalten nur **einfache Prozesse und auch keine User Tasks**, daher verzichten wir auf den "Ballast" der Camunda Process Engine und implementieren sie als **einfache Spring Boot-Applikationen**.
 3. Sie kommunizieren mit der Aussenwelt über **SOAP**.
 4. Die detaillierte Dokumentation ist zu finden in folgenden **Github-Repositories**:
-    1. Personenregister: ??????????????
-    2. Gebäude- und Wohnungsregister: ??????????????
+    1. Personenregister: https://github.com/zhaw-gpi/personenregister-2018
+    2. Gebäude- und Wohnungsregister: https://github.com/zhaw-gpi/gwr-2018
 
 ### VeKa-Center-Auskunftsdienst
 1. Es gelten die Punkte 1 und 2 des vorherigen Kapitels.
@@ -260,7 +260,6 @@ Die **Farben** bedeuten dabei:
 2. Daten aufräumen: Auf keinen Fall sollen Prozessvariablen wie z.B MunicipalityList persistiert werden, welche Stammdaten enthalten oder nur Hilfsvariablen => aufräumen am Schluss (eigener Service Task) => allenfalls müssen aber sogar noch alte Aktivitäten gelöscht werden, weil ja schon zuvor diese Variablen persistiert wurden
 3. Aufruf des EKS-Kommunikationsdienstes
 4. "Angaben für Zusatzdienste erfassen" implementieren
-5. Die vereinfachten GWR/Personenregister-Services anzapfen (sollte streng genommen keine Anpassung erfordern)
 
 ## Mitwirkende
 1. Björn Scheppler: Hauptarbeit
