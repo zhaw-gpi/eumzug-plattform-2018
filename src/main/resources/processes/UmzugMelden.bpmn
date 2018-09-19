@@ -2,10 +2,6 @@
 <definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" targetNamespace="http://www.signavio.com/bpmn20" exporter="Camunda Modeler" exporterVersion="1.16.2" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <collaboration id="Collaboration_05jmpr5">
     <participant id="UmzugMeldenParticipant" name="Umzug melden" processRef="UmzugMelden" />
-    <textAnnotation id="TextAnnotation_13kmpaf">
-      <text>In dieser Farbe sind im HS 2017 nicht oder nur teilweise implementierte Elemente markiert</text>
-    </textAnnotation>
-    <association id="Association_0x0zaoe" sourceRef="UmzugMeldenParticipant" targetRef="TextAnnotation_13kmpaf" />
   </collaboration>
   <process id="UmzugMelden" name="Umzug melden" isExecutable="true">
     <laneSet>
@@ -182,10 +178,7 @@ Der kantonale Benachrichtigungsdienst erwartet eine HashMap mit dort spezifierte
 
 Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Prozessvariablen zusammenstellen, zum andern benötigt sie folgende zwei Prozessvariablen, die als Input-Parameter in diesem Service Task erstellt werden:
 - notificationSubject=eUmzugsmeldung erfolgreich abgeschlossen
-- notificationMessageBody=Die Einwohnerkontrollen haben die Umzugsmeldung akzeptiert. Der eUmzug-Meldeprozess ist damit erfolgreich abgeschlossen.
-
-
-</documentation>
+- notificationMessageBody=Die Einwohnerkontrollen haben die Umzugsmeldung akzeptiert. Der eUmzug-Meldeprozess ist damit erfolgreich abgeschlossen.</documentation>
       <extensionElements>
         <camunda:executionListener delegateExpression="#{GenerateNotificationTaskVariableAdapter}" event="start" />
         <camunda:inputOutput>
@@ -205,8 +198,7 @@ Der kantonale Benachrichtigungsdienst erwartet eine HashMap mit dort spezifierte
 
 Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Prozessvariablen zusammenstellen, zum andern benötigt sie folgende zwei Prozessvariablen, die als Input-Parameter in diesem Service Task erstellt werden:
 - notificationSubject=eUmzugsmeldung abgebrochen
-- notificationMessageBody=Die Einwohnerkontrollen haben die Umzugsmeldung nicht innerhalb von 60 Tagen beantwortet. Melden Sie sich bei ihnen.
-</documentation>
+- notificationMessageBody=Die Einwohnerkontrollen haben die Umzugsmeldung nicht innerhalb von 60 Tagen beantwortet. Melden Sie sich bei ihnen.</documentation>
       <extensionElements>
         <camunda:executionListener delegateExpression="#{GenerateNotificationTaskVariableAdapter}" event="start" />
         <camunda:inputOutput>
@@ -226,8 +218,7 @@ Der kantonale Benachrichtigungsdienst erwartet eine HashMap mit dort spezifierte
 
 Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Prozessvariablen zusammenstellen, zum andern benötigt sie folgende zwei Prozessvariablen, die als Input-Parameter in diesem Service Task erstellt werden:
 - notificationSubject=eUmzugsmeldung abgelehnt
-- notificationMessageBody=Die Einwohnerkontrollen haben die Umzugsmeldung abgelehnt. Melden Sie sich bei ihnen.
-</documentation>
+- notificationMessageBody=Die Einwohnerkontrollen haben die Umzugsmeldung abgelehnt. Melden Sie sich bei ihnen.</documentation>
       <extensionElements>
         <camunda:executionListener delegateExpression="#{GenerateNotificationTaskVariableAdapter}" event="start" />
         <camunda:inputOutput>
@@ -261,7 +252,7 @@ Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Proz
       <bpmndi:BPMNShape id="Lane_09fif4i_di" bpmnElement="KantonalerBenachrichtigungsdienst">
         <omgdc:Bounds x="29" y="677" width="1030" height="333" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_0fypb5d_di" bpmnElement="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen">
+      <bpmndi:BPMNShape id="EndEvent_0fypb5d_di" bpmnElement="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <omgdc:Bounds x="300" y="206" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <omgdc:Bounds x="278" y="246" width="83" height="53" />
@@ -273,25 +264,25 @@ Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Proz
           <omgdc:Bounds x="954" y="249" width="83" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_13cetj5_di" bpmnElement="UmzugsmeldungWegenAblehnungFehlgeschlagen">
+      <bpmndi:BPMNShape id="EndEvent_13cetj5_di" bpmnElement="UmzugsmeldungWegenAblehnungFehlgeschlagen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <omgdc:Bounds x="977" y="423" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <omgdc:Bounds x="951" y="466" width="88" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_1egx8l8_di" bpmnElement="UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen">
+      <bpmndi:BPMNShape id="EndEvent_1egx8l8_di" bpmnElement="UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <omgdc:Bounds x="977" y="316" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <omgdc:Bounds x="954" y="359" width="83" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BoundaryEvent_0qzu74p_di" bpmnElement="UmzugsmeldungVonGemeindenAbgelehnt">
+      <bpmndi:BPMNShape id="BoundaryEvent_0qzu74p_di" bpmnElement="UmzugsmeldungVonGemeindenAbgelehnt" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <omgdc:Bounds x="474" y="608" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <omgdc:Bounds x="381" y="626" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BoundaryEvent_1n6yipp_di" bpmnElement="SechzigTageVerstrichen">
+      <bpmndi:BPMNShape id="BoundaryEvent_1n6yipp_di" bpmnElement="SechzigTageVerstrichen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <omgdc:Bounds x="527" y="608" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <omgdc:Bounds x="562" y="632" width="53" height="27" />
@@ -343,7 +334,7 @@ Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Proz
         <omgdi:waypoint x="422" y="586" />
         <omgdi:waypoint x="465" y="586" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BoundaryEvent_18l55ip_di" bpmnElement="EinAbbruchgrundIstEingetroffen">
+      <bpmndi:BPMNShape id="BoundaryEvent_18l55ip_di" bpmnElement="EinAbbruchgrundIstEingetroffen" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <omgdc:Bounds x="235" y="86" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <omgdc:Bounds x="273" y="126" width="89" height="27" />
@@ -354,23 +345,16 @@ Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Proz
         <omgdi:waypoint x="253" y="224" />
         <omgdi:waypoint x="300" y="224" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_13kmpaf_di" bpmnElement="TextAnnotation_13kmpaf" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <omgdc:Bounds x="682" y="-75" width="274" height="40" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_0x0zaoe_di" bpmnElement="Association_0x0zaoe">
-        <omgdi:waypoint x="791" y="-1" />
-        <omgdi:waypoint x="809" y="-35" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_1jsp0ib_di" bpmnElement="UmzugsmeldungErfassenUndBezahlen">
         <omgdc:Bounds x="230" y="24" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0hhrqwf_di" bpmnElement="ErfolgreichenAbschlussPersistieren">
+      <bpmndi:BPMNShape id="ServiceTask_0hhrqwf_di" bpmnElement="ErfolgreichenAbschlussPersistieren" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <omgdc:Bounds x="794" y="184" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0hxz067_di" bpmnElement="UeberschreitenDerAntwortfristPersistieren">
+      <bpmndi:BPMNShape id="ServiceTask_0hxz067_di" bpmnElement="UeberschreitenDerAntwortfristPersistieren" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <omgdc:Bounds x="794" y="294" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_1fxn2rg_di" bpmnElement="AblehnungPersistieren">
+      <bpmndi:BPMNShape id="ServiceTask_1fxn2rg_di" bpmnElement="AblehnungPersistieren" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <omgdc:Bounds x="794" y="401" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0aqrb40_di" bpmnElement="ErfolgreichenAbschlussMitteilen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
@@ -394,10 +378,10 @@ Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Proz
         <omgdi:waypoint x="730" y="224" />
         <omgdi:waypoint x="794" y="224" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_0mxcs2j_di" bpmnElement="ServiceTask_0xhiz34">
+      <bpmndi:BPMNShape id="ServiceTask_0mxcs2j_di" bpmnElement="ServiceTask_0xhiz34" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <omgdc:Bounds x="596" y="806" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0j38d2g_di" bpmnElement="AblehnungMitteilen">
+      <bpmndi:BPMNShape id="ServiceTask_0j38d2g_di" bpmnElement="AblehnungMitteilen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <omgdc:Bounds x="596" y="910" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

@@ -117,7 +117,6 @@ Vorbedingungen: Personenregister, GWR und Umzugsplattform müssen auf localhost 
 	}
 }
 </con:request><con:originalUri>http://localhost/rest/process-definition/key/RelocationReportingProcess/start</con:originalUri><con:credentials><con:username xsi:nil="true"/><con:password xsi:nil="true"/><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder/></con:request><con:request name="TestdatenFuerKorrekturDerArbeiten" id="6012de8c-719b-481c-a599-8b3acdcff334" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8081</con:endpoint><con:request>{
-             "businessKey": "testMitVorausgefuelltenDaten",
              "variables": {
              			  "meldePflichtiger": {"value": "a", "type": "String"},
                            "firstName": {"value": "Hans", "type": "String"}, 
@@ -138,7 +137,7 @@ Vorbedingungen: Personenregister, GWR und Umzugsplattform müssen auf localhost 
                            "arrivalDate": {"value": "2017-01-02T00:00:00.000+0100", "type": "Date"},
                            "apartmentIdMoveIn": {"value":"237123456780","type":"String"},
                            "phoneNumber": {"value": "0980987766", "type": "String"},
-                           "emailAddress": {"value": "scep@zhaw.ch", "type": "String"},
+                           "emailAddress": {"value": "hans.meier@privat.ch", "type": "String"},
                            "housingSituationType": {"value": "2", "type": "String"},
                            "nameHousingSituation": {"value": "BearRent", "type": "String"},
                            "streetHousingSituation": {"value": "Am Bäreneck", "type": "String"},

@@ -2,10 +2,6 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_1j21kxz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
   <bpmn:collaboration id="Collaboration_0v36rjh">
     <bpmn:participant id="UmzugsmeldungErfassenUndBezahlenParticipant" name="Umzugsmeldung erfassen und bezahlen" processRef="UmzugsmeldungErfassenUndBezahlen" />
-    <bpmn:textAnnotation id="TextAnnotation_1pwk9di">
-      <bpmn:text>In dieser Farbe sind im HS 2017 nicht oder nur teilweise oder anders implementierte Elemente markiert</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_1monp7o" sourceRef="UmzugsmeldungErfassenUndBezahlenParticipant" targetRef="TextAnnotation_1pwk9di" />
   </bpmn:collaboration>
   <bpmn:process id="UmzugsmeldungErfassenUndBezahlen" name="Umzugsmeldung erfassen und bezahlen" isExecutable="true">
     <bpmn:subProcess id="UmzugsmeldungErfassen" name="Umzugsmeldung erfassen">
@@ -104,13 +100,7 @@ Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtige
         <bpmn:incoming>SequenceFlow_120w2r2</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_001pwxn</bpmn:outgoing>
       </bpmn:callActivity>
-      <bpmn:sequenceFlow id="SequenceFlow_05prxas" sourceRef="DokumenteHochladen" targetRef="Task_13r9lkm" />
-      <bpmn:task id="Task_13r9lkm" name="Angaben für Zusatzdienste erfassen">
-        <bpmn:documentation>TBD (Hundemarken &amp; Co.)</bpmn:documentation>
-        <bpmn:incoming>SequenceFlow_05prxas</bpmn:incoming>
-        <bpmn:outgoing>SequenceFlow_0e292zc</bpmn:outgoing>
-      </bpmn:task>
-      <bpmn:sequenceFlow id="SequenceFlow_0e292zc" sourceRef="Task_13r9lkm" targetRef="GebuehrenErmitteln" />
+      <bpmn:sequenceFlow id="SequenceFlow_05prxas" sourceRef="DokumenteHochladen" targetRef="GebuehrenErmitteln" />
       <bpmn:callActivity id="DokumenteHochladen" name="Dokumente hochladen" calledElement="DokumenteHochladen">
         <bpmn:documentation>Im aufgerufenen Prozess lädt der Meldepflichtige allenfalls erforderliche, eingescannte Dokumente hoch.
 
@@ -133,8 +123,8 @@ Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtige
 
 Zunächst wird geprüft, ob es sich um Wegzug/Zuzug oder Umzug handelt. Je nachdem werden dann über ein JPA-Repository eine oder zwei Gemeinde-Objekte aus der Datenbank geladen.
 
-Für jedes Objekt wird die relevante Gebühr (Zuzug, Wegzug oder Umzug) ausgelesen und einer HashMap hinzugefügt inklusive Angabe, um welche Art von Gebühr es sich handelt (z.B. "Wegzugsgebühr"). Falls mindestens eine Gebühr anfällt, wird die HashMap mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable feeMap zugewiesen, ansonsten wird dieser Variable der Wert null zugewiesen.</bpmn:documentation>
-        <bpmn:incoming>SequenceFlow_0e292zc</bpmn:incoming>
+Für jedes Objekt wird die relevante Gebühr (Zuzug, Wegzug oder Umzug) ausgelesen und einer HashMap hinzugefügt inklusive Angabe, um welche Art von Gebühr es sich handelt (z.B. "Wegzugsgebühr"). Falls mindestens eine Gebühr anfällt, wird die HashMap der Prozessvariable feeMap zugewiesen, ansonsten wird dieser Variable der Wert null zugewiesen.</bpmn:documentation>
+        <bpmn:incoming>SequenceFlow_05prxas</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_12mko98</bpmn:outgoing>
       </bpmn:serviceTask>
       <bpmn:userTask id="AlleAngabenPruefen" name="Alle Angaben prüfen" camunda:formKey="embedded:app:forms/AlleAngabenPruefenForm.html" camunda:assignee="${meldePflichtiger}">
@@ -199,11 +189,14 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
         <bpmn:incoming>Abbrechen</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_0eixy45</bpmn:outgoing>
       </bpmn:serviceTask>
+      <bpmn:textAnnotation id="TextAnnotation_0bef5pm">
+        <bpmn:text>Von Beginn weg schon gewisse Elemente vorhanden</bpmn:text>
+      </bpmn:textAnnotation>
+      <bpmn:association id="Association_10kuid4" sourceRef="AlleAngabenPruefen" targetRef="TextAnnotation_0bef5pm" />
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="SequenceFlow_0idpplo" sourceRef="UmzugsmeldungGestartet" targetRef="UmzugsmeldungErfassen" />
     <bpmn:sequenceFlow id="SequenceFlow_11zgl40" sourceRef="AchtundvierzigStundenVerstrichen" targetRef="ExclusiveGateway_0ldwwai" />
     <bpmn:sequenceFlow id="SequenceFlow_1lte88j" sourceRef="UmzugsmeldungErfassen" targetRef="ExclusiveGateway_1t9zc0d" />
-    <bpmn:sequenceFlow id="SequenceFlow_0bjydst" sourceRef="WegenNichtAkzeptierterGebuehrenAbgebrochenBoundaryEvent" targetRef="WegenNichtAkzeptierterGebuehrenAbgebrochenEndEvent" />
     <bpmn:startEvent id="UmzugsmeldungGestartet" name="Umzugsmeldung gestartet">
       <bpmn:documentation>Dieses Prozesstartereignis wird aufgerufen vom Prozess 'UmzugMelden' und ist nicht gedacht, um unabhängig davon (z.B. aus der Tasklist) aufgerufen zu werden.</bpmn:documentation>
       <bpmn:outgoing>SequenceFlow_0idpplo</bpmn:outgoing>
@@ -258,10 +251,6 @@ b) Nur das Vorhandensein von localPersonId geprüft wird (darf also nicht null s
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0xvv0xn" sourceRef="AbbruchWegenZeitueberschreitungPersistieren" targetRef="ExclusiveGateway_0ebozi5" />
     <bpmn:sequenceFlow id="SequenceFlow_1u4hpcs" sourceRef="ExclusiveGateway_0ebozi5" targetRef="EndEvent_0q8vph1" />
-    <bpmn:boundaryEvent id="WegenNichtAkzeptierterGebuehrenAbgebrochenBoundaryEvent" name="Wegen nicht akzeptierter Gebühren abgebrochen" attachedToRef="UmzugsmeldungErfassen">
-      <bpmn:outgoing>SequenceFlow_0bjydst</bpmn:outgoing>
-      <bpmn:errorEventDefinition errorRef="Error_0ye3wrs" />
-    </bpmn:boundaryEvent>
     <bpmn:exclusiveGateway id="ExclusiveGateway_175tgn6">
       <bpmn:incoming>GebuehrenFallenNichtAn</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_04m4p8a</bpmn:incoming>
@@ -282,18 +271,6 @@ Je nach Antwortzeiten der Gemeinden werden Sie dann in den nächsten Stunden ode
       <bpmn:outgoing>GebuehrenFallenAn</bpmn:outgoing>
       <bpmn:outgoing>GebuehrenFallenNichtAn</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:boundaryEvent id="ZahlungFehlgeschlagen" name="Zahlung fehlgeschlagen" attachedToRef="ZahlungDurchfuehren">
-      <bpmn:documentation>Kommt es innerhalb des Zahlungsprozesses zu einem Business-Fehler (z.B. Zahlung nicht innerhalb der Frist durchgeführt), so wird dieser hier abgefangen und im folgenden Sequenzfluss behandelt.
-
-In einem End-Listener wird die Prozessvariable 'status' gesetzt auf "Fehlgeschlagen bei Zahlung durchführen".</bpmn:documentation>
-      <bpmn:extensionElements>
-        <camunda:executionListener event="end">
-          <camunda:script scriptFormat="JavaScript">execution.setVariable("status", "Fehlgeschlagen bei Zahlung durchführen.");</camunda:script>
-        </camunda:executionListener>
-      </bpmn:extensionElements>
-      <bpmn:outgoing>SequenceFlow_1d0k5r8</bpmn:outgoing>
-      <bpmn:errorEventDefinition errorRef="Error_1ak9z8o" />
-    </bpmn:boundaryEvent>
     <bpmn:serviceTask id="FehlgeschlageneZahlungPersistieren" name="Fehlgeschlagene Zahlung persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
       <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
 
@@ -357,9 +334,7 @@ Der kantonale Benachrichtigungsdienst erwartet eine HashMap mit dort spezifierte
 
 Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Prozessvariablen zusammenstellen, zum andern benötigt sie folgende zwei Prozessvariablen, die als Input-Parameter in diesem Service Task erstellt werden:
 - notificationSubject: Bestätigung eUmzugsmeldung-Erfassung
-- notificationMessageBody: Danke für die Erfassung der eUmzugsmeldung, welche nun an die Einwohnerkontrollen zur Prüfung weitergeleitet werden.
-
-</bpmn:documentation>
+- notificationMessageBody: Danke für die Erfassung der eUmzugsmeldung, welche nun an die Einwohnerkontrollen zur Prüfung weitergeleitet werden.</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:executionListener delegateExpression="#{GenerateNotificationTaskVariableAdapter}" event="start" />
         <camunda:inputOutput>
@@ -389,10 +364,18 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_12n4w31" sourceRef="ErfolgreicheUmzugsmeldungErfasungMitteilen" targetRef="ErfolgreicheUmzugsmeldungErfassungPersistieren" />
     <bpmn:sequenceFlow id="SequenceFlow_1bqdavl" sourceRef="ErfolgreicheUmzugsmeldungErfassungPersistieren" targetRef="UmzugsmeldungErfolgreichErfasst" />
-    <bpmn:endEvent id="WegenNichtAkzeptierterGebuehrenAbgebrochenEndEvent" name="Wegen nicht akzeptierter Gebühren abgebrochen">
-      <bpmn:incoming>SequenceFlow_0bjydst</bpmn:incoming>
-      <bpmn:errorEventDefinition errorRef="Error_0lboqji" />
-    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="ZahlungFehlgeschlagen" name="Zahlung fehlgeschlagen" attachedToRef="ZahlungDurchfuehren">
+      <bpmn:documentation>Kommt es innerhalb des Zahlungsprozesses zu einem Business-Fehler (z.B. Zahlung nicht innerhalb der Frist durchgeführt), so wird dieser hier abgefangen und im folgenden Sequenzfluss behandelt.
+
+In einem End-Listener wird die Prozessvariable 'status' gesetzt auf "Fehlgeschlagen bei Zahlung durchführen".</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">execution.setVariable("status", "Fehlgeschlagen bei Zahlung durchführen.");</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_1d0k5r8</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_1ak9z8o" />
+    </bpmn:boundaryEvent>
   </bpmn:process>
   <bpmn:error id="Error_0fmfamk" name="ErrorUmzugsmeldungErfassenUndBezahlen" errorCode="ZeitueberschreitungBenutzer" />
   <bpmn:error id="Error_1ak9z8o" name="ErrorZahlungFehlgeschlagen" />
@@ -420,33 +403,33 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
         <di:waypoint x="114" y="272" />
         <di:waypoint x="146" y="272" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="SubProcess_0vam6rt_di" bpmnElement="UmzugsmeldungErfassen" isExpanded="true">
+      <bpmndi:BPMNShape id="SubProcess_0vam6rt_di" bpmnElement="UmzugsmeldungErfassen" isExpanded="true" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <dc:Bounds x="146" y="92" width="987" height="355" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BoundaryEvent_1o5j1g4_di" bpmnElement="AchtundvierzigStundenVerstrichen">
+      <bpmndi:BPMNShape id="BoundaryEvent_1o5j1g4_di" bpmnElement="AchtundvierzigStundenVerstrichen" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <dc:Bounds x="261" y="429" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="211" y="455" width="53" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0xvv0xn_di" bpmnElement="SequenceFlow_0xvv0xn">
+      <bpmndi:BPMNEdge id="SequenceFlow_0xvv0xn_di" bpmnElement="SequenceFlow_0xvv0xn" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <di:waypoint x="478" y="531" />
         <di:waypoint x="538" y="531" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0ebozi5_di" bpmnElement="ExclusiveGateway_0ebozi5" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="ExclusiveGateway_0ebozi5_di" bpmnElement="ExclusiveGateway_0ebozi5" isMarkerVisible="true" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <dc:Bounds x="538" y="506" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1u4hpcs_di" bpmnElement="SequenceFlow_1u4hpcs">
+      <bpmndi:BPMNEdge id="SequenceFlow_1u4hpcs_di" bpmnElement="SequenceFlow_1u4hpcs" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <di:waypoint x="588" y="531" />
         <di:waypoint x="644" y="531" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0ldwwai_di" bpmnElement="ExclusiveGateway_0ldwwai" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="ExclusiveGateway_0ldwwai_di" bpmnElement="ExclusiveGateway_0ldwwai" isMarkerVisible="true" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <dc:Bounds x="254" y="506" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="182" y="511" width="62" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1snvvu0_di" bpmnElement="PersonIdentifikationNichtErfasst">
+      <bpmndi:BPMNEdge id="SequenceFlow_1snvvu0_di" bpmnElement="PersonIdentifikationNichtErfasst" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <di:waypoint x="279" y="556" />
         <di:waypoint x="279" y="597" />
         <di:waypoint x="563" y="597" />
@@ -455,11 +438,11 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
           <dc:Bounds x="290" y="575" width="21" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_11zgl40_di" bpmnElement="SequenceFlow_11zgl40">
+      <bpmndi:BPMNEdge id="SequenceFlow_11zgl40_di" bpmnElement="SequenceFlow_11zgl40" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <di:waypoint x="279" y="465" />
         <di:waypoint x="279" y="506" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_1d6hl3c_di" bpmnElement="EndEvent_0q8vph1">
+      <bpmndi:BPMNShape id="EndEvent_1d6hl3c_di" bpmnElement="EndEvent_0q8vph1" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <dc:Bounds x="644" y="513" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="621" y="553" width="82" height="40" />
@@ -510,22 +493,22 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
         <di:waypoint x="1362" y="272" />
         <di:waypoint x="1393" y="272" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BoundaryEvent_0sieegt_di" bpmnElement="ZahlungFehlgeschlagen">
-        <dc:Bounds x="1276" y="294" width="36" height="36" />
+      <bpmndi:BPMNShape id="BoundaryEvent_0sieegt_di" bpmnElement="ZahlungFehlgeschlagen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
+        <dc:Bounds x="1261" y="294" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1213" y="325" width="73" height="27" />
+          <dc:Bounds x="1198" y="325" width="73" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1d0k5r8_di" bpmnElement="SequenceFlow_1d0k5r8">
-        <di:waypoint x="1294" y="330" />
-        <di:waypoint x="1294" y="385" />
+      <bpmndi:BPMNEdge id="SequenceFlow_1d0k5r8_di" bpmnElement="SequenceFlow_1d0k5r8" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
+        <di:waypoint x="1279" y="330" />
+        <di:waypoint x="1279" y="385" />
         <di:waypoint x="1333" y="385" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1vi0gkw_di" bpmnElement="SequenceFlow_1vi0gkw">
+      <bpmndi:BPMNEdge id="SequenceFlow_1vi0gkw_di" bpmnElement="SequenceFlow_1vi0gkw" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <di:waypoint x="1433" y="385" />
         <di:waypoint x="1476" y="385" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_1ox16lp_di" bpmnElement="WegenFehlgeschlagenerZahlungAbgebrochen">
+      <bpmndi:BPMNShape id="EndEvent_1ox16lp_di" bpmnElement="WegenFehlgeschlagenerZahlungAbgebrochen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <dc:Bounds x="1476" y="367" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1451" y="412" width="85" height="53" />
@@ -547,15 +530,15 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
         <di:waypoint x="260" y="315" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_12mko98_di" bpmnElement="SequenceFlow_12mko98">
-        <di:waypoint x="622" y="355" />
-        <di:waypoint x="670" y="355" />
+        <di:waypoint x="467" y="355" />
+        <di:waypoint x="522" y="355" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_00uv839_di" bpmnElement="SequenceFlow_00uv839">
         <di:waypoint x="202" y="137" />
         <di:waypoint x="235" y="137" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_15e28af_di" bpmnElement="SequenceFlow_15e28af">
-        <di:waypoint x="770" y="355" />
+        <di:waypoint x="622" y="355" />
         <di:waypoint x="828" y="355" />
         <di:waypoint x="828" y="254" />
         <di:waypoint x="854" y="254" />
@@ -568,7 +551,7 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
         <di:waypoint x="1133" y="272" />
         <di:waypoint x="1169" y="272" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BoundaryEvent_0yosntn_di" bpmnElement="DreiMinutenVerstrichen">
+      <bpmndi:BPMNShape id="BoundaryEvent_0yosntn_di" bpmnElement="DreiMinutenVerstrichen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <dc:Bounds x="1539" y="294" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1485" y="320" width="53" height="27" />
@@ -580,45 +563,31 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
       <bpmndi:BPMNShape id="CallActivity_0wck348_di" bpmnElement="WegzugsadresseErfassenUndPruefen">
         <dc:Bounds x="367" y="198" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_1ds9c4y_di" bpmnElement="ZuzugsinformationenErfassenUndPruefen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+      <bpmndi:BPMNShape id="CallActivity_1ds9c4y_di" bpmnElement="ZuzugsinformationenErfassenUndPruefen">
         <dc:Bounds x="522" y="198" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_163y65k_di" bpmnElement="PersonIdentifikationErfasst">
+      <bpmndi:BPMNEdge id="SequenceFlow_163y65k_di" bpmnElement="PersonIdentifikationErfasst" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <di:waypoint x="304" y="531" />
         <di:waypoint x="378" y="531" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="326" y="509" width="8" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="CallActivity_12i13lc_di" bpmnElement="WeitereAngabenErfassen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+      <bpmndi:BPMNShape id="CallActivity_12i13lc_di" bpmnElement="WeitereAngabenErfassen">
         <dc:Bounds x="670" y="198" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_05prxas_di" bpmnElement="SequenceFlow_05prxas">
         <di:waypoint x="310" y="355" />
         <di:waypoint x="367" y="355" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_13r9lkm_di" bpmnElement="Task_13r9lkm" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <dc:Bounds x="367" y="315" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0e292zc_di" bpmnElement="SequenceFlow_0e292zc">
-        <di:waypoint x="467" y="355" />
-        <di:waypoint x="522" y="355" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_1pwk9di_di" bpmnElement="TextAnnotation_1pwk9di" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <dc:Bounds x="295" y="2" width="336" height="40" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1monp7o_di" bpmnElement="Association_1monp7o">
-        <di:waypoint x="548" y="71" />
-        <di:waypoint x="497" y="42" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="CallActivity_1xn6vm1_di" bpmnElement="DokumenteHochladen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+      <bpmndi:BPMNShape id="CallActivity_1xn6vm1_di" bpmnElement="DokumenteHochladen">
         <dc:Bounds x="210" y="315" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0qdvp34_di" bpmnElement="GebuehrenErmitteln">
-        <dc:Bounds x="522" y="315" width="100" height="80" />
+      <bpmndi:BPMNShape id="ServiceTask_0qdvp34_di" bpmnElement="GebuehrenErmitteln" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
+        <dc:Bounds x="367" y="315" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_1nlu7rj_di" bpmnElement="AlleAngabenPruefen">
-        <dc:Bounds x="670" y="315" width="100" height="80" />
+      <bpmndi:BPMNShape id="UserTask_1nlu7rj_di" bpmnElement="AlleAngabenPruefen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
+        <dc:Bounds x="522" y="315" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0b249hv_di" bpmnElement="ExclusiveGateway_0b249hv" isMarkerVisible="true">
         <dc:Bounds x="854" y="229" width="50" height="50" />
@@ -656,7 +625,7 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
           <dc:Bounds x="893" y="288" width="53" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_18x8f3n_di" bpmnElement="WegenNichtAkzeptierterGebuehrenAbgebrochenErrorEvent">
+      <bpmndi:BPMNShape id="EndEvent_18x8f3n_di" bpmnElement="WegenNichtAkzeptierterGebuehrenAbgebrochenErrorEvent" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <dc:Bounds x="1055" y="337" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1040" y="378" width="65" height="53" />
@@ -666,40 +635,29 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
         <di:waypoint x="1015" y="355" />
         <di:waypoint x="1055" y="355" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0bjydst_di" bpmnElement="SequenceFlow_0bjydst">
-        <di:waypoint x="818" y="465" />
-        <di:waypoint x="818" y="524" />
-        <di:waypoint x="889" y="524" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BoundaryEvent_190mwd4_di" bpmnElement="WegenNichtAkzeptierterGebuehrenAbgebrochenBoundaryEvent">
-        <dc:Bounds x="800" y="429" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="741" y="463" width="65" height="53" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_14d9ckh_di" bpmnElement="AbbruchWegenZeitueberschreitungPersistieren">
+      <bpmndi:BPMNShape id="ServiceTask_14d9ckh_di" bpmnElement="AbbruchWegenZeitueberschreitungPersistieren" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <dc:Bounds x="378" y="491" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0nhbdvy_di" bpmnElement="GebuehrenNichtAkzeptiertPersistieren">
+      <bpmndi:BPMNShape id="ServiceTask_0nhbdvy_di" bpmnElement="GebuehrenNichtAkzeptiertPersistieren" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="915" y="315" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0n32zod_di" bpmnElement="FehlgeschlageneZahlungPersistieren">
+      <bpmndi:BPMNShape id="ServiceTask_0n32zod_di" bpmnElement="FehlgeschlageneZahlungPersistieren" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <dc:Bounds x="1333" y="345" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0oz8vy1_di" bpmnElement="ErfolgreicheUmzugsmeldungErfassungPersistieren">
+      <bpmndi:BPMNShape id="ServiceTask_0oz8vy1_di" bpmnElement="ErfolgreicheUmzugsmeldungErfassungPersistieren" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="1831" y="232" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_0e63u17_di" bpmnElement="ZahlungDurchfuehren" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+      <bpmndi:BPMNShape id="CallActivity_0e63u17_di" bpmnElement="ZahlungDurchfuehren">
         <dc:Bounds x="1262" y="232" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0mh6vb8_di" bpmnElement="SequenceFlow_0mh6vb8">
         <di:waypoint x="1582" y="272" />
         <di:waypoint x="1608" y="272" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_08sma34_di" bpmnElement="ExclusiveGateway_08sma34" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="ExclusiveGateway_08sma34_di" bpmnElement="ExclusiveGateway_08sma34" isMarkerVisible="true" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <dc:Bounds x="1608.278" y="247" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_01v74w3_di" bpmnElement="SequenceFlow_01v74w3">
+      <bpmndi:BPMNEdge id="SequenceFlow_01v74w3_di" bpmnElement="SequenceFlow_01v74w3" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <di:waypoint x="1557" y="330" />
         <di:waypoint x="1557" y="387" />
         <di:waypoint x="1633" y="387" />
@@ -720,12 +678,13 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
         <di:waypoint x="1931" y="272" />
         <di:waypoint x="1967" y="272" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_1q6nggr_di" bpmnElement="WegenNichtAkzeptierterGebuehrenAbgebrochenEndEvent">
-        <dc:Bounds x="889" y="506" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="875" y="549" width="65" height="53" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNShape id="TextAnnotation_0bef5pm_di" bpmnElement="TextAnnotation_0bef5pm">
+        <dc:Bounds x="645" y="386" width="177" height="39" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_10kuid4_di" bpmnElement="Association_10kuid4">
+        <di:waypoint x="622" y="371" />
+        <di:waypoint x="670" y="386" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0zo10zu" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_0zo10zu" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
   <bpmn:collaboration id="Collaboration_1tnimfb">
     <bpmn:participant id="DokumenteHochladenParticipant" name="Dokumente hochladen" processRef="DokumenteHochladen" />
   </bpmn:collaboration>
@@ -41,8 +41,7 @@ Dieses Hilfsobjekt wird mittels Camunda Spin in ein JSON-Objekt serialisiert und
 
 Für jedes Element in documents.municipalityDocumentUploadedFiles ein Input-Feld vom Typ file und ein Label, welches den Dokument-Namen (z.B. Heiratsurkunde) und die Bedingung (z.B. "falls verheiratet") enthält.
 
-Der eigentliche Upload geschieht in einer eigenen Funktion, wo der Dateiname als auch die Datei selbst (als DataUrl) in den Variablen fileName und fileDataUrl gespeichert werden.
-</bpmn:documentation>
+Der eigentliche Upload geschieht in einer eigenen Funktion, wo der Dateiname als auch die Datei selbst (als DataUrl) in den Variablen fileName und fileDataUrl gespeichert werden.</bpmn:documentation>
       <bpmn:incoming>DokumenteVorhanden</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1k753gz</bpmn:outgoing>
     </bpmn:userTask>
@@ -86,10 +85,10 @@ Der eigentliche Upload geschieht in einer eigenen Funktion, wo der Dateiname als
           <dc:Bounds x="150" y="65" width="60" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_1a4yxl8_di" bpmnElement="DokumenteHochladenForm">
+      <bpmndi:BPMNShape id="UserTask_1a4yxl8_di" bpmnElement="DokumenteHochladenForm" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
         <dc:Bounds x="564" y="69" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_16ym1i0_di" bpmnElement="HochzuladendeDokumenteErmitteln">
+      <bpmndi:BPMNShape id="ServiceTask_16ym1i0_di" bpmnElement="HochzuladendeDokumenteErmitteln" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
         <dc:Bounds x="285" y="69" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_1xg555j_di" bpmnElement="ExclusiveGateway_1xg555j" isMarkerVisible="true">

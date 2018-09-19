@@ -12,9 +12,10 @@ Formular zum UserTask "Versicherungs-Kartennummern erfassen"
     </div>
     
     <!-- Formularfeld zum Erfassen der Versichertenkartennummer -->
+    <!-- PS: Eigentlich wäre type=number sinnvoll, aber Javascript hat Mühe mit so grossen Zahlen. Dadurch wird z.B. aus einer Eingabe von 36026946698526862 im Hintergrund 36026946698526864 -->
     <div class="form-group">
         <label>Versichertenkartennummer für {{person.firstName}} {{person.officialName}}*</label>
-        <input type="number" 
+        <input type="text" 
                name="baseInsuranceNumber" 
                class="form-control"
                ng-model="baseInsuranceNumber"

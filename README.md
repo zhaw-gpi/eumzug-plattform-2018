@@ -54,6 +54,7 @@ Dieses Projekt ist die Musterlösung für eine Aufgabenstellung, welche den Stud
     1. Nach dem erfolgreichen Erfassen und Zahlen soll ein PDF generiert werden mit allen Angaben (analog AlleAngabenPruefenForm).
     2. Dieses soll bei der Aktivität "Erfolgreiche Umzugsmeldung-Erfasung mitteilen" in ein Base64-String serialisiert werden.
     3. Dieser wird dem kantonalen Benachrichtigungsdienst übergeben, damit dieser das deserialisierte PDF der Mail anhängen kann.
+6. **Zusatzdienste erfassen**: Also z.B. Parkkarten oder Hundedaten.
 
 ## Architektur der Umzugsplattform inklusive Umsystemen
 Die Umzugsplattform benötigt für das Funktionieren verschiedene Komponenten, welche teilweise in der Umzugsplattform selbst (= das vorliegende Maven-Projekt) enthalten sind und teilweise extern.
@@ -259,7 +260,6 @@ Die **Farben** bedeuten dabei:
 1. DokumenteHochladenForm: Bei mitumziehenden Personen muss nur die Hauptperson aktuell Dokumente hochladen
 2. Daten aufräumen: Auf keinen Fall sollen Prozessvariablen wie z.B MunicipalityList persistiert werden, welche Stammdaten enthalten oder nur Hilfsvariablen => aufräumen am Schluss (eigener Service Task) => allenfalls müssen aber sogar noch alte Aktivitäten gelöscht werden, weil ja schon zuvor diese Variablen persistiert wurden
 3. Aufruf des EKS-Kommunikationsdienstes
-4. "Angaben für Zusatzdienste erfassen" implementieren
 
 ## Mitwirkende
 1. Björn Scheppler: Hauptarbeit

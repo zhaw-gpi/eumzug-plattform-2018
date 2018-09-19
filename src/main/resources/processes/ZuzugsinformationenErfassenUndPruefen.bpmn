@@ -14,10 +14,6 @@
     <bpmn:messageFlow id="Wohnungen" name="Wohnungen" sourceRef="GebaeudeUndWohnungsregister" targetRef="WohnungenAnZuzugsadresseBestimmen">
       <bpmn:documentation>Meldung vom Typ WohnungenAntwortType, welche null oder eine Liste von WohnungType enthält.</bpmn:documentation>
     </bpmn:messageFlow>
-    <bpmn:textAnnotation id="TextAnnotation_0cytvg6">
-      <bpmn:text>In dieser Farbe sind im HS 2017 nicht implementierte Elemente markiert</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_04jk8wv" sourceRef="ZuzugsinformationenErfassenUndPruefenParticipant" targetRef="TextAnnotation_0cytvg6" />
   </bpmn:collaboration>
   <bpmn:process id="ZuzugsinformationenErfassenUndPruefen" name="ZuzugsinformationenErfassenUndPruefen" isExecutable="true">
     <bpmn:startEvent id="WegzugsadressPruefungErfolgreichAbgeschlossen" name="Wegzugsadress-prüfung erfolgreich abgeschlossen">
@@ -25,8 +21,7 @@
 
 Ein End-Listener ruft die JavaDelegate-Klasse 'GetMunicipalityListDelegate' auf mit folgender Aufgabe: Serialisierte Prozessvariable municipalityList mit allen Gemeinden in der Umzugsplattform-Datenbank erstellen
 
-Über ein JPA-Repository sollen alle Municipality-Objekte aus der Datenbank in ein List-Objekt eingelesen werden. Diese Objekte werden mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable municipalityList zugewiesen.
-</bpmn:documentation>
+Über ein JPA-Repository sollen alle Municipality-Objekte aus der Datenbank in ein List-Objekt eingelesen werden. Diese Objekte werden mittels Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable municipalityList zugewiesen.</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:executionListener event="end">
           <camunda:script scriptFormat="JavaScript">// Variable adresseUngueltigZaehler mit dem Wert 0 initiieren
@@ -115,13 +110,17 @@ execution.setVariable("adresseUngueltigZaehler", adresseUngueltigZaehler + 1);</
       <bpmn:outgoing>SequenceFlow_0sag684</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_0sag684" sourceRef="WohnungAnZuzugsadresseAuswaehlen" targetRef="ZuzugsInformationenErfolgreichGeprueft" />
+    <bpmn:association id="Association_1jbjozh" sourceRef="WohnungenAnZuzugsadresseBestimmen" targetRef="TextAnnotation_18n9v1b" />
+    <bpmn:textAnnotation id="TextAnnotation_18n9v1b">
+      <bpmn:text>Initial wird wohnungenGefunden auf true gesetzt</bpmn:text>
+    </bpmn:textAnnotation>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1o68a8d">
       <bpmndi:BPMNShape id="Participant_1t0xf0u_di" bpmnElement="ZuzugsinformationenErfassenUndPruefenParticipant">
         <dc:Bounds x="0" y="132" width="938" height="243" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="WegzugsadressPruefungErfolgreichAbgeschlossen">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="WegzugsadressPruefungErfolgreichAbgeschlossen" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
         <dc:Bounds x="71" y="234" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="49" y="277" width="82" height="53" />
@@ -138,10 +137,10 @@ execution.setVariable("adresseUngueltigZaehler", adresseUngueltigZaehler + 1);</
         <di:waypoint x="212" y="252" />
         <di:waypoint x="272" y="252" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_164dpbh_di" bpmnElement="ZuzugsadresseErfassen">
+      <bpmndi:BPMNShape id="UserTask_164dpbh_di" bpmnElement="ZuzugsadresseErfassen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="272" y="212" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_1oew700_di" bpmnElement="WohnungenAnZuzugsadresseBestimmen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+      <bpmndi:BPMNShape id="ServiceTask_1oew700_di" bpmnElement="WohnungenAnZuzugsadresseBestimmen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="432" y="212" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_02hjo1y_di" bpmnElement="ExclusiveGateway_02hjo1y" isMarkerVisible="true">
@@ -180,36 +179,36 @@ execution.setVariable("adresseUngueltigZaehler", adresseUngueltigZaehler + 1);</
           <dc:Bounds x="652" y="231" width="8" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Participant_0yqqcl4_di" bpmnElement="GebaeudeUndWohnungsregister">
+      <bpmndi:BPMNShape id="Participant_0yqqcl4_di" bpmnElement="GebaeudeUndWohnungsregister" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="333" y="-1" width="300" height="60" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="MessageFlow_1g54841_di" bpmnElement="Zuzugsadresse">
+      <bpmndi:BPMNEdge id="MessageFlow_1g54841_di" bpmnElement="Zuzugsadresse" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <di:waypoint x="468" y="212" />
         <di:waypoint x="468" y="59" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="410" y="83" width="40" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="MessageFlow_05ay0wk_di" bpmnElement="Wohnungen">
+      <bpmndi:BPMNEdge id="MessageFlow_05ay0wk_di" bpmnElement="Wohnungen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <di:waypoint x="497" y="59" />
         <di:waypoint x="497" y="212" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="505" y="84" width="59" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0cytvg6_di" bpmnElement="TextAnnotation_0cytvg6" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <dc:Bounds x="651" y="58" width="249" height="44" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_04jk8wv_di" bpmnElement="Association_04jk8wv">
-        <di:waypoint x="685" y="132" />
-        <di:waypoint x="737" y="102" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_07y7x4j_di" bpmnElement="WohnungAnZuzugsadresseAuswaehlen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+      <bpmndi:BPMNShape id="UserTask_07y7x4j_di" bpmnElement="WohnungAnZuzugsadresseAuswaehlen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="704" y="212" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0sag684_di" bpmnElement="SequenceFlow_0sag684">
         <di:waypoint x="804" y="252" />
         <di:waypoint x="854" y="252" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_18n9v1b_di" bpmnElement="TextAnnotation_18n9v1b">
+        <dc:Bounds x="252" y="152" width="200" height="38" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1jbjozh_di" bpmnElement="Association_1jbjozh">
+        <di:waypoint x="432" y="221" />
+        <di:waypoint x="382" y="190" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

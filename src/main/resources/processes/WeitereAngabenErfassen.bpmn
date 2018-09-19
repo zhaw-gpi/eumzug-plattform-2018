@@ -9,10 +9,6 @@
     <bpmn:messageFlow id="Pruefergebnis" name="Prüfergebnis" sourceRef="VeKaCenterAuskunftsdienstParticipant" targetRef="GrundversicherungPruefen">
       <bpmn:documentation>checkBaseInsuranceResult und checkBaseInsuranceResultDetails</bpmn:documentation>
     </bpmn:messageFlow>
-    <bpmn:textAnnotation id="TextAnnotation_0fwhown">
-      <bpmn:text>In dieser Farbe sind im HS 2017 nicht oder nur teilweise oder anders implementierte Elemente markiert</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_0k8bvf1" sourceRef="WeitereAngabenErfassenParticipant" targetRef="TextAnnotation_0fwhown" />
   </bpmn:collaboration>
   <bpmn:process id="WeitereAngabenErfassen" name="WeitereAngabenErfassen" isExecutable="true">
     <bpmn:subProcess id="GrundversicherungFuerAllePersonenPruefen" name="Grundversicherung für alle Personen prüfen">
@@ -20,8 +16,7 @@
 
 Dies geschieht in diesem sequentiellen Multi-Instanz-Subprozess. Für die Anzahl Elemente in personList.persons wird dieser Subprozess durchgeführt, wobei im Hintergrund von Camunda automatisch die loopCounter-Variable gesetzt wird, welche dem Index in personList.persons entspricht. Es handelt sich also um das BPMN-Äquivalent zu einer klassischen for-Schleife.
 
-PS: Der elegantere Weg über ${personList.persons} als Collection und person als Element Variable (for-each-Schleife) klappt leider nicht, weil die Collection als Value statt reference übergeben wird. Auf diese Weise werden veränderte person-Objekte nicht in personList.persons aktualisiert.
-</bpmn:documentation>
+PS: Der elegantere Weg über ${personList.persons} als Collection und person als Element Variable (for-each-Schleife) klappt leider nicht, weil die Collection als Value statt reference übergeben wird. Auf diese Weise werden veränderte person-Objekte nicht in personList.persons aktualisiert.</bpmn:documentation>
       <bpmn:incoming>WegzugZuzug</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_11hyioi</bpmn:outgoing>
       <bpmn:multiInstanceLoopCharacteristics isSequential="true">
@@ -30,8 +25,7 @@ PS: Der elegantere Weg über ${personList.persons} als Collection und person als
       <bpmn:startEvent id="GrundversicherungPruefenStartEvent">
         <bpmn:documentation>In einem End Listener wird die Prozessvariable checkBaseInsurance auf true gesetzt. 
 
-Diese Variable wird benötigt, um zu steuern, ob nach dem Erfassen der Versicherungskartennummer diese geprüft werden soll (im ersten Durchgang immer) oder ob die Prüfung übersprungen werden soll (im zweiten Durchgang, falls der Benutzer keine andere Nummer eingibt).
-</bpmn:documentation>
+Diese Variable wird benötigt, um zu steuern, ob nach dem Erfassen der Versicherungskartennummer diese geprüft werden soll (im ersten Durchgang immer) oder ob die Prüfung übersprungen werden soll (im zweiten Durchgang, falls der Benutzer keine andere Nummer eingibt).</bpmn:documentation>
         <bpmn:extensionElements>
           <camunda:executionListener event="end">
             <camunda:script scriptFormat="JavaScript">execution.setVariable("checkBaseInsurance", true);</camunda:script>
@@ -61,8 +55,7 @@ Formularfeld:
 Skripte:
 - Nach dem Formular-Laden sollen die Variablen checkBaseInsurance, personList und loopCounter ausgelesen werden
 - Nach dem Auslesen soll die aktuelle Person (gemäss loopCounter) $scope.person zugewiesen werden. Zudem sind die Variablen $scope.baseInsuranceNumberOriginal und $scope.baseInsuranceNumber entsprechend aus $scope.person.baseInsuranceNumber auszulesen
-- Vor dem Absenden des Formulars ist zu prüfen, ob der Benutzer die baseInsuranceNumber geändert hat. Falls checkBaseInsurance falsch ist und der Benutzer etwas geändert hat, ist checkBaseInsurance auf Wahr zu setzen.
-</bpmn:documentation>
+- Vor dem Absenden des Formulars ist zu prüfen, ob der Benutzer die baseInsuranceNumber geändert hat. Falls checkBaseInsurance falsch ist und der Benutzer etwas geändert hat, ist checkBaseInsurance auf Wahr zu setzen.</bpmn:documentation>
         <bpmn:incoming>SequenceFlow_14qf1vf</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_13c4q3d</bpmn:outgoing>
       </bpmn:userTask>
@@ -232,14 +225,14 @@ E-Mailadresse
           <dc:Bounds x="58" y="177" width="90" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0vcuo44_di" bpmnElement="UmzugsdatenErfassen">
+      <bpmndi:BPMNShape id="UserTask_0vcuo44_di" bpmnElement="UmzugsdatenErfassen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="161" y="112" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1j0inpb_di" bpmnElement="SequenceFlow_1j0inpb">
         <di:waypoint x="121" y="152" />
         <di:waypoint x="161" y="152" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_14lnox3_di" bpmnElement="KontaktangabenErfassen">
+      <bpmndi:BPMNShape id="UserTask_14lnox3_di" bpmnElement="KontaktangabenErfassen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="1445" y="112" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0gaq5kd_di" bpmnElement="SequenceFlow_0gaq5kd">
@@ -260,47 +253,40 @@ E-Mailadresse
         <di:waypoint x="1545" y="152" />
         <di:waypoint x="1588" y="152" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0fwhown_di" bpmnElement="TextAnnotation_0fwhown" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <dc:Bounds x="39" y="-64" width="302" height="40" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_0k8bvf1_di" bpmnElement="Association_0k8bvf1">
-        <di:waypoint x="427" y="33" />
-        <di:waypoint x="252" y="-24" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Participant_02v5zqt_di" bpmnElement="VeKaCenterAuskunftsdienstParticipant" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+      <bpmndi:BPMNShape id="Participant_02v5zqt_di" bpmnElement="VeKaCenterAuskunftsdienstParticipant" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="863" y="368" width="300" height="60" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="MessageFlow_0gi7zs3_di" bpmnElement="VersichertenDaten">
+      <bpmndi:BPMNEdge id="MessageFlow_0gi7zs3_di" bpmnElement="VersichertenDaten" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <di:waypoint x="998" y="191" />
         <di:waypoint x="998" y="368" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="921" y="322.9999999999997" width="65" height="40" />
+          <dc:Bounds x="921" y="323" width="65" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="MessageFlow_0yggjzl_di" bpmnElement="Pruefergebnis">
+      <bpmndi:BPMNEdge id="MessageFlow_0yggjzl_di" bpmnElement="Pruefergebnis" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <di:waypoint x="1037" y="368" />
         <di:waypoint x="1037" y="191" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1054" y="334" width="63" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_1hs2uh5_di" bpmnElement="WohnverhaeltnisErfassen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+      <bpmndi:BPMNShape id="UserTask_1hs2uh5_di" bpmnElement="WohnverhaeltnisErfassen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="304" y="112" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="SubProcess_0o1j9nw_di" bpmnElement="GrundversicherungFuerAllePersonenPruefen" isExpanded="true" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+      <bpmndi:BPMNShape id="SubProcess_0o1j9nw_di" bpmnElement="GrundversicherungFuerAllePersonenPruefen" isExpanded="true" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <dc:Bounds x="560" y="53" width="776" height="197" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_11hyioi_di" bpmnElement="SequenceFlow_11hyioi">
         <di:waypoint x="1336" y="152" />
         <di:waypoint x="1365" y="152" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="StartEvent_0lgf9sj_di" bpmnElement="GrundversicherungPruefenStartEvent">
+      <bpmndi:BPMNShape id="StartEvent_0lgf9sj_di" bpmnElement="GrundversicherungPruefenStartEvent" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <dc:Bounds x="589" y="133" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0fdvlqr_di" bpmnElement="VersicherungsKartennummernErfassen">
+      <bpmndi:BPMNShape id="UserTask_0fdvlqr_di" bpmnElement="VersicherungsKartennummernErfassen" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
         <dc:Bounds x="730" y="111" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_08wzuh0_di" bpmnElement="GrundversicherungPruefen">
+      <bpmndi:BPMNShape id="ServiceTask_08wzuh0_di" bpmnElement="GrundversicherungPruefen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="963" y="111" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_13c4q3d_di" bpmnElement="SequenceFlow_13c4q3d">

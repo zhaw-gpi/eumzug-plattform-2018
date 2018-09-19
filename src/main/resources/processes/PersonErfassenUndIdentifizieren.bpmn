@@ -11,10 +11,6 @@
     <bpmn:messageFlow id="MessageFlow_0orjp5r" name="Existenz und Umzugs-berechtigung" sourceRef="KantonalesPersonenregisterParticipant" targetRef="PersonIdentifizieren">
       <bpmn:documentation>eCH-0194:personMoveResponse</bpmn:documentation>
     </bpmn:messageFlow>
-    <bpmn:textAnnotation id="TextAnnotation_1t02yh8">
-      <bpmn:text>In dieser Farbe sind im HS 2017 nicht oder nur teilweise oder anders implementierte Elemente markiert</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_13tr07e" sourceRef="PersonErfassenUndIdentifizierenParticipant" targetRef="TextAnnotation_1t02yh8" />
   </bpmn:collaboration>
   <bpmn:process id="PersonErfassenUndIdentifizieren" name="PersonErfassenUndIdentifizieren" isExecutable="true">
     <bpmn:startEvent id="UmzugsmeldungGestartet" name="Umzugsmeldung gestartet">
@@ -193,6 +189,14 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
     <bpmn:sequenceFlow id="KorrekturGewuenscht" name="ja" sourceRef="ExclusiveGateway_02eif3q" targetRef="ExclusiveGateway_1nsjb6v">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${revisionDesired}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
+    <bpmn:association id="Association_1nt4btm" sourceRef="PersonenidentifikatorGenerieren" targetRef="TextAnnotation_0rus1mg" />
+    <bpmn:textAnnotation id="TextAnnotation_0rus1mg">
+      <bpmn:text>Von Beginn an hinterlegt ist ein statischer Wert</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0nehhgw">
+      <bpmn:text>Von Beginn an hinterlegt ist statisch die Rückgabe von personKnown/moveAllowed=true sowie relativesExist=false</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1m3n56m" sourceRef="PersonIdentifizieren" targetRef="TextAnnotation_0nehhgw" />
   </bpmn:process>
   <bpmn:error id="Error_0j8yidj" name="ErrorPersonErfassenUndIdentifizieren" errorCode="WegenNegativerPersonenIdentifikationAbgebrochen" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -200,16 +204,16 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
       <bpmndi:BPMNShape id="Participant_1hkfvkb_di" bpmnElement="PersonErfassenUndIdentifizierenParticipant">
         <dc:Bounds x="-1" y="118" width="1637" height="399" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="StartEvent_14lr8fl_di" bpmnElement="UmzugsmeldungGestartet">
+      <bpmndi:BPMNShape id="StartEvent_14lr8fl_di" bpmnElement="UmzugsmeldungGestartet" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
         <dc:Bounds x="72" y="246" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="49" y="289" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0m8m5zm_di" bpmnElement="IdentifikationsmerkmaleErfassen">
+      <bpmndi:BPMNShape id="UserTask_0m8m5zm_di" bpmnElement="IdentifikationsmerkmaleErfassen" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
         <dc:Bounds x="250" y="224" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_15zrloe_di" bpmnElement="PersonenidentifikatorGenerieren">
+      <bpmndi:BPMNShape id="ServiceTask_15zrloe_di" bpmnElement="PersonenidentifikatorGenerieren" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
         <dc:Bounds x="394" y="224" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_09b5q9r_di" bpmnElement="SequenceFlow_09b5q9r">
@@ -226,7 +230,7 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
           <dc:Bounds x="653" y="218.5" width="68" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_04385zn_di" bpmnElement="PersonIdentifizieren">
+      <bpmndi:BPMNShape id="ServiceTask_04385zn_di" bpmnElement="PersonIdentifizieren" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
         <dc:Bounds x="546" y="224" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0vatjx1_di" bpmnElement="ExclusiveGateway_0vatjx1" isMarkerVisible="true">
@@ -235,13 +239,13 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
           <dc:Bounds x="831" y="193" width="71" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0ko93ge_di" bpmnElement="MitumziehendePersonenAuswaehlen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
+      <bpmndi:BPMNShape id="UserTask_0ko93ge_di" bpmnElement="MitumziehendePersonenAuswaehlen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="964" y="224" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0cjsigp_di" bpmnElement="ExclusiveGateway_0cjsigp" isMarkerVisible="true">
         <dc:Bounds x="1112" y="239" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_1010s5o_di" bpmnElement="KorrekturbedarfMitteilen">
+      <bpmndi:BPMNShape id="UserTask_1010s5o_di" bpmnElement="KorrekturbedarfMitteilen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="964" y="379" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_02eif3q_di" bpmnElement="ExclusiveGateway_02eif3q" isMarkerVisible="true">
@@ -253,7 +257,7 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
       <bpmndi:BPMNShape id="ExclusiveGateway_0620p1a_di" bpmnElement="ExclusiveGateway_0620p1a" isMarkerVisible="true">
         <dc:Bounds x="1298" y="239" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0hwv8rb_di" bpmnElement="AnSchalterVerwiesenWerden">
+      <bpmndi:BPMNShape id="UserTask_0hwv8rb_di" bpmnElement="AnSchalterVerwiesenWerden" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="1391" y="224" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0j730q8_di" bpmnElement="WegenNegativerPersonenIdentifikationAbgebrochen">
@@ -360,29 +364,36 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
           <dc:Bounds x="1113" y="474" width="8" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Participant_0cfc1eh_di" bpmnElement="KantonalesPersonenregisterParticipant">
+      <bpmndi:BPMNShape id="Participant_0cfc1eh_di" bpmnElement="KantonalesPersonenregisterParticipant" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
         <dc:Bounds x="460" y="0" width="300" height="60" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="MessageFlow_0jxik1a_di" bpmnElement="MessageFlow_0jxik1a">
+      <bpmndi:BPMNEdge id="MessageFlow_0jxik1a_di" bpmnElement="MessageFlow_0jxik1a" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
         <di:waypoint x="584" y="224" />
         <di:waypoint x="584" y="60" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="499" y="72" width="72" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="MessageFlow_0orjp5r_di" bpmnElement="MessageFlow_0orjp5r">
+      <bpmndi:BPMNEdge id="MessageFlow_0orjp5r_di" bpmnElement="MessageFlow_0orjp5r" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
         <di:waypoint x="609" y="60" />
         <di:waypoint x="609" y="224" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="621" y="72" width="64" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_1t02yh8_di" bpmnElement="TextAnnotation_1t02yh8" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <dc:Bounds x="70" y="27" width="339" height="45" />
+      <bpmndi:BPMNShape id="TextAnnotation_0rus1mg_di" bpmnElement="TextAnnotation_0rus1mg">
+        <dc:Bounds x="394" y="329" width="100" height="54" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_13tr07e_di" bpmnElement="Association_13tr07e">
-        <di:waypoint x="387" y="118" />
-        <di:waypoint x="287" y="72" />
+      <bpmndi:BPMNEdge id="Association_1nt4btm_di" bpmnElement="Association_1nt4btm">
+        <di:waypoint x="444" y="304" />
+        <di:waypoint x="444" y="329" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0nehhgw_di" bpmnElement="TextAnnotation_0nehhgw">
+        <dc:Bounds x="546" y="341" width="100" height="138" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1m3n56m_di" bpmnElement="Association_1m3n56m">
+        <di:waypoint x="596" y="304" />
+        <di:waypoint x="596" y="341" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
