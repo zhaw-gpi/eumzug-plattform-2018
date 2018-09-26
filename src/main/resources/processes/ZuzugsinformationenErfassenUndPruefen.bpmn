@@ -110,10 +110,6 @@ execution.setVariable("adresseUngueltigZaehler", adresseUngueltigZaehler + 1);</
       <bpmn:outgoing>SequenceFlow_0sag684</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_0sag684" sourceRef="WohnungAnZuzugsadresseAuswaehlen" targetRef="ZuzugsInformationenErfolgreichGeprueft" />
-    <bpmn:association id="Association_1jbjozh" sourceRef="WohnungenAnZuzugsadresseBestimmen" targetRef="TextAnnotation_18n9v1b" />
-    <bpmn:textAnnotation id="TextAnnotation_18n9v1b">
-      <bpmn:text>Initial wird wohnungenGefunden auf true gesetzt</bpmn:text>
-    </bpmn:textAnnotation>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1o68a8d">
@@ -202,13 +198,6 @@ execution.setVariable("adresseUngueltigZaehler", adresseUngueltigZaehler + 1);</
       <bpmndi:BPMNEdge id="SequenceFlow_0sag684_di" bpmnElement="SequenceFlow_0sag684">
         <di:waypoint x="804" y="252" />
         <di:waypoint x="854" y="252" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_18n9v1b_di" bpmnElement="TextAnnotation_18n9v1b">
-        <dc:Bounds x="252" y="152" width="200" height="38" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1jbjozh_di" bpmnElement="Association_1jbjozh">
-        <di:waypoint x="432" y="221" />
-        <di:waypoint x="382" y="190" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

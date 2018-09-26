@@ -91,7 +91,7 @@ Der Header wiederum muss ebenfalls gesetzt werden mit Variablen:
 senderId (sedex://umzugsplattform), manufacturer (Kanton Bern), product (Umzugsplattform), productVersion (1.0), messageDate (aktuelles Datum/Uhrzeit), testDeliveryFlag (true), action (1), messageType (sedex://personMoveRequest), messageId (businessCaseId + "." + messageType).
 Header und personMoveRequest werden dann in der eigentlichen Request-Klasse DeliveryType zugewiesen.
 
-Die Response ist ebenfalls vom Typ DeliveryType und enthält den Header sowie entweder eine personMoveResponse oder bei einem Fehler (action ist nicht 9) NegativeReportType. Falls ein NegativeReportType zurückkommt, dann wird lediglich der darin enthaltene textGerman als Fehlermeldung in einer UnsupportedOperationException ausgegeben. Ansonsten werden die zwei in personMoveResponse enthaltenen Eigenschaften personKnown und sofern vorhanden moveAllowed den gleich benannten Prozessvariablen übergeben.</bpmn:documentation>
+Die Response ist ebenfalls vom Typ DeliveryType und enthält den Header sowie entweder eine personMoveResponse oder bei einem Fehler (action ist nicht 9) NegativeReportType. Falls ein NegativeReportType zurückkommt, dann wird lediglich der darin enthaltene textGerman als Fehlermeldung zu einer BPMNException geworfen. Ansonsten werden die zwei in personMoveResponse enthaltenen Eigenschaften personKnown und sofern vorhanden moveAllowed den gleich benannten Prozessvariablen übergeben.</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_0bbx1ag</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1nn0lr5</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -113,50 +113,11 @@ Die Response ist ebenfalls vom Typ DeliveryType und enthält den Header sowie en
     <bpmn:exclusiveGateway id="ExclusiveGateway_1nsjb6v">
       <bpmn:incoming>SequenceFlow_0endv5n</bpmn:incoming>
       <bpmn:incoming>KorrekturGewuenscht</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0slbt2s</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1qa435t</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:userTask id="KorrekturbedarfMitteilen" name="Korrekturbedarf mitteilen" camunda:formKey="embedded:app:forms/KorrekturBedarfMitteilenForm.html" camunda:assignee="${meldePflichtiger}">
-      <bpmn:documentation>In diesem Schritt soll zunächst das negative Prüfergebnis als Fehlermeldung (Bootstrap alert-warning) angezeigt werden.
-
-Anschliessend sollen vn (sofern vorhanden), firstName, officialName, sex (in ausgeschriebener Form) und dateOfBirth in einer Tabelle angezeigt werden.
-
-Und schliesslich soll die Frage gestellt werden, ob er die Personalien überarbeiten möchte und die Identifikation nochmals versuchen will.
-
-Überarbeitung der Personalien erwünscht?
-  revisionDesired
-  Boolean
-  input checkbox</bpmn:documentation>
-      <bpmn:incoming>PersonNichtGefunden</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1fttpqx</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_02eif3q" name="Korrektur gewünscht?">
-      <bpmn:incoming>SequenceFlow_1fttpqx</bpmn:incoming>
-      <bpmn:outgoing>KorrekturNichtGewuenscht</bpmn:outgoing>
-      <bpmn:outgoing>KorrekturGewuenscht</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:endEvent id="PersonenidentifikationErfolgreichAbgeschlossen" name="Personenidentifikation erfolgreich abgeschlossen">
       <bpmn:incoming>SequenceFlow_0n90szt</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:userTask id="AnSchalterVerwiesenWerden" name="An Schalter verwiesen werden" camunda:asyncAfter="true" camunda:formKey="embedded:app:forms/AnSchalterVerweisenForm.html" camunda:assignee="${meldePflichtiger}">
-      <bpmn:documentation>Fehlermeldung (Bootstrap alert-warning): "Sie können den Umzug nicht elektronisch melden. Bitte melden Sie sich bei Ihrer Wegzugsgemeinde xyz am Schalter."
-xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
-      <bpmn:incoming>SequenceFlow_0d6anna</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1jlptqu</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0620p1a">
-      <bpmn:incoming>NichtFuerEumzugBerechtigt</bpmn:incoming>
-      <bpmn:incoming>KorrekturNichtGewuenscht</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0d6anna</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="WegenNegativerPersonenIdentifikationAbgebrochen" name="Wegen negativer Personen-identifikation abgebrochen">
-      <bpmn:documentation>In einem Start-Listener soll eine neue Prozessvariable status mit dem Wert "Wegen negativer Personenidentifikation abgebrochen" gesetzt werden.</bpmn:documentation>
-      <bpmn:extensionElements>
-        <camunda:executionListener event="start">
-          <camunda:script scriptFormat="JavaScript">execution.setVariable("status", "Wegen negativer Personenidentifikation abgebrochen");</camunda:script>
-        </camunda:executionListener>
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_1jlptqu</bpmn:incoming>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_14fbx4x" errorRef="Error_0j8yidj" />
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0endv5n" sourceRef="UmzugsmeldungGestartet" targetRef="ExclusiveGateway_1nsjb6v" />
     <bpmn:sequenceFlow id="SequenceFlow_1qa435t" sourceRef="ExclusiveGateway_1nsjb6v" targetRef="IdentifikationsmerkmaleErfassen" />
@@ -189,16 +150,54 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
     <bpmn:sequenceFlow id="KorrekturGewuenscht" name="ja" sourceRef="ExclusiveGateway_02eif3q" targetRef="ExclusiveGateway_1nsjb6v">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${revisionDesired}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:association id="Association_1nt4btm" sourceRef="PersonenidentifikatorGenerieren" targetRef="TextAnnotation_0rus1mg" />
-    <bpmn:textAnnotation id="TextAnnotation_0rus1mg">
-      <bpmn:text>Von Beginn an hinterlegt ist ein statischer Wert</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_0nehhgw">
-      <bpmn:text>Von Beginn an hinterlegt ist statisch die Rückgabe von personKnown/moveAllowed=true sowie relativesExist=false</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_1m3n56m" sourceRef="PersonIdentifizieren" targetRef="TextAnnotation_0nehhgw" />
+    <bpmn:userTask id="KorrekturbedarfMitteilen" name="Korrekturbedarf mitteilen" camunda:formKey="embedded:app:forms/KorrekturBedarfMitteilenForm.html" camunda:assignee="${meldePflichtiger}">
+      <bpmn:documentation>In diesem Schritt soll zunächst das negative Prüfergebnis als Fehlermeldung (Bootstrap alert-warning) angezeigt werden.
+
+Anschliessend sollen vn (sofern vorhanden), firstName, officialName, sex (in ausgeschriebener Form) und dateOfBirth in einer Tabelle angezeigt werden.
+
+Und schliesslich soll die Frage gestellt werden, ob er die Personalien überarbeiten möchte und die Identifikation nochmals versuchen will.
+
+Überarbeitung der Personalien erwünscht?
+  revisionDesired
+  Boolean
+  input checkbox</bpmn:documentation>
+      <bpmn:incoming>PersonNichtGefunden</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1fttpqx</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_02eif3q" name="Korrektur gewünscht?">
+      <bpmn:incoming>SequenceFlow_1fttpqx</bpmn:incoming>
+      <bpmn:outgoing>KorrekturNichtGewuenscht</bpmn:outgoing>
+      <bpmn:outgoing>KorrekturGewuenscht</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0620p1a">
+      <bpmn:incoming>NichtFuerEumzugBerechtigt</bpmn:incoming>
+      <bpmn:incoming>KorrekturNichtGewuenscht</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0d6anna</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="AnSchalterVerwiesenWerden" name="An Schalter verwiesen werden" camunda:asyncAfter="true" camunda:formKey="embedded:app:forms/AnSchalterVerweisenForm.html" camunda:assignee="${meldePflichtiger}">
+      <bpmn:documentation>Fehlermeldung (Bootstrap alert-warning): "Sie können den Umzug nicht elektronisch melden. Bitte melden Sie sich bei Ihrer Wegzugsgemeinde xyz am Schalter."
+xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_0d6anna</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1jlptqu</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="WegenNegativerPersonenIdentifikationAbgebrochen" name="Wegen negativer Personen-identifikation abgebrochen">
+      <bpmn:documentation>In einem Start-Listener soll eine neue Prozessvariable status mit dem Wert "Wegen negativer Personenidentifikation abgebrochen" gesetzt werden.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">execution.setVariable("status", "Wegen negativer Personenidentifikation abgebrochen");</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1jlptqu</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_14fbx4x" errorRef="Error_0j8yidj" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0slbt2s" sourceRef="NegativeReportErhalten" targetRef="ExclusiveGateway_1nsjb6v" />
+    <bpmn:boundaryEvent id="NegativeReportErhalten" name="NegativeReport erhalten" attachedToRef="PersonIdentifizieren">
+      <bpmn:outgoing>SequenceFlow_0slbt2s</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_0b0fhfh" />
+    </bpmn:boundaryEvent>
   </bpmn:process>
   <bpmn:error id="Error_0j8yidj" name="ErrorPersonErfassenUndIdentifizieren" errorCode="WegenNegativerPersonenIdentifikationAbgebrochen" />
+  <bpmn:error id="Error_0b0fhfh" name="ErrorPersonIdentifizieren" errorCode="NegativeReportErhalten" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_06rojpi">
       <bpmndi:BPMNShape id="Participant_1hkfvkb_di" bpmnElement="PersonErfassenUndIdentifizierenParticipant">
@@ -246,24 +245,24 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
         <dc:Bounds x="1112" y="239" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_1010s5o_di" bpmnElement="KorrekturbedarfMitteilen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <dc:Bounds x="964" y="379" width="100" height="80" />
+        <dc:Bounds x="816" y="379" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_02eif3q_di" bpmnElement="ExclusiveGateway_02eif3q" isMarkerVisible="true">
-        <dc:Bounds x="1112" y="394" width="50" height="50" />
+        <dc:Bounds x="989" y="394" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1107" y="357" width="59" height="27" />
+          <dc:Bounds x="984" y="357" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0620p1a_di" bpmnElement="ExclusiveGateway_0620p1a" isMarkerVisible="true">
-        <dc:Bounds x="1298" y="239" width="50" height="50" />
+        <dc:Bounds x="1278" y="394" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_0hwv8rb_di" bpmnElement="AnSchalterVerwiesenWerden" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <dc:Bounds x="1391" y="224" width="100" height="80" />
+        <dc:Bounds x="1385" y="379" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0j730q8_di" bpmnElement="WegenNegativerPersonenIdentifikationAbgebrochen">
-        <dc:Bounds x="1555" y="246" width="36" height="36" />
+        <dc:Bounds x="1549" y="401" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1532" y="286" width="84" height="53" />
+          <dc:Bounds x="1526" y="441" width="84" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1nn0lr5_di" bpmnElement="SequenceFlow_1nn0lr5">
@@ -273,18 +272,18 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
       <bpmndi:BPMNEdge id="SequenceFlow_00h8w1e_di" bpmnElement="PersonNichtGefunden">
         <di:waypoint x="727" y="289" />
         <di:waypoint x="727" y="419" />
-        <di:waypoint x="964" y="419" />
+        <di:waypoint x="816" y="419" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="752" y="383" width="63" height="27" />
+          <dc:Bounds x="734" y="383" width="63" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_19kndj1_di" bpmnElement="NichtFuerEumzugBerechtigt">
         <di:waypoint x="727" y="239" />
         <di:waypoint x="727" y="139" />
-        <di:waypoint x="1323" y="139" />
-        <di:waypoint x="1323" y="239" />
+        <di:waypoint x="1303" y="139" />
+        <di:waypoint x="1303" y="394" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="739" y="148" width="85" height="27" />
+          <dc:Bounds x="737" y="148" width="85" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1q5qbr1_di" bpmnElement="FuerEumzugBerechtigt">
@@ -315,24 +314,23 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
         <di:waypoint x="1112" y="264" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1fttpqx_di" bpmnElement="SequenceFlow_1fttpqx">
-        <di:waypoint x="1064" y="419" />
-        <di:waypoint x="1112" y="419" />
+        <di:waypoint x="916" y="419" />
+        <di:waypoint x="989" y="419" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0btqzvc_di" bpmnElement="KorrekturNichtGewuenscht">
-        <di:waypoint x="1162" y="419" />
-        <di:waypoint x="1323" y="419" />
-        <di:waypoint x="1323" y="289" />
+        <di:waypoint x="1039" y="419" />
+        <di:waypoint x="1278" y="419" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1178" y="397" width="21" height="14" />
+          <dc:Bounds x="1075" y="397" width="21" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0d6anna_di" bpmnElement="SequenceFlow_0d6anna">
-        <di:waypoint x="1348" y="264" />
-        <di:waypoint x="1391" y="264" />
+        <di:waypoint x="1328" y="419" />
+        <di:waypoint x="1385" y="419" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1jlptqu_di" bpmnElement="SequenceFlow_1jlptqu">
-        <di:waypoint x="1491" y="264" />
-        <di:waypoint x="1555" y="264" />
+        <di:waypoint x="1485" y="419" />
+        <di:waypoint x="1549" y="419" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ExclusiveGateway_1nsjb6v_di" bpmnElement="ExclusiveGateway_1nsjb6v" isMarkerVisible="true">
         <dc:Bounds x="152" y="239" width="50" height="50" />
@@ -356,12 +354,12 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
         <di:waypoint x="1205" y="264" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0fh0dge_di" bpmnElement="KorrekturGewuenscht">
-        <di:waypoint x="1137" y="444" />
-        <di:waypoint x="1137" y="496" />
+        <di:waypoint x="1014" y="444" />
+        <di:waypoint x="1014" y="496" />
         <di:waypoint x="177" y="496" />
         <di:waypoint x="177" y="289" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1113" y="474" width="8" height="14" />
+          <dc:Bounds x="993" y="474" width="8" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_0cfc1eh_di" bpmnElement="KantonalesPersonenregisterParticipant" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
@@ -381,19 +379,17 @@ xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
           <dc:Bounds x="621" y="72" width="64" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0rus1mg_di" bpmnElement="TextAnnotation_0rus1mg">
-        <dc:Bounds x="394" y="329" width="100" height="54" />
+      <bpmndi:BPMNShape id="BoundaryEvent_0x5lag5_di" bpmnElement="NegativeReportErhalten">
+        <dc:Bounds x="528" y="206" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="454" y="186" width="78" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1nt4btm_di" bpmnElement="Association_1nt4btm">
-        <di:waypoint x="444" y="304" />
-        <di:waypoint x="444" y="329" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0nehhgw_di" bpmnElement="TextAnnotation_0nehhgw">
-        <dc:Bounds x="546" y="341" width="100" height="138" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1m3n56m_di" bpmnElement="Association_1m3n56m">
-        <di:waypoint x="596" y="304" />
-        <di:waypoint x="596" y="341" />
+      <bpmndi:BPMNEdge id="SequenceFlow_0slbt2s_di" bpmnElement="SequenceFlow_0slbt2s">
+        <di:waypoint x="546" y="206" />
+        <di:waypoint x="546" y="160" />
+        <di:waypoint x="177" y="160" />
+        <di:waypoint x="177" y="239" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

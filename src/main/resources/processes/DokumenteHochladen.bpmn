@@ -2,6 +2,9 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_0zo10zu" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
   <bpmn:collaboration id="Collaboration_1tnimfb">
     <bpmn:participant id="DokumenteHochladenParticipant" name="Dokumente hochladen" processRef="DokumenteHochladen" />
+    <bpmn:textAnnotation id="TextAnnotation_1wouo73">
+      <bpmn:text>Dieser Teil muss noch analog zur Grundversicherungsprüfung in ein Multi-Instance-Subprocess</bpmn:text>
+    </bpmn:textAnnotation>
   </bpmn:collaboration>
   <bpmn:process id="DokumenteHochladen" name="DokumenteHochladen" isExecutable="true">
     <bpmn:startEvent id="WeitereAngabenErfolgreichErfasst" name="Weitere Angaben erfolgreich erfasst">
@@ -24,7 +27,7 @@
       <bpmn:outgoing>SequenceFlow_19e1phj</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:serviceTask id="HochzuladendeDokumenteErmitteln" name="Hochzuladende Dokumente ermitteln" camunda:delegateExpression="#{getDocumentsAdapter}">
-      <bpmn:documentation>Serialisierte Prozessvariable mit relevanten Dokumenten basierend auf Angaben in der Umzugsplattform-Datenbank erstellen
+      <bpmn:documentation>Prozessvariable mit relevanten Dokumenten basierend auf Angaben in der Umzugsplattform-Datenbank erstellen
 
 Über ein Data Access Object sollen die Dokumente der relevanten MunicipalityEntity-Objekte aus der Datenbank in ein List Objekt eingelesen werden.
 
@@ -67,6 +70,7 @@ Der eigentliche Upload geschieht in einer eigenen Funktion, wo der Dateiname als
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_1k753gz" sourceRef="DokumenteHochladenForm" targetRef="ExclusiveGateway_1tfq0zf" />
     <bpmn:sequenceFlow id="SequenceFlow_19e1phj" sourceRef="ExclusiveGateway_1tfq0zf" targetRef="EndEvent_17ucf54" />
+    <bpmn:association id="Association_1trh2fl" sourceRef="DokumenteHochladenForm" targetRef="TextAnnotation_1wouo73" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1tnimfb">
@@ -159,6 +163,13 @@ Der eigentliche Upload geschieht in einer eigenen Funktion, wo der Dateiname als
           <dc:Bounds x="827" y="243" width="57" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1wouo73_di" bpmnElement="TextAnnotation_1wouo73">
+        <dc:Bounds x="604" y="-106" width="237" height="51" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1trh2fl_di" bpmnElement="Association_1trh2fl">
+        <di:waypoint x="637" y="69" />
+        <di:waypoint x="709" y="-55" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

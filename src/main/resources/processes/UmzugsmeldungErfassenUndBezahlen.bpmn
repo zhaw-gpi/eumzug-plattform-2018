@@ -11,7 +11,7 @@
       <bpmn:startEvent id="StartEvent_09eswy9">
         <bpmn:outgoing>SequenceFlow_00uv839</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:endEvent id="EndEvent_1fsuc39" name="Angaben erfolgreich geprüft">
+      <bpmn:endEvent id="AngabenErfolgreichGeprueft" name="Angaben erfolgreich geprüft">
         <bpmn:incoming>Weiter</bpmn:incoming>
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="SequenceFlow_0mei95i" sourceRef="PersonErfassenUndIdentifizieren" targetRef="WegzugsadresseErfassenUndPruefen" />
@@ -19,7 +19,7 @@
       <bpmn:sequenceFlow id="SequenceFlow_001pwxn" sourceRef="WeitereAngabenErfassen" targetRef="DokumenteHochladen" />
       <bpmn:sequenceFlow id="SequenceFlow_12mko98" sourceRef="GebuehrenErmitteln" targetRef="AlleAngabenPruefen" />
       <bpmn:sequenceFlow id="SequenceFlow_00uv839" sourceRef="StartEvent_09eswy9" targetRef="ExclusiveGateway_0frtja1" />
-      <bpmn:sequenceFlow id="SequenceFlow_15e28af" sourceRef="AlleAngabenPruefen" targetRef="ExclusiveGateway_0b249hv" />
+      <bpmn:sequenceFlow id="SequenceFlow_15e28af" sourceRef="AlleAngabenPruefen" targetRef="WeiteresVorgehen" />
       <bpmn:sequenceFlow id="SequenceFlow_0hi1ppy" sourceRef="WegzugsadresseErfassenUndPruefen" targetRef="ZuzugsinformationenErfassenUndPruefen" />
       <bpmn:callActivity id="PersonErfassenUndIdentifizieren" name="Person erfassen und identifizieren" calledElement="PersonErfassenUndIdentifizieren">
         <bpmn:documentation>Im aufgerufenen Prozess erfasst der Meldepflichtige seine Personalien und seine politische Gemeinde. Im kantonalen Personenregister wird mit diesen Angaben geprüft, ob die Person existiert und ob sie für den Umzug berechtigt ist.
@@ -46,7 +46,7 @@ Theoretisch: Dem Prozess wird der BusinessKey, die BusinessCaseId und der Benutz
       <bpmn:callActivity id="WegzugsadresseErfassenUndPruefen" name="Wegzugsadresse erfassen und prüfen" calledElement="WegzugsadresseErfassenUndPruefen">
         <bpmn:documentation>Im aufgerufenen Prozess erfasst der Meldepflichtige seine Wegzugsadresse. Im Gebäude- und Wohnungsregister wird mit diesen Angaben geprüft, ob die Adresse existiert.
 
-Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger) und municipalityNameMoveOut übergeben und umgekehrt folgende Variablen zurück genommen: houseNumberMoveOut, swissZipCodeMoveOut, streetMoveOut und townMoveOut. Praktisch: Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
+Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger) und municipalityNameMoveOut übergeben und umgekehrt folgende Variablen zurück genommen: houseNumberMoveOut, swissZipCodeMoveOut, streetMoveOut und townMoveOut. Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
         <bpmn:extensionElements>
           <camunda:in businessKey="#{execution.processBusinessKey}" />
           <camunda:in source="meldePflichtiger" target="meldePflichtiger" />
@@ -63,7 +63,7 @@ Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtige
       <bpmn:callActivity id="ZuzugsinformationenErfassenUndPruefen" name="Zuzugsinformationen erfassen und prüfen" calledElement="ZuzugsinformationenErfassenUndPruefen">
         <bpmn:documentation>Im aufgerufenen Prozess erfasst der Meldepflichtige die politische Zuzugsgemeinde und die Zuzugsadresse, welche im Gebäude- und Wohnungsregister geprüft wird. Existiert sie, kann er aus einer Liste von Wohnungen die zukünftige auswählen.
 
-Theoretisch: Dem Prozess wird der BusinessKey und der Benutzername (meldePflichtiger) übergeben und umgekehrt folgende Variablen zurück genommen: houseNumberMoveIn, swissZipCodeMoveIn, streetMoveIn, townMoveIn, apartmentMoveIn und municipalityNameMoveIn. Praktisch: Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
+Theoretisch: Dem Prozess wird der BusinessKey und der Benutzername (meldePflichtiger) übergeben und umgekehrt folgende Variablen zurück genommen: houseNumberMoveIn, swissZipCodeMoveIn, streetMoveIn, townMoveIn, apartmentMoveIn und municipalityNameMoveIn. Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
         <bpmn:extensionElements>
           <camunda:in businessKey="#{execution.processBusinessKey}" />
           <camunda:in source="meldePflichtiger" target="meldePflichtiger" />
@@ -82,7 +82,7 @@ Theoretisch: Dem Prozess wird der BusinessKey und der Benutzername (meldePflicht
       <bpmn:callActivity id="WeitereAngabenErfassen" name="Weitere Angaben erfassen" calledElement="WeitereAngabenErfassen">
         <bpmn:documentation>Im aufgerufenen Prozess erfasst der Meldepflichtige das Datum für Weg-/Zuzug, das zukünftige Wohnverhältnis (housingSituationMoveInMunicipallity), seine Kontaktangaben und für alle mitumziehenden Personen die Krankenkassen-Versichertennummer. Über einen REST-Service des VeKa-Centers wird geprüft, ob für die Personen eine Krankengrundversicherung abgeschlossen wurde (healthInsuranceData). Der Prozess geht allerdings auch weiter, wenn die Prüfung nicht erfolgreich ist.
 
-Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger), eine personList (enthält Meldepflichtigen plus umziehende Personen), municipalityIdMoveIn und municipalityIdMoveOut übergeben und umgekehrt folgende Variablen zurück genommen: departureDate, arrivalDate, personHealthInsuranceList (jeder Eintrag enthält ein Person-Objekt mit der zusätzlichen Eigenschaft healthInsuranceData) und housingSituationMoveInMunicipallity. Praktisch: Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
+Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger), eine personList (enthält Meldepflichtigen plus umziehende Personen), municipalityIdMoveIn und municipalityIdMoveOut übergeben und umgekehrt folgende Variablen zurück genommen: departureDate, arrivalDate, personHealthInsuranceList (jeder Eintrag enthält ein Person-Objekt mit der zusätzlichen Eigenschaft healthInsuranceData) und housingSituationMoveInMunicipallity. Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
         <bpmn:extensionElements>
           <camunda:in businessKey="#{execution.processBusinessKey}" />
           <camunda:in source="meldePflichtiger" target="meldePflichtiger" />
@@ -102,7 +102,7 @@ Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtige
       </bpmn:callActivity>
       <bpmn:sequenceFlow id="SequenceFlow_05prxas" sourceRef="DokumenteHochladen" targetRef="GebuehrenErmitteln" />
       <bpmn:callActivity id="DokumenteHochladen" name="Dokumente hochladen" calledElement="DokumenteHochladen">
-        <bpmn:documentation>Im aufgerufenen Prozess lädt der Meldepflichtige allenfalls erforderliche, eingescannte Dokumente hoch.
+        <bpmn:documentation>Im aufgerufenen Prozess lädt der Meldepflichtige allenfalls erforderliche, eingescannte Dokumente für sich und die mitumziehenden Personen hoch.
 
 Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger), municipalityIdMoveOut und municipalityIdMoveIn übergeben und umgekehrt folgende Variablen zurück genommen: documentsExist und documents. Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
         <bpmn:extensionElements>
@@ -119,7 +119,7 @@ Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtige
         <bpmn:outgoing>SequenceFlow_05prxas</bpmn:outgoing>
       </bpmn:callActivity>
       <bpmn:serviceTask id="GebuehrenErmitteln" name="Gebühren ermitteln" camunda:delegateExpression="#{getFeesAdapter}">
-        <bpmn:documentation>Serialisierte Prozessvariable mit relevanten Gebühren basierend auf Angaben in der Umzugsplattform-Datenbank erstellen
+        <bpmn:documentation>Prozessvariable mit relevanten Gebühren basierend auf Angaben in der Umzugsplattform-Datenbank erstellen
 
 Zunächst wird geprüft, ob es sich um Wegzug/Zuzug oder Umzug handelt. Je nachdem werden dann über ein JPA-Repository eine oder zwei Gemeinde-Objekte aus der Datenbank geladen.
 
@@ -135,13 +135,13 @@ Für jedes Objekt wird die relevante Gebühr (Zuzug, Wegzug oder Umzug) ausgeles
 - Mitumziehende Personen (nur Vornamen)
 - Dokumente (wenn grundsätzlich überhaupt Dokumente hätten hochgeladen werden können):
   - Ausgabe als Tabelle
-  - Spalte 1 enthält Name des Dokuments (z.B. Heiratsurkunde)
-  - Spalte 2 enthält entweder "Kein Dokument hochgeladen" oder der Dateiname der hochgeladenen Datei mit einem Download-Link
+  - Spalte 1 enthält Vorname der Person (z.B. Hans)
+  - Spalte 2 enthält Name des Dokuments (z.B. Heiratsurkunde)
+  - Spalte 3 enthält entweder "Kein Dokument hochgeladen" oder der Dateiname der hochgeladenen Datei mit einem Download-Link
 - Kontaktangaben
 - Wegzugsinformationen
 - Zuzugsinformationen
 - Wohnverhältnis-Informationen
-
 
 Zuunterst zwei Checkboxes:
 
@@ -151,13 +151,13 @@ Zuunterst zwei Checkboxes:
         <bpmn:incoming>SequenceFlow_12mko98</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_15e28af</bpmn:outgoing>
       </bpmn:userTask>
-      <bpmn:exclusiveGateway id="ExclusiveGateway_0b249hv" name="Weiteres Vorgehen?">
+      <bpmn:exclusiveGateway id="WeiteresVorgehen" name="Weiteres Vorgehen?">
         <bpmn:incoming>SequenceFlow_15e28af</bpmn:incoming>
         <bpmn:outgoing>Weiter</bpmn:outgoing>
         <bpmn:outgoing>AngabenKorrigieren</bpmn:outgoing>
         <bpmn:outgoing>Abbrechen</bpmn:outgoing>
       </bpmn:exclusiveGateway>
-      <bpmn:sequenceFlow id="Weiter" name="Weiter" sourceRef="ExclusiveGateway_0b249hv" targetRef="EndEvent_1fsuc39">
+      <bpmn:sequenceFlow id="Weiter" name="Weiter" sourceRef="WeiteresVorgehen" targetRef="AngabenErfolgreichGeprueft">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${allDataCorrect &amp;&amp; (feesAccepted == null || feesAccepted)}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:exclusiveGateway id="ExclusiveGateway_0frtja1">
@@ -166,10 +166,10 @@ Zuunterst zwei Checkboxes:
         <bpmn:outgoing>SequenceFlow_1p9ea31</bpmn:outgoing>
       </bpmn:exclusiveGateway>
       <bpmn:sequenceFlow id="SequenceFlow_1p9ea31" sourceRef="ExclusiveGateway_0frtja1" targetRef="PersonErfassenUndIdentifizieren" />
-      <bpmn:sequenceFlow id="AngabenKorrigieren" name="Angaben korrigieren" sourceRef="ExclusiveGateway_0b249hv" targetRef="ExclusiveGateway_0frtja1">
+      <bpmn:sequenceFlow id="AngabenKorrigieren" name="Angaben korrigieren" sourceRef="WeiteresVorgehen" targetRef="ExclusiveGateway_0frtja1">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!allDataCorrect}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="Abbrechen" name="Abbrechen" sourceRef="ExclusiveGateway_0b249hv" targetRef="GebuehrenNichtAkzeptiertPersistieren">
+      <bpmn:sequenceFlow id="Abbrechen" name="Abbrechen" sourceRef="WeiteresVorgehen" targetRef="GebuehrenNichtAkzeptiertPersistieren">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!feesAccepted}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:endEvent id="WegenNichtAkzeptierterGebuehrenAbgebrochenErrorEvent" name="Wegen nicht akzeptierter Gebühren abgebrochen">
@@ -189,13 +189,9 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
         <bpmn:incoming>Abbrechen</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_0eixy45</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:textAnnotation id="TextAnnotation_0bef5pm">
-        <bpmn:text>Von Beginn weg schon gewisse Elemente vorhanden</bpmn:text>
-      </bpmn:textAnnotation>
-      <bpmn:association id="Association_10kuid4" sourceRef="AlleAngabenPruefen" targetRef="TextAnnotation_0bef5pm" />
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="SequenceFlow_0idpplo" sourceRef="UmzugsmeldungGestartet" targetRef="UmzugsmeldungErfassen" />
-    <bpmn:sequenceFlow id="SequenceFlow_11zgl40" sourceRef="AchtundvierzigStundenVerstrichen" targetRef="ExclusiveGateway_0ldwwai" />
+    <bpmn:sequenceFlow id="SequenceFlow_11zgl40" sourceRef="AchtundvierzigStundenVerstrichen" targetRef="PersonIdentifikationErfasstGateway" />
     <bpmn:sequenceFlow id="SequenceFlow_1lte88j" sourceRef="UmzugsmeldungErfassen" targetRef="ExclusiveGateway_1t9zc0d" />
     <bpmn:startEvent id="UmzugsmeldungGestartet" name="Umzugsmeldung gestartet">
       <bpmn:documentation>Dieses Prozesstartereignis wird aufgerufen vom Prozess 'UmzugMelden' und ist nicht gedacht, um unabhängig davon (z.B. aus der Tasklist) aufgerufen zu werden.</bpmn:documentation>
@@ -217,7 +213,7 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschla
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT48H</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0ldwwai" name="Person-identifikation erfasst?">
+    <bpmn:exclusiveGateway id="PersonIdentifikationErfasstGateway" name="Person-identifikation erfasst?">
       <bpmn:incoming>SequenceFlow_11zgl40</bpmn:incoming>
       <bpmn:outgoing>PersonIdentifikationNichtErfasst</bpmn:outgoing>
       <bpmn:outgoing>PersonIdentifikationErfasst</bpmn:outgoing>
@@ -227,7 +223,7 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschla
       <bpmn:incoming>PersonIdentifikationNichtErfasst</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1u4hpcs</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="EndEvent_0q8vph1" name="Wegen Zeitüber-schreitung abgebrochen">
+    <bpmn:endEvent id="WegenZeitueberschreitungAbgebrochen" name="Wegen Zeitüber-schreitung abgebrochen">
       <bpmn:incoming>SequenceFlow_1u4hpcs</bpmn:incoming>
       <bpmn:errorEventDefinition errorRef="Error_0fmfamk" />
     </bpmn:endEvent>
@@ -238,11 +234,11 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
       <bpmn:incoming>PersonIdentifikationErfasst</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0xvv0xn</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="PersonIdentifikationNichtErfasst" name="nein" sourceRef="ExclusiveGateway_0ldwwai" targetRef="ExclusiveGateway_0ebozi5">
+    <bpmn:sequenceFlow id="PersonIdentifikationNichtErfasst" name="nein" sourceRef="PersonIdentifikationErfasstGateway" targetRef="ExclusiveGateway_0ebozi5">
       <bpmn:documentation>Siehe Dokumentation bei ja</bpmn:documentation>
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable('localPersonId') == null}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="PersonIdentifikationErfasst" name="ja" sourceRef="ExclusiveGateway_0ldwwai" targetRef="AbbruchWegenZeitueberschreitungPersistieren">
+    <bpmn:sequenceFlow id="PersonIdentifikationErfasst" name="ja" sourceRef="PersonIdentifikationErfasstGateway" targetRef="AbbruchWegenZeitueberschreitungPersistieren">
       <bpmn:documentation>Mindestens die AHV-Nummer oder die Kombination aus Vorname, Nachname und Geburtsdatum müssen erfasst sein, dass es sich lohnt, überhaupt einen Log-Eintrag zu erstellen. Wenn diese Informationen fehlen, kann davon ausgegangen werden, dass lediglich der Prozess gestartet wurde, aber nicht einmal der erste User Task "Personidentifikation erfassen" abgeschlossen wurde.
 Dies kann vereinfacht abgefragt werden, indem
 a) Bei "Personenidentifikator generieren" Async after gesetzt ist
@@ -250,7 +246,7 @@ b) Nur das Vorhandensein von localPersonId geprüft wird (darf also nicht null s
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable('localPersonId') != null}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0xvv0xn" sourceRef="AbbruchWegenZeitueberschreitungPersistieren" targetRef="ExclusiveGateway_0ebozi5" />
-    <bpmn:sequenceFlow id="SequenceFlow_1u4hpcs" sourceRef="ExclusiveGateway_0ebozi5" targetRef="EndEvent_0q8vph1" />
+    <bpmn:sequenceFlow id="SequenceFlow_1u4hpcs" sourceRef="ExclusiveGateway_0ebozi5" targetRef="WegenZeitueberschreitungAbgebrochen" />
     <bpmn:exclusiveGateway id="ExclusiveGateway_175tgn6">
       <bpmn:incoming>GebuehrenFallenNichtAn</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_04m4p8a</bpmn:incoming>
@@ -279,9 +275,9 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
       <bpmn:outgoing>SequenceFlow_1vi0gkw</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:callActivity id="ZahlungDurchfuehren" name="Zahlung durchführen" calledElement="ZahlungDurchfuehren">
-      <bpmn:documentation>Im aufgerufenen Prozess erfasst der Meldepflichtige die Zahlungsdetails (z.B. Kreditkartennummer) in einem mit Stripe Checkout-Formular. Die Zahlungsdetails werden direkt an den Stripe-Server gesendet, also so, dass nur Stripe diese Zahlungsdetails erhält und somit die Umzugsplattform automatisch PCI compliant ist. Im Normalfall erhält Stripe Checkout ein Token zurück und übergibt dieses dem Umzugsplattform-Client. Dieser sendet das Token für die weitere Verarbeitung als Prozessvariable an die Process Engine. 
+      <bpmn:documentation>Im aufgerufenen Prozess erfasst der Meldepflichtige die Zahlungsdetails (z.B. Kreditkartennummer) in einem Stripe Checkout-Formular. Die Zahlungsdetails werden direkt an den Stripe-Server gesendet, also so, dass nur Stripe diese Zahlungsdetails erhält und somit die Umzugsplattform automatisch PCI compliant ist. Im Normalfall erhält Stripe Checkout ein Token zurück und übergibt dieses dem Umzugsplattform-Client. Dieser sendet das Token für die weitere Verarbeitung als Prozessvariable an die Process Engine. 
 
-In einem Service Task wird nun eine Kartenbelastungsanfrage an Stripe mit dem Token gesendet. Synchron kommt nun eine Antwort von Stripe zurück, entweder eine erfolgreiche Belastung der Kreditkarte oder ein Error. Im ersten Fall endet damit der Bezahlvorgang, im anderen Fall muss er es erneut versuchen. Falls er dies nicht innert 24 h erledigt, wird der Zahlungsvorgang als fehlgeschlagen gekennzeichnet, ein Fehler, der über das angeheftete Fehlerzwischenereignis abgefangen wird über eine Persistierung der wichtigsten Daten und dem Abbruch des ganzen Meldeprozesses. 
+In einem Service Task wird nun eine Kartenbelastungsanfrage an Stripe mit dem Token gesendet. Synchron kommt nun eine Antwort von Stripe zurück, entweder eine erfolgreiche Belastung der Kreditkarte oder ein Error. Im ersten Fall endet damit der Bezahlvorgang, im anderen Fall muss er es erneut versuchen. Falls er dies nicht innert 24 h erledigt, wird der Zahlungsvorgang als fehlgeschlagen gekennzeichnet (Fehler).  
 
 Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtiger) und die Gebührentabelle (feeMap) übergeben und umgekehrt keine Variablen zurück genommen. Praktisch: Es werden alle Variablen hin- und zurückgenommen, damit das Testing mittels vorausgefüllten Daten per REST einfacher klappt.</bpmn:documentation>
       <bpmn:extensionElements>
@@ -423,7 +419,7 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt auf "Fehlgeschla
         <di:waypoint x="588" y="531" />
         <di:waypoint x="644" y="531" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0ldwwai_di" bpmnElement="ExclusiveGateway_0ldwwai" isMarkerVisible="true" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
+      <bpmndi:BPMNShape id="ExclusiveGateway_0ldwwai_di" bpmnElement="PersonIdentifikationErfasstGateway" isMarkerVisible="true" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <dc:Bounds x="254" y="506" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="182" y="511" width="62" height="40" />
@@ -442,7 +438,7 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt auf "Fehlgeschla
         <di:waypoint x="279" y="465" />
         <di:waypoint x="279" y="506" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_1d6hl3c_di" bpmnElement="EndEvent_0q8vph1" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
+      <bpmndi:BPMNShape id="EndEvent_1d6hl3c_di" bpmnElement="WegenZeitueberschreitungAbgebrochen" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <dc:Bounds x="644" y="513" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="621" y="553" width="82" height="40" />
@@ -451,7 +447,7 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt auf "Fehlgeschla
       <bpmndi:BPMNShape id="StartEvent_09eswy9_di" bpmnElement="StartEvent_09eswy9">
         <dc:Bounds x="166" y="119" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_1fsuc39_di" bpmnElement="EndEvent_1fsuc39">
+      <bpmndi:BPMNShape id="EndEvent_1fsuc39_di" bpmnElement="AngabenErfolgreichGeprueft">
         <dc:Bounds x="1055" y="236" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1028" y="279" width="90" height="27" />
@@ -589,7 +585,7 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt auf "Fehlgeschla
       <bpmndi:BPMNShape id="UserTask_1nlu7rj_di" bpmnElement="AlleAngabenPruefen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
         <dc:Bounds x="522" y="315" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0b249hv_di" bpmnElement="ExclusiveGateway_0b249hv" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="ExclusiveGateway_0b249hv_di" bpmnElement="WeiteresVorgehen" isMarkerVisible="true">
         <dc:Bounds x="854" y="229" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="815" y="213" width="53" height="27" />
@@ -617,7 +613,7 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt auf "Fehlgeschla
           <dc:Bounds x="892" y="186" width="52" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1krji0q_di" bpmnElement="Abbrechen">
+      <bpmndi:BPMNEdge id="SequenceFlow_1krji0q_di" bpmnElement="Abbrechen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <di:waypoint x="879" y="279" />
         <di:waypoint x="879" y="355" />
         <di:waypoint x="915" y="355" />
@@ -625,20 +621,20 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt auf "Fehlgeschla
           <dc:Bounds x="893" y="288" width="53" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_18x8f3n_di" bpmnElement="WegenNichtAkzeptierterGebuehrenAbgebrochenErrorEvent" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
+      <bpmndi:BPMNShape id="EndEvent_18x8f3n_di" bpmnElement="WegenNichtAkzeptierterGebuehrenAbgebrochenErrorEvent" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <dc:Bounds x="1055" y="337" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1040" y="378" width="65" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0eixy45_di" bpmnElement="SequenceFlow_0eixy45">
+      <bpmndi:BPMNEdge id="SequenceFlow_0eixy45_di" bpmnElement="SequenceFlow_0eixy45" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <di:waypoint x="1015" y="355" />
         <di:waypoint x="1055" y="355" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_14d9ckh_di" bpmnElement="AbbruchWegenZeitueberschreitungPersistieren" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <dc:Bounds x="378" y="491" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0nhbdvy_di" bpmnElement="GebuehrenNichtAkzeptiertPersistieren" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
+      <bpmndi:BPMNShape id="ServiceTask_0nhbdvy_di" bpmnElement="GebuehrenNichtAkzeptiertPersistieren" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <dc:Bounds x="915" y="315" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0n32zod_di" bpmnElement="FehlgeschlageneZahlungPersistieren" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
@@ -677,13 +673,6 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt auf "Fehlgeschla
       <bpmndi:BPMNEdge id="SequenceFlow_1bqdavl_di" bpmnElement="SequenceFlow_1bqdavl">
         <di:waypoint x="1931" y="272" />
         <di:waypoint x="1967" y="272" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0bef5pm_di" bpmnElement="TextAnnotation_0bef5pm">
-        <dc:Bounds x="645" y="386" width="177" height="39" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_10kuid4_di" bpmnElement="Association_10kuid4">
-        <di:waypoint x="622" y="371" />
-        <di:waypoint x="670" y="386" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

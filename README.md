@@ -163,7 +163,7 @@ Die **Farben** bedeuten dabei:
     5. Package delegates mit JavaDelegate-Klassen, die von den Prozessen aufgerufen werden, um entweder direkt etwas zu tun oder als Vermittler zu anderen Serivces & Co. zu dienen (z.B. zu LocalPersonIdGeneratorService).
 3. **Persistierungs-Komponenten**:
     1. JDBC-Komponente als Treiber
-    2. H2-Datenbank-Unterstützung inklusive Console-Servlet über ApplicationConfiguration-Klasse
+    2. H2-Datenbank-Unterstützung inklusive Console-Servlet über application.properties-Einstellung
     3. Java Persistence API (JPA) inklusive persistence.xml und EumzugPlattform2018Model.jpa-Diagramm (von Jeddict erstellt)
     4. Package Repositories und Package entities für Municipality, Person, TransactionLog und Document
     5. JavaDelegates GetDocumentsDelegate, GetFeesDelegate, GetMunicipalityListDelegate und PersistUserEntriesAndStatusDelegate
