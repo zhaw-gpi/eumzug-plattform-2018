@@ -97,7 +97,10 @@ Theoretisch: Dem Prozess wird der BusinessKey, die BusinessCaseId und der meldeP
       <outgoing>SequenceFlow_1iopode</outgoing>
     </callActivity>
     <boundaryEvent id="EinAbbruchgrundIstEingetroffen" name="Ein Abbruchgrund ist eingetroffen" attachedToRef="UmzugsmeldungErfassenUndBezahlen">
-      <documentation>Kommt es innerhalb des aufgerufenen Prozesses zu einem Fehler, so soll dieser innerhalb des aufgerufenen Prozesses behandelt werden, während der Hauptprozess lediglich darüber informiert wird, damit die Prozessinstanz entsprechend vorzeitig beendet werden kann.</documentation>
+      <documentation>Gewisse Ausnahmefälle innerhalb des aufgerufenen Prozesses sind allenfalls so gravierend, dass eine Weiterführung des Hauptprozesses keinen Sinn macht.
+
+Der eigentliche Fehler soll innerhalb des aufgerufenen Prozesses behandelt werden, während der Hauptprozess lediglich darüber informiert wird, damit dessen Prozessinstanz entsprechend vorzeitig beendet werden kann.
+</documentation>
       <outgoing>SequenceFlow_1312w0k</outgoing>
       <errorEventDefinition id="ErrorEventDefinition_0pb3nhb" errorRef="Error_12sd8hn" />
     </boundaryEvent>

@@ -36,6 +36,7 @@ Die Lösung entstand im Rahmen des **Moduls Geschäftsprozesssintegration im Stu
 
 ## Anforderungsspezifikation und Aufgabenstellung
 Dieses Projekt ist die Musterlösung für eine Aufgabenstellung, welche den Studierenden gestellt wurde. Die Aufgabenstellung (PDF), das BPMN-Modell der im nächsten Kapitel abgebildeten Architektur sowie die originalen eCH-Anforderungsdokumente sind im Ordner **src/docs** abgelegt.
+Unter anderem befindet sich dort im Ordner **exception-handling** eine Excel-Datei als Musterlösung für verschiedene Ausnahmefälle und ihrer Behandlung. Diese Ausnahmefallbehandlungen sind soweit sinnvoll auch in den jeweiligen BPMN-Modellen vorhanden.
 
 ### Wie können Studierende Bonus-Punkte sammeln (in Aufgabenstellung verschieben)
 1. **Zahlungsprozess fortgeschritten**: Statt bloss Kreditkarten soll auch SEPA unterstützt werden, was aber einen Rattenschwanz an Konsequenzen mit sich bringt aufgrund des asynchronen Zahlungsvorgangs:
