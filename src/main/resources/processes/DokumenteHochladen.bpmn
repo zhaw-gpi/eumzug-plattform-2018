@@ -21,11 +21,6 @@
       <bpmn:outgoing>DokumenteVorhanden</bpmn:outgoing>
       <bpmn:outgoing>DokumenteNichtVorhanden</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_1tfq0zf">
-      <bpmn:incoming>SequenceFlow_1k753gz</bpmn:incoming>
-      <bpmn:incoming>DokumenteNichtVorhanden</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_19e1phj</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:serviceTask id="HochzuladendeDokumenteErmitteln" name="Hochzuladende Dokumente ermitteln" camunda:delegateExpression="#{getDocumentsAdapter}">
       <bpmn:documentation>Prozessvariable mit relevanten Dokumenten basierend auf Angaben in der Umzugsplattform-Datenbank erstellen
 
@@ -48,127 +43,130 @@ Der eigentliche Upload geschieht in einer eigenen Funktion, wo der Dateiname als
       <bpmn:incoming>DokumenteVorhanden</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1k753gz</bpmn:outgoing>
     </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1k1s0lb">
+      <bpmn:incoming>Umzug</bpmn:incoming>
+      <bpmn:incoming>DokumenteNichtVorhanden</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0xhr4qr</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
     <bpmn:endEvent id="EndEvent_17ucf54" name="Dokumente erfolgreich hochgeladen">
-      <bpmn:incoming>SequenceFlow_19e1phj</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1k753gz</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:endEvent id="EndEvent_1mtarjy" name="Dokumente hochladen verworfen">
-      <bpmn:incoming>Umzug</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0xhr4qr</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_09gv400" sourceRef="WeitereAngabenErfolgreichErfasst" targetRef="ExclusiveGateway_09tednt" />
-    <bpmn:sequenceFlow id="WegzugZuzug" name="Wegzug/&#10;Zuzug" sourceRef="ExclusiveGateway_09tednt" targetRef="HochzuladendeDokumenteErmitteln">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${municipalityIdMoveOut != municipalityIdMoveIn}</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="SequenceFlow_1k753gz" sourceRef="DokumenteHochladenForm" targetRef="EndEvent_17ucf54" />
+    <bpmn:sequenceFlow id="DokumenteNichtVorhanden" name="Nein" sourceRef="ExclusiveGateway_1xg555j" targetRef="ExclusiveGateway_1k1s0lb">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!documentsExist}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Umzug" name="Umzug" sourceRef="ExclusiveGateway_09tednt" targetRef="EndEvent_1mtarjy">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${municipalityIdMoveOut == municipalityIdMoveIn}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_1l3ujyh" sourceRef="HochzuladendeDokumenteErmitteln" targetRef="ExclusiveGateway_1xg555j" />
     <bpmn:sequenceFlow id="DokumenteVorhanden" name="Ja" sourceRef="ExclusiveGateway_1xg555j" targetRef="DokumenteHochladenForm">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${documentsExist}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="DokumenteNichtVorhanden" name="Nein" sourceRef="ExclusiveGateway_1xg555j" targetRef="ExclusiveGateway_1tfq0zf">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!documentsExist}</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="SequenceFlow_1l3ujyh" sourceRef="HochzuladendeDokumenteErmitteln" targetRef="ExclusiveGateway_1xg555j" />
+    <bpmn:sequenceFlow id="Umzug" name="Umzug" sourceRef="ExclusiveGateway_09tednt" targetRef="ExclusiveGateway_1k1s0lb">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${municipalityIdMoveOut == municipalityIdMoveIn}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_1k753gz" sourceRef="DokumenteHochladenForm" targetRef="ExclusiveGateway_1tfq0zf" />
-    <bpmn:sequenceFlow id="SequenceFlow_19e1phj" sourceRef="ExclusiveGateway_1tfq0zf" targetRef="EndEvent_17ucf54" />
+    <bpmn:sequenceFlow id="WegzugZuzug" name="Wegzug/&#10;Zuzug" sourceRef="ExclusiveGateway_09tednt" targetRef="HochzuladendeDokumenteErmitteln">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${municipalityIdMoveOut != municipalityIdMoveIn}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_09gv400" sourceRef="WeitereAngabenErfolgreichErfasst" targetRef="ExclusiveGateway_09tednt" />
+    <bpmn:sequenceFlow id="SequenceFlow_0xhr4qr" sourceRef="ExclusiveGateway_1k1s0lb" targetRef="EndEvent_1mtarjy" />
     <bpmn:association id="Association_1trh2fl" sourceRef="DokumenteHochladenForm" targetRef="TextAnnotation_1wouo73" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1tnimfb">
       <bpmndi:BPMNShape id="Participant_1ann79f_di" bpmnElement="DokumenteHochladenParticipant">
-        <dc:Bounds x="-1" y="-1" width="908" height="304" />
+        <dc:Bounds x="0" y="2" width="782" height="277" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="WeitereAngabenErfolgreichErfasst">
-        <dc:Bounds x="69" y="91" width="36" height="36" />
+        <dc:Bounds x="70" y="66" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="43" y="134" width="89" height="27" />
+          <dc:Bounds x="44" y="109" width="89" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_09tednt_di" bpmnElement="ExclusiveGateway_09tednt" isMarkerVisible="true">
-        <dc:Bounds x="154" y="84" width="50" height="50" />
+        <dc:Bounds x="155" y="59" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="150" y="65" width="60" height="14" />
+          <dc:Bounds x="151" y="40" width="60" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_1a4yxl8_di" bpmnElement="DokumenteHochladenForm" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
-        <dc:Bounds x="564" y="69" width="100" height="80" />
+        <dc:Bounds x="565" y="44" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_16ym1i0_di" bpmnElement="HochzuladendeDokumenteErmitteln" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
-        <dc:Bounds x="285" y="69" width="100" height="80" />
+        <dc:Bounds x="286" y="44" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_1xg555j_di" bpmnElement="ExclusiveGateway_1xg555j" isMarkerVisible="true">
-        <dc:Bounds x="448" y="84" width="50" height="50" />
+        <dc:Bounds x="449" y="59" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="446" y="138" width="57" height="27" />
+          <dc:Bounds x="445" y="21.5" width="57" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_1tfq0zf_di" bpmnElement="ExclusiveGateway_1tfq0zf" isMarkerVisible="true">
-        <dc:Bounds x="731" y="84" width="50" height="50" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0hshaz5_di" bpmnElement="WegzugZuzug">
-        <di:waypoint x="204" y="109" />
-        <di:waypoint x="285" y="109" />
+        <di:waypoint x="205" y="84" />
+        <di:waypoint x="286" y="84" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="219" y="72" width="44" height="27" />
+          <dc:Bounds x="220" y="47" width="44" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1xrac01_di" bpmnElement="Umzug">
-        <di:waypoint x="179" y="134" />
-        <di:waypoint x="179" y="218" />
-        <di:waypoint x="837" y="218" />
+        <di:waypoint x="180" y="109" />
+        <di:waypoint x="180" y="193" />
+        <di:waypoint x="449" y="193" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="203" y="197" width="35" height="14" />
+          <dc:Bounds x="189" y="169" width="35" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_19e1phj_di" bpmnElement="SequenceFlow_19e1phj">
-        <di:waypoint x="781" y="109" />
-        <di:waypoint x="837" y="109" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0qzmrdv_di" bpmnElement="DokumenteVorhanden">
-        <di:waypoint x="498" y="109" />
-        <di:waypoint x="564" y="109" />
+        <di:waypoint x="499" y="84" />
+        <di:waypoint x="565" y="84" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="511" y="86" width="12" height="14" />
+          <dc:Bounds x="512" y="61" width="12" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1k753gz_di" bpmnElement="SequenceFlow_1k753gz">
-        <di:waypoint x="664" y="109" />
-        <di:waypoint x="731" y="109" />
+        <di:waypoint x="665" y="84" />
+        <di:waypoint x="712" y="84" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1l3ujyh_di" bpmnElement="SequenceFlow_1l3ujyh">
-        <di:waypoint x="385" y="109" />
-        <di:waypoint x="448" y="109" />
+        <di:waypoint x="386" y="84" />
+        <di:waypoint x="449" y="84" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_01hck4k_di" bpmnElement="DokumenteNichtVorhanden">
-        <di:waypoint x="473" y="84" />
-        <di:waypoint x="473" y="44" />
-        <di:waypoint x="756" y="44" />
-        <di:waypoint x="756" y="84" />
+        <di:waypoint x="474" y="109" />
+        <di:waypoint x="474" y="168" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="477" y="17" width="23" height="14" />
+          <dc:Bounds x="488" y="116" width="23" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_09gv400_di" bpmnElement="SequenceFlow_09gv400">
-        <di:waypoint x="105" y="109" />
-        <di:waypoint x="154" y="109" />
+        <di:waypoint x="106" y="84" />
+        <di:waypoint x="155" y="84" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_17ucf54_di" bpmnElement="EndEvent_17ucf54">
-        <dc:Bounds x="837" y="91" width="36" height="36" />
+        <dc:Bounds x="712" y="66" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="824" y="134" width="63" height="40" />
+          <dc:Bounds x="699" y="109" width="63" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1mtarjy_di" bpmnElement="EndEvent_1mtarjy">
-        <dc:Bounds x="837" y="200" width="36" height="36" />
+        <dc:Bounds x="712" y="175" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="827" y="243" width="57" height="40" />
+          <dc:Bounds x="702" y="218" width="57" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1wouo73_di" bpmnElement="TextAnnotation_1wouo73">
         <dc:Bounds x="604" y="-106" width="237" height="51" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1trh2fl_di" bpmnElement="Association_1trh2fl">
-        <di:waypoint x="637" y="69" />
-        <di:waypoint x="709" y="-55" />
+        <di:waypoint x="642" y="44" />
+        <di:waypoint x="707" y="-55" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1k1s0lb_di" bpmnElement="ExclusiveGateway_1k1s0lb" isMarkerVisible="true">
+        <dc:Bounds x="449" y="168" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xhr4qr_di" bpmnElement="SequenceFlow_0xhr4qr">
+        <di:waypoint x="499" y="193" />
+        <di:waypoint x="712" y="193" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

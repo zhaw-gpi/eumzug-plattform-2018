@@ -99,8 +99,7 @@ Theoretisch: Dem Prozess wird der BusinessKey, die BusinessCaseId und der meldeP
     <boundaryEvent id="EinAbbruchgrundIstEingetroffen" name="Ein Abbruchgrund ist eingetroffen" attachedToRef="UmzugsmeldungErfassenUndBezahlen">
       <documentation>Gewisse Ausnahmefälle innerhalb des aufgerufenen Prozesses sind allenfalls so gravierend, dass eine Weiterführung des Hauptprozesses keinen Sinn macht.
 
-Der eigentliche Fehler soll innerhalb des aufgerufenen Prozesses behandelt werden, während der Hauptprozess lediglich darüber informiert wird, damit dessen Prozessinstanz entsprechend vorzeitig beendet werden kann.
-</documentation>
+Der eigentliche Fehler soll innerhalb des aufgerufenen Prozesses behandelt werden, während der Hauptprozess lediglich darüber informiert wird, damit dessen Prozessinstanz entsprechend vorzeitig beendet werden kann.</documentation>
       <outgoing>SequenceFlow_1312w0k</outgoing>
       <errorEventDefinition id="ErrorEventDefinition_0pb3nhb" errorRef="Error_12sd8hn" />
     </boundaryEvent>
@@ -225,8 +224,12 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
     </serviceTask>
     <sequenceFlow id="SequenceFlow_1hdylfx" sourceRef="ErfolgreichenAbschlussPersistieren" targetRef="UmzugsmeldungErfolgreichAbgeschlossen" />
     <sequenceFlow id="SequenceFlow_1x0qckx" sourceRef="ErfolgreichenAbschlussMitteilen" targetRef="ErfolgreichenAbschlussPersistieren" />
-    <sequenceFlow id="SequenceFlow_19k3fjn" name="ja" sourceRef="UmzugsmeldungAkzeptiert" targetRef="ErfolgreichenAbschlussMitteilen" />
-    <sequenceFlow id="SequenceFlow_1woxygr" name="nein" sourceRef="UmzugsmeldungAkzeptiert" targetRef="AblehnungMitteilen" />
+    <sequenceFlow id="SequenceFlow_19k3fjn" name="ja" sourceRef="UmzugsmeldungAkzeptiert" targetRef="ErfolgreichenAbschlussMitteilen">
+      <conditionExpression xsi:type="tFormalExpression">${true == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_1woxygr" name="nein" sourceRef="UmzugsmeldungAkzeptiert" targetRef="AblehnungMitteilen">
+      <conditionExpression xsi:type="tFormalExpression">${false == true}</conditionExpression>
+    </sequenceFlow>
     <sequenceFlow id="SequenceFlow_1563am6" sourceRef="AblehnungMitteilen" targetRef="AblehnungPersistieren" />
     <sequenceFlow id="SequenceFlow_1ptg35o" sourceRef="MitEKSystemenKommunizieren" targetRef="UmzugsmeldungAkzeptiert" />
     <sequenceFlow id="SequenceFlow_0qpbkoo" sourceRef="DefinierteZeitVerstrichen" targetRef="UeberschreitenDerAntwortfristMitteilen" />
