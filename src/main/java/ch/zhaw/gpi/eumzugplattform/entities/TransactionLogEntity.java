@@ -39,7 +39,7 @@ public class TransactionLogEntity implements Serializable {
     @Size(min = 1, max = 100)
     private String status;
 
-    @ManyToOne(targetEntity = PersonEntity.class)
+    @ManyToOne
     @JoinColumn(name = "LOCALPERSONID")
     private PersonEntity personEntity;
 

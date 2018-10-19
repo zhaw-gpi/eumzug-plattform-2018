@@ -38,7 +38,7 @@ public class MunicipalityDocumentRelationEntity implements Serializable {
     @Basic
     private Boolean strangerCondition;
 
-    @ManyToOne(targetEntity = DocumentEntity.class)
+    @ManyToOne
     @JoinColumn(name = "DOCUMENT_ID")
     private DocumentEntity documentEntity;
 

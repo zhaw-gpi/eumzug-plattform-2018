@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" pkg="ch.zhaw.gpi.eumzugplattform.entities" v="4.6.1" rws="_150939164300877" Pws="_150939164300877" cws="_150939164300877" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_150939164300876" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" epkg="ch.zhaw.gpi.eumzugplattform.entities" v="4.6.1" rws="_150939164300877" Pws="_150939164300877" cws="_150939164300877" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_150939164300876" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
     <jpa:entity compositePrimaryKeyClass="TransactionLogEntityPK" abs="false" class="TransactionLogEntity" v="true" jbn="false" xre="false" m="false" rootElement="_150939164300876" id="_1509391667783">
         <jpa:inf e="true" n="java.io.Serializable"/>
         <jpa:ath>scep</jpa:ath>
@@ -270,11 +270,11 @@
     </jpa:c>
     <jpa:wsl>
         <jpa:ws n="Main" id="_150939164300877">
-            <i ref="_151422195308514" x="235" y="507"/>
-            <i ref="_150939218792097" x="106" y="223"/>
-            <i ref="_151422196406623" x="640" y="507"/>
-            <i ref="_1509391667783" x="432" y="144"/>
-            <i ref="_150939188916285" x="759" y="144"/>
+            <i ref="_151422195308514" x="233" y="505"/>
+            <i ref="_150939218792097" x="104" y="221"/>
+            <i ref="_151422196406623" x="638" y="505"/>
+            <i ref="_1509391667783" x="430" y="142"/>
+            <i ref="_150939188916285" x="757" y="142"/>
         </jpa:ws>
     </jpa:wsl>
 </jpa:entity-mappings>

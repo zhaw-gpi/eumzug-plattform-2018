@@ -50,7 +50,7 @@ public class MunicipalityEntity implements Serializable {
     @Max(value = 50)
     private int feeMoveIn;
 
-    @OneToMany(targetEntity = MunicipalityDocumentRelationEntity.class)
+    @OneToMany
     @JoinColumn(name = "MUNICIPALITY_ID")
     private List<MunicipalityDocumentRelationEntity> municipalityDocumentRelationEntities;
 
