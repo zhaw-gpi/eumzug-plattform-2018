@@ -165,7 +165,7 @@ Die **Farben** bedeuten dabei:
 3. **Persistierungs-Komponenten**:
     1. JDBC-Komponente als Treiber
     2. H2-Datenbank-Unterstützung inklusive Console-Servlet über application.properties-Einstellung
-    3. Java Persistence API (JPA) inklusive persistence.xml und EumzugPlattform2018Model.jpa-Diagramm (von Jeddict erstellt)
+    3. Java Persistence API (JPA) inklusive EumzugPlattform2018Model.jpa-Diagramm (von Jeddict erstellt)
     4. Package Repositories und Package entities für Municipality, Person, TransactionLog und Document
     5. JavaDelegates GetDocumentsDelegate, GetFeesDelegate, GetMunicipalityListDelegate und PersistUserEntriesAndStatusDelegate
     6. initialData.sql/xlsx in test/ressources, um die Datenbank initial mit sinnvollen Stammdaten zu füllen

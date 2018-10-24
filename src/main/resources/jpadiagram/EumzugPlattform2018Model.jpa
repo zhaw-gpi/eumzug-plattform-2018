@@ -4,13 +4,13 @@
         <jpa:inf e="true" n="java.io.Serializable"/>
         <jpa:ath>scep</jpa:ath>
         <jpa:attributes>
-            <jpa:basic attribute-type="java.util.Date" v="true" xvt="" name="logTimeStamp" ft="false" id="_150939174396980">
+            <jpa:basic attribute-type="java.util.Date" v="true" xvt="" name="logTimeStamp_Date_NotNull" ft="false" id="_150939174396980">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:temporal>TIMESTAMP</jpa:temporal>
                 <jpa:column unique="false" nullable="false" insertable="true" updatable="true"/>
             </jpa:basic>
-            <jpa:basic attribute-type="String" v="true" xvt="" name="status" ft="false" id="_150939184450981">
+            <jpa:basic attribute-type="String" v="true" xvt="" name="status_String_1-100_NotNull" ft="false" id="_150939184450981">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:bv>
@@ -24,7 +24,7 @@
                 <jpa:xm/>
                 <jpa:join-column name="LOCALPERSONID" unique="false" nullable="true" insertable="true" updatable="true"/>
             </jpa:many-to-one>
-            <jpa:id attribute-type="Long" v="true" xvt="" name="logId" ft="false" id="_150939166778478">
+            <jpa:id attribute-type="Long" v="true" xvt="" name="logId_Long_AutoGenerator" ft="false" id="_150939166778478">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:column unique="true" nullable="false" insertable="true" updatable="true"/>
@@ -34,18 +34,18 @@
         <jpa:nq e="false" name="TransactionLogEntity.findAll">
             <jpa:query>Select e from TransactionLogEntity e</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="TransactionLogEntity.findByLogTimeStamp">
-            <jpa:query>Select t from TransactionLogEntity t where t.logTimeStamp=:logTimeStamp</jpa:query>
+        <jpa:nq e="false" name="TransactionLogEntity.findByLogTimeStamp_Date_NotNull">
+            <jpa:query>Select t from TransactionLogEntity t where t.logTimeStamp_Date_NotNull=:logTimeStamp_Date_NotNull</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="TransactionLogEntity.findByStatus">
-            <jpa:query>Select t from TransactionLogEntity t where t.status=:status</jpa:query>
+        <jpa:nq e="false" name="TransactionLogEntity.findByStatus_String_1-100_NotNull">
+            <jpa:query>Select t from TransactionLogEntity t where t.status_String_1-100_NotNull=:status_String_1-100_NotNull</jpa:query>
         </jpa:nq>
     </jpa:entity>
     <jpa:entity compositePrimaryKeyClass="PersonEntityPK" abs="false" class="PersonEntity" v="true" jbn="false" xre="false" m="false" rootElement="_150939164300876" id="_150939188916285">
         <jpa:inf e="true" n="java.io.Serializable"/>
         <jpa:ath>scep</jpa:ath>
         <jpa:attributes>
-            <jpa:basic optional="true" attribute-type="Long" v="true" xvt="" name="vn" ft="true" id="_150939201635294">
+            <jpa:basic optional="true" attribute-type="Long" v="true" xvt="" name="vn_Long_7560000000001-7569999999999" ft="true" id="_150939201635294">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:bv>
@@ -53,7 +53,7 @@
                     <jpa:ma v="7569999999999"/>
                 </jpa:bv>
             </jpa:basic>
-            <jpa:basic attribute-type="String" v="true" xvt="" name="firstName" ft="false" id="_150939188916287">
+            <jpa:basic attribute-type="String" v="true" xvt="" name="firstName_String_1-100_NotNull" ft="false" id="_150939188916287">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:bv>
@@ -62,7 +62,7 @@
                 </jpa:bv>
                 <jpa:column unique="false" nullable="false" insertable="true" updatable="true"/>
             </jpa:basic>
-            <jpa:basic attribute-type="String" v="true" xvt="" name="officialName" ft="false" id="_150939188916288">
+            <jpa:basic attribute-type="String" v="true" xvt="" name="officialName_String_1-100_NotNull" ft="false" id="_150939188916288">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:bv>
@@ -71,7 +71,7 @@
                 </jpa:bv>
                 <jpa:column unique="false" nullable="false" insertable="true" updatable="true"/>
             </jpa:basic>
-            <jpa:basic attribute-type="int" v="true" xvt="" name="sex" ft="false" id="_150939188916289">
+            <jpa:basic attribute-type="int" v="true" xvt="" name="sex_int_1-3_NotNull" ft="false" id="_150939188916289">
                 <jpa:des>1 (männlich), 2 (weiblich), 3 (unbestimmt)</jpa:des>
                 <jpa:xwm/>
                 <jpa:xm/>
@@ -82,13 +82,13 @@
                 </jpa:bv>
                 <jpa:column unique="false" nullable="false" insertable="true" updatable="true" precision="0"/>
             </jpa:basic>
-            <jpa:basic attribute-type="java.util.Date" v="true" xvt="" name="dateOfBirth" ft="false" id="_150939188916290">
+            <jpa:basic attribute-type="java.util.Date" v="true" xvt="" name="dateOfBirth_Date_NotNull" ft="false" id="_150939188916290">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:temporal>DATE</jpa:temporal>
                 <jpa:column unique="false" nullable="false" insertable="true" updatable="true"/>
             </jpa:basic>
-            <jpa:id attribute-type="String" v="true" xvt="" name="localPersonId" ft="true" id="_150939188916286">
+            <jpa:id attribute-type="String" v="true" xvt="" name="localPersonId_String_1-36" ft="true" id="_150939188916286">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:bv>
@@ -100,30 +100,30 @@
         <jpa:nq e="false" name="PersonEntity.findAll">
             <jpa:query>Select e from PersonEntity e</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="PersonEntity.findByFirstName">
-            <jpa:query>Select r from PersonEntity r where r.firstName=:firstName</jpa:query>
+        <jpa:nq e="false" name="PersonEntity.findByFirstName_String_1-100_NotNull">
+            <jpa:query>Select r from PersonEntity r where r.firstName_String_1-100_NotNull=:firstName_String_1-100_NotNull</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="PersonEntity.findByOfficialName">
-            <jpa:query>Select r from PersonEntity r where r.officialName=:officialName</jpa:query>
+        <jpa:nq e="false" name="PersonEntity.findByOfficialName_String_1-100_NotNull">
+            <jpa:query>Select r from PersonEntity r where r.officialName_String_1-100_NotNull=:officialName_String_1-100_NotNull</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="PersonEntity.findBySex">
-            <jpa:query>Select r from PersonEntity r where r.sex=:sex</jpa:query>
+        <jpa:nq e="false" name="PersonEntity.findBySex_int_1-3_NotNull">
+            <jpa:query>Select r from PersonEntity r where r.sex_int_1-3_NotNull=:sex_int_1-3_NotNull</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="PersonEntity.findByDateOfBirth">
-            <jpa:query>Select r from PersonEntity r where r.dateOfBirth=:dateOfBirth</jpa:query>
+        <jpa:nq e="false" name="PersonEntity.findByDateOfBirth_Date_NotNull">
+            <jpa:query>Select r from PersonEntity r where r.dateOfBirth_Date_NotNull=:dateOfBirth_Date_NotNull</jpa:query>
         </jpa:nq>
         <jpa:nq e="false" name="PersonEntity.findByMoveAllowed">
             <jpa:query>Select r from PersonEntity r where r.moveAllowed=:moveAllowed</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="PersonEntity.findByVn">
-            <jpa:query>Select p from PersonEntity p where p.vn=:vn</jpa:query>
+        <jpa:nq e="false" name="PersonEntity.findByVn_Long_7560000000001-">
+            <jpa:query>Select p from PersonEntity p where p.vn_Long_7560000000001-=:vn_Long_7560000000001-</jpa:query>
         </jpa:nq>
     </jpa:entity>
     <jpa:entity compositePrimaryKeyClass="MunicipalityEntityPK" abs="false" class="MunicipalityEntity" v="true" jbn="false" xre="false" m="false" rootElement="_150939164300876" id="_150939218792097">
         <jpa:inf e="true" n="java.io.Serializable"/>
         <jpa:ath>scep</jpa:ath>
         <jpa:attributes>
-            <jpa:basic attribute-type="String" v="true" xvt="" name="municipalityName" ft="false" id="_150939218792099">
+            <jpa:basic attribute-type="String" v="true" xvt="" name="municipalityName_String_1-40_NotNull" ft="false" id="_150939218792099">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:bv>
@@ -132,7 +132,7 @@
                 </jpa:bv>
                 <jpa:column unique="false" nullable="false" insertable="true" updatable="true"/>
             </jpa:basic>
-            <jpa:basic attribute-type="int" v="true" xvt="" name="feeMove" id="_1509392239922101">
+            <jpa:basic attribute-type="int" v="true" xvt="" name="feeMove_int_0-50" id="_1509392239922101">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:bv>
@@ -140,7 +140,7 @@
                     <jpa:ma v="50"/>
                 </jpa:bv>
             </jpa:basic>
-            <jpa:basic attribute-type="int" v="true" xvt="" name="feeMoveOut" id="_1509392289213102">
+            <jpa:basic attribute-type="int" v="true" xvt="" name="feeMoveOut_int_0-50" id="_1509392289213102">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:bv>
@@ -148,7 +148,7 @@
                     <jpa:ma v="50"/>
                 </jpa:bv>
             </jpa:basic>
-            <jpa:basic attribute-type="int" v="true" xvt="" name="feeMoveIn" id="_1509392302205103">
+            <jpa:basic attribute-type="int" v="true" xvt="" name="feeMoveIn_int_0-50" id="_1509392302205103">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:bv>
@@ -161,7 +161,7 @@
                 <jpa:xm/>
                 <jpa:join-column name="MUNICIPALITY_ID" unique="false" nullable="true" insertable="true" updatable="true"/>
             </jpa:one-to-many>
-            <jpa:id attribute-type="int" v="true" xvt="" name="municipalityId" ft="false" id="_150939218792098">
+            <jpa:id attribute-type="int" v="true" xvt="" name="municipalityId_int_1-9999" ft="false" id="_150939218792098">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:bv>
@@ -175,11 +175,11 @@
         <jpa:nq e="false" name="MunicipalityEntity.findAll">
             <jpa:query>Select e from MunicipalityEntity e</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="Municipality.findByMunicipalityName">
-            <jpa:query>Select m from MunicipalityEntity m where m.municipalityName=:municipalityName</jpa:query>
+        <jpa:nq e="false" name="Municipality.findByMunicipalityName_String_1-40_NotNull">
+            <jpa:query>Select m from MunicipalityEntity m where m.municipalityName_String_1-40_NotNull=:municipalityName_String_1-40_NotNull</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="MunicipalityEntity.findByFeeMoveOut">
-            <jpa:query>Select m from MunicipalityEntity m where m.feeMoveOut=:feeMoveOut</jpa:query>
+        <jpa:nq e="false" name="MunicipalityEntity.findByFeeMoveOut_int_0-50">
+            <jpa:query>Select m from MunicipalityEntity m where m.feeMoveOut_int_0-50=:feeMoveOut_int_0-50</jpa:query>
         </jpa:nq>
         <jpa:nq e="false" name="MunicipalityEntity.findByWebServiceURL">
             <jpa:query>Select m from MunicipalityEntity m where m.webServiceURL=:webServiceURL</jpa:query>
@@ -189,17 +189,17 @@
         <jpa:inf e="true" n="java.io.Serializable"/>
         <jpa:ath>Bekim</jpa:ath>
         <jpa:attributes>
-            <jpa:basic attribute-type="Boolean" v="true" xvt="" name="marriageCondition" ft="false" id="_151422195308516">
+            <jpa:basic attribute-type="Boolean" v="true" xvt="" name="marriageCondition_Boolean_NotNull" ft="false" id="_151422195308516">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:column name="MARRIAGE_CONDITION" unique="false" nullable="false" insertable="true" updatable="true"/>
             </jpa:basic>
-            <jpa:basic attribute-type="Boolean" v="true" xvt="" name="childrenCondition" ft="false" id="_151422195308517">
+            <jpa:basic attribute-type="Boolean" v="true" xvt="" name="childrenCondition_Boolean_NotNull" ft="false" id="_151422195308517">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:column name="CHILDREN_CONDITION" unique="false" nullable="false" insertable="true" updatable="true"/>
             </jpa:basic>
-            <jpa:basic attribute-type="Boolean" v="true" xvt="" name="strangerCondition" ft="false" id="_151422195308518">
+            <jpa:basic attribute-type="Boolean" v="true" xvt="" name="strangerCondition_Boolean_NotNull" ft="false" id="_151422195308518">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:column name="STRANGER_CONDITION" unique="false" nullable="false" insertable="true" updatable="true"/>
@@ -209,7 +209,7 @@
                 <jpa:xm/>
                 <jpa:join-column name="DOCUMENT_ID" unique="false" nullable="true" insertable="true" updatable="true"/>
             </jpa:many-to-one>
-            <jpa:id attribute-type="Long" v="true" xvt="" name="municipalityDocumentId" ft="false" id="_151422195308515">
+            <jpa:id attribute-type="Long" v="true" xvt="" name="municipalityDocumentId_Long_IdentiyGenerator" ft="false" id="_151422195308515">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:column name="MUNICIPALITY_DOCUMENT_ID" unique="true" nullable="false" insertable="true" updatable="true"/>
@@ -219,14 +219,14 @@
         <jpa:nq e="false" name="MunicipalityDocumentRelationEntity.findAll">
             <jpa:query>Select e from MunicipalityDocumentRelationEntity e</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="MunicipalityDocumentRelationEntity.findByMarriageCondition">
-            <jpa:query>Select m from MunicipalityDocumentRelationEntity m where m.marriageCondition=:marriageCondition</jpa:query>
+        <jpa:nq e="false" name="MunicipalityDocumentRelationEntity.findByMarriageCondition_Boolean_NotNull">
+            <jpa:query>Select m from MunicipalityDocumentRelationEntity m where m.marriageCondition_Boolean_NotNull=:marriageCondition_Boolean_NotNull</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="MunicipalityDocumentRelationEntity.findByChildrenCondition">
-            <jpa:query>Select m from MunicipalityDocumentRelationEntity m where m.childrenCondition=:childrenCondition</jpa:query>
+        <jpa:nq e="false" name="MunicipalityDocumentRelationEntity.findByChildrenCondition_Boolean_NotNull">
+            <jpa:query>Select m from MunicipalityDocumentRelationEntity m where m.childrenCondition_Boolean_NotNull=:childrenCondition_Boolean_NotNull</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="MunicipalityDocumentRelationEntity.findByStrangerCondition">
-            <jpa:query>Select m from MunicipalityDocumentRelationEntity m where m.strangerCondition=:strangerCondition</jpa:query>
+        <jpa:nq e="false" name="MunicipalityDocumentRelationEntity.findByStrangerCondition_Boolean_NotNull">
+            <jpa:query>Select m from MunicipalityDocumentRelationEntity m where m.strangerCondition_Boolean_NotNull=:strangerCondition_Boolean_NotNull</jpa:query>
         </jpa:nq>
         <jpa:table name="MUNICIPALITY_DOCUMENT"/>
     </jpa:entity>
@@ -234,12 +234,12 @@
         <jpa:inf e="true" n="java.io.Serializable"/>
         <jpa:ath>Bekim</jpa:ath>
         <jpa:attributes>
-            <jpa:basic attribute-type="String" v="true" xvt="" name="name" ft="false" id="_151422196406625">
+            <jpa:basic attribute-type="String" v="true" xvt="" name="name_String_Unique_NotNull" ft="false" id="_151422196406625">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:column name="NAME" unique="true" nullable="false" insertable="true" updatable="true" length="255"/>
             </jpa:basic>
-            <jpa:id attribute-type="Long" v="true" xvt="" name="documentId" ft="false" id="_151422196406624">
+            <jpa:id attribute-type="Long" v="true" xvt="" name="documentId_Long" ft="false" id="_151422196406624">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:column name="DOCUMENT_ID" unique="true" nullable="false" insertable="true" updatable="true"/>
@@ -249,8 +249,8 @@
         <jpa:nq e="false" name="DocumentEntity.findAll">
             <jpa:query>Select e from DocumentEntity e</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="DocumentEntity.findByName">
-            <jpa:query>Select d from DocumentEntity d where d.name=:name</jpa:query>
+        <jpa:nq e="false" name="DocumentEntity.findByName_String_Unique_NotNull">
+            <jpa:query>Select d from DocumentEntity d where d.name_String_Unique_NotNull=:name_String_Unique_NotNull</jpa:query>
         </jpa:nq>
         <jpa:table name="DOCUMENT"/>
     </jpa:entity>
@@ -270,11 +270,11 @@
     </jpa:c>
     <jpa:wsl>
         <jpa:ws n="Main" id="_150939164300877">
-            <i ref="_151422195308514" x="233" y="505"/>
-            <i ref="_150939218792097" x="104" y="221"/>
-            <i ref="_151422196406623" x="638" y="505"/>
-            <i ref="_1509391667783" x="430" y="142"/>
-            <i ref="_150939188916285" x="757" y="142"/>
+            <i ref="_151422195308514" x="188" y="30"/>
+            <i ref="_150939218792097" x="32" y="267"/>
+            <i ref="_151422196406623" x="425" y="267"/>
+            <i ref="_1509391667783" x="684" y="40"/>
+            <i ref="_150939188916285" x="790" y="267"/>
         </jpa:ws>
     </jpa:wsl>
 </jpa:entity-mappings>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_1j21kxz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_1j21kxz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
   <bpmn:collaboration id="Collaboration_0v36rjh">
     <bpmn:participant id="UmzugsmeldungErfassenUndBezahlenParticipant" name="Umzugsmeldung erfassen und bezahlen" processRef="UmzugsmeldungErfassenUndBezahlen" />
   </bpmn:collaboration>
@@ -123,7 +123,9 @@ Theoretisch: Dem Prozess wird der BusinessKey, der Benutzername (meldePflichtige
 
 Zunächst wird geprüft, ob es sich um Wegzug/Zuzug oder Umzug handelt. Je nachdem werden dann über ein JPA-Repository eine oder zwei Gemeinde-Objekte aus der Datenbank geladen.
 
-Für jedes Objekt wird die relevante Gebühr (Zuzug, Wegzug oder Umzug) ausgelesen und einer HashMap hinzugefügt inklusive Angabe, um welche Art von Gebühr es sich handelt (z.B. "Wegzugsgebühr"). Falls mindestens eine Gebühr anfällt, wird die HashMap der Prozessvariable feeMap zugewiesen, ansonsten wird dieser Variable der Wert null zugewiesen.</bpmn:documentation>
+Für jedes Objekt wird die relevante Gebühr (Zuzug, Wegzug oder Umzug) ausgelesen und einer HashMap hinzugefügt inklusive Angabe, um welche Art von Gebühr es sich handelt (z.B. "Wegzugsgebühr"). Falls mindestens eine Gebühr anfällt, wird die HashMap der Prozessvariable feeMap zugewiesen, ansonsten wird dieser Variable der Wert null zugewiesen.
+
+Zudem wird die Prozessvariable feesTotal auf den Wert der Gebühren insgesamt gesetzt, also 0, falls keine Gebühren anfallen und ansonsten die Summe aller Gebühren.</bpmn:documentation>
         <bpmn:incoming>SequenceFlow_05prxas</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_12mko98</bpmn:outgoing>
       </bpmn:serviceTask>
@@ -178,7 +180,7 @@ Zuunterst zwei Checkboxes:
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="SequenceFlow_0eixy45" sourceRef="GebuehrenNichtAkzeptiertPersistieren" targetRef="WegenNichtAkzeptierterGebuehrenAbgebrochenErrorEvent" />
       <bpmn:serviceTask id="GebuehrenNichtAkzeptiertPersistieren" name="Gebühren nicht akzeptiert persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
-        <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
+        <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren. Erstere sollen nur gespeichert werden, wenn die entsprechende Person nicht bereits in der Datenbank existiert. Letztere sollen in der TransactionLog-Entität gespeichert werden.
 
 Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex). In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Fehlgeschlagen wegen nicht akzeptierter Gebühren".</bpmn:documentation>
         <bpmn:extensionElements>
@@ -228,9 +230,17 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschla
       <bpmn:errorEventDefinition errorRef="Error_0fmfamk" />
     </bpmn:endEvent>
     <bpmn:serviceTask id="AbbruchWegenZeitueberschreitungPersistieren" name="Abbruch wegen Zeitüberschreitung persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
-      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
+      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren. Erstere sollen nur gespeichert werden, wenn die entsprechende Person nicht bereits in der Datenbank existiert. Letztere sollen in der TransactionLog-Entität gespeichert werden.
 
-Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex), ebenfalls der Status (status).</bpmn:documentation>
+Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex), ebenfalls der Status (status).
+
+In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Wegen Zeitüberschreitung abgebrochen".
+</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">Wegen Zeitüberschreitung abgebrochen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>PersonIdentifikationErfasst</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0xvv0xn</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -268,9 +278,16 @@ Je nach Antwortzeiten der Gemeinden werden Sie dann in den nächsten Stunden ode
       <bpmn:outgoing>GebuehrenFallenNichtAn</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:serviceTask id="FehlgeschlageneZahlungPersistieren" name="Fehlgeschlagene Zahlung persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
-      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
+      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren. Erstere sollen nur gespeichert werden, wenn die entsprechende Person nicht bereits in der Datenbank existiert. Letztere sollen in der TransactionLog-Entität gespeichert werden.
 
-Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex), ebenfalls der Status (status).</bpmn:documentation>
+Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex), ebenfalls der Status (status).
+
+In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Wegen fehlgeschlagener Zahlung abgebrochen".</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">Wegen fehlgeschlagener Zahlung abgebrochen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1d0k5r8</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1vi0gkw</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -345,7 +362,7 @@ Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Proz
       <bpmn:incoming>SequenceFlow_1bqdavl</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:serviceTask id="ErfolgreicheUmzugsmeldungErfassungPersistieren" name="Erfolgreiche Umzugsmeldung-Erfassung persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
-      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren.
+      <bpmn:documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren. Erstere sollen nur gespeichert werden, wenn die entsprechende Person nicht bereits in der Datenbank existiert. Letztere sollen in der TransactionLog-Entität gespeichert werden.
 
 Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex).
 
