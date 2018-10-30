@@ -84,7 +84,7 @@ public class PersistUserEntriesAndStatusDelegate implements JavaDelegate {
         transactionLog.setStatus(status);
 
         // Die gefundene oder neu erstellte PersonEntity der passenden Transaktionslog-Eigenschaft zuweisen
-        transactionLog.setPersonEntity(personEntity);
+        transactionLog.setPerson(personEntity);
 
         // Das neue TransaktionsLog-Objekt persistieren
         transactionLogRepository.save(transactionLog);
