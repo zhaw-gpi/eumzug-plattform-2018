@@ -1,11 +1,10 @@
 package ch.zhaw.gpi.eumzugplattform.services;
 
-import ch.zhaw.gpi.eumzugplattform.processdata.VeKaResponse;
-import java.util.Date;
-import java.util.Locale;
+import ch.zhaw.gpi.eumzugplattform.processdata.VeKaCard;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.format.datetime.DateFormatter;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -31,34 +30,35 @@ public class VeKaClientService {
     }
     
     /**
-     * Methode, um die Grundversicherung einer Person/Karte zu prüfen
+     * Methode, um die Karteninformationen zu einer Kartennummer zu erhalten
      * 
      * @param baseInsuranceNumber   Versicherungskartennummer
-     * @param firstName             Vorname
-     * @param officialName          Nachname
-     * @param dateOfBirth           Geburtsdatum
-     * @return                      VeKaResponse mit zwei String-Variablen (Yes/No/Unknown und erläuternden Details)
+     * @return                      null oder ein Versichertenkarten-Objekt
      */
-    public VeKaResponse checkBaseInsurance(Long baseInsuranceNumber, String firstName, String officialName, Date dateOfBirth) {
-        // Die URL besteht ausschliesslich aus Strings, daher ist eine Übersetzung
-        // des Geburtsdatums in einen passend formatierten String erforderlich
-        DateFormatter dateFormatter = new DateFormatter("dd.MM.yyyy");
-        String dateOfBirthString = dateFormatter.print(dateOfBirth, Locale.GERMAN);
-        
+    public VeKaCard getVeKaCard(Long baseInsuranceNumber) {        
         // Aufruf des REST-Services über die getForObject-Methode von RestTemplate, welche als Parameter erwartet:
-        // - Die URL mit Parametern, wobei der in {} gesetzte Teil dann durch die Werte ersetzt wird
+        // - Die URL mit Parametern, wobei der in {} gesetzte Teil dann durch den Parameter baseInsuranceNumber ersetzt wird
         // - Die Klassendefinition, in welcher die Antwort aufbereitet werden soll (von JSON zu dieser Klasse)
-        // - Eine passende Anzahl an Parameter-Werten, welche die {} in der URL ersetzt
-        // Zurücknehmen der Ressource und Deserialisierung als VeKaResponse-Objekt
-        VeKaResponse veKaResponse = restTemplate.getForObject(
-                vekaEndpoint + "/checkbaseinsurance?firstName={FIRSTNAME}&officialName={OFFICIALNAME}&dateOfBirth={DATEOFBIRTH}&baseInsuranceNumber={BASEINSURANCENUMBER}", 
-                VeKaResponse.class, 
-                firstName, 
-                officialName, 
-                dateOfBirthString, 
-                Long.toString(baseInsuranceNumber));
-        
-        // Die erhaltene Antwort weiter reichen an die aufrufende Methode
-        return veKaResponse;
+        // - Eine passende Anzahl an Parameter-Werten, welche die {} in der URL ersetzt (hier nur einer)
+        // Zurücknehmen der Ressource und Deserialisierung als VeKaCard-Objekt
+        try{
+            // Versuchen, eine Karte zu erhalten
+            VeKaCard veKaCard = restTemplate.getForObject(
+                    vekaEndpoint + "/cards/{baseInsuranceNumber}",
+                    VeKaCard.class,
+                    baseInsuranceNumber);
+            
+            // Wenn es klappt, diese zurückgeben
+            return veKaCard;
+        } catch(HttpClientErrorException httpClientErrorException) {
+            // Wenn es fehlschlägt, in Abhängigkeit des HTTP-Status-Codes anders vorgehen
+            // Wenn Resource nicht gefunden wird, dann null zurückgeben
+            if(httpClientErrorException.getStatusCode() == HttpStatus.NOT_FOUND){
+                return null;
+            } else {
+                // Ansonsten den Fehler weiter reichen
+                throw httpClientErrorException;
+            }
+        }
     }
 }

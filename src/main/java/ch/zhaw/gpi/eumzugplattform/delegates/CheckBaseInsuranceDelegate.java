@@ -1,9 +1,9 @@
 package ch.zhaw.gpi.eumzugplattform.delegates;
 
+import ch.zhaw.gpi.eumzugplattform.processdata.CheckBaseInsuranceResult;
 import ch.zhaw.gpi.eumzugplattform.processdata.Person;
 import ch.zhaw.gpi.eumzugplattform.processdata.PersonList;
-import ch.zhaw.gpi.eumzugplattform.processdata.VeKaResponse;
-import ch.zhaw.gpi.eumzugplattform.services.VeKaClientService;
+import ch.zhaw.gpi.eumzugplattform.services.CheckBaseInsuranceService;
 import javax.inject.Named;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -12,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Grundversicherungsprüfung pro umziehender Person im Auskunftsdienst des VeKa-Centers
  * 
- * Die Prüfung selbst erfolgt über den VeKaClientService.
+ * Die Prüfung selbst erfolgt über den CheckBaseInsuranceService.
  * 
  * Die Aufgabe dieses Delegates ist:
  * - Aus person in der Prozessvariable personList die Eigenschaften baseInsuranceNumber, 
  * firstName, officialName und dateOfBirth auslesen.
- * - Die Methode checkBaseInsurance des VeKaClientServices mit diesen Angaben füttern.
- * - Die Antwort als VeKaResponse-Objekt auslesen. Sie enthält zwei String-Variablen: 
+ * - Die Methode checkBaseInsurance des CheckBaseInsuranceService mit diesen Angaben füttern.
+ * - Die Antwort als CheckBaseInsuranceResult-Objekt auslesen. Sie enthält zwei String-Variablen: 
  *   - checkBaseInsuranceResult, welche positiv (Yes, Person ist grundversichert), 
  * negativ (No, Person ist nicht grundversichert) oder unklar (Unknown, die Prüfung
  * konnte nicht durchgeführt werden. Einerseits sind nicht alle Versicherungen abfragbar (Bsp.: Helsana) oder die Versichertenkartennum-mer konnte nicht gefunden werden.) sein kann.
@@ -31,9 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Named("checkBaseInsuranceAdapter")
 public class CheckBaseInsuranceDelegate implements JavaDelegate {
     
-    // Verdrahten des VeKaClientServices
+    // Verdrahten des CheckBaseInsuranceService
     @Autowired
-    private VeKaClientService veKaClientService;
+    CheckBaseInsuranceService checkBaseInsuranceService;
 
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
@@ -44,19 +44,17 @@ public class CheckBaseInsuranceDelegate implements JavaDelegate {
         // Person innerhalb der PersonenListe basierend auf dem Index (loopCounter) ermitteln
         Person person = personList.getPersons().get(loopCounter);
         
-        // Methode des VeKaClientServices aufrufen mit den Angaben zu Kartennummer,
-        // Vorname, Nachname und Geburtsdatum. Die Antwort in einem VeKaResponse-Objekt speichern
-        VeKaResponse veKaResponse = veKaClientService.checkBaseInsurance(
-                person.getBaseInsuranceNumber(), 
-                person.getFirstName(), 
-                person.getOfficialName(), 
-                person.getDateOfBirth()
-        );
+        // Methode des CheckBaseInsuranceService aufrufen mit den erforderlichen Prüf-Angaben
+        CheckBaseInsuranceResult checkBaseInsuranceResult = checkBaseInsuranceService.checkBaseInsuranceValidity(
+                person.getBaseInsuranceNumber(),
+                person.getFirstName(),
+                person.getOfficialName(),
+                person.getDateOfBirth());
         
         // Die Antwort den passenden Person-Variablen zuweisen
         person
-            .setCheckBaseInsuranceResult(veKaResponse.getCheckResult())
-            .setCheckBaseInsuranceResultDetails(veKaResponse.getCheckResultDetails());
+            .setCheckBaseInsuranceResult(checkBaseInsuranceResult.getCheckResult())
+            .setCheckBaseInsuranceResultDetails(checkBaseInsuranceResult.getCheckResultDetails());
         
         // Die personList-Prozessvariable wird mit der veränderten personList überschrieben
         delegateExecution.setVariable("personList", personList);

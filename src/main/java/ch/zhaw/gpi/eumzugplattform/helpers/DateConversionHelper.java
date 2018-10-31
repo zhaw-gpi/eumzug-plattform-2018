@@ -1,14 +1,18 @@
 package ch.zhaw.gpi.eumzugplattform.helpers;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.springframework.stereotype.Component;
 
 /**
- * Hilfsklasse für die Konversion von XML- und Java-Datumstypen
+ * Hilfsklasse für die Konversion von Datumstypen
  */
+@Component
 public class DateConversionHelper {
     
     /**
@@ -34,4 +38,16 @@ public class DateConversionHelper {
         }
     }
     
+    /**
+     * Wandelt ein java.util.Date (mit Timezone & Co.) in ein LocalDate (nur Jahr, Monat, Tag ohne Timezone)
+     * 
+     * @param dateToConvert     java.util.Date-Datum
+     * @return                  LocalDate-Datum
+     */
+    public LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
+        // Umwandlung indirekt über Instant an der System-Zeitzone
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
 }

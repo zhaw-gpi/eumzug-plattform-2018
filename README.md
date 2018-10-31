@@ -2,7 +2,7 @@
 
 > Autoren der Dokumentation: Björn Scheppler
 
-> Dokumentation letztmals aktualisiert: 2.9.2018
+> Dokumentation letztmals aktualisiert: 31.10.2018
 
 > TOC erstellt mit https://ecotrust-canada.github.io/markdown-toc/
 
@@ -44,7 +44,6 @@ Unter anderem befindet sich dort im Ordner **exception-handling** eine Excel-Dat
     2. Es muss ein REST-Endpoint registriert werden, um die Stripe Webhook-Notifications empfangen zu können.
     3. Falls von Stripe eine Ablehnung kommt, dann muss der Meldepflichtige benachrichtigt werden und ihm erneut ein User Task für einen neuen Zahlungsversuch angezeigt werden.
     4. (Falls von den Einwohnergemeinden eine Ablehnung kommt, dann muss per Stripe eine Rückerstattung veranlasst werden)
-2. **Persistierung fortgeschritten und WebApp für Mitarbeitende**: Wir könnten aber natürlich das auch etwas ausweiten, indem eine separate Applikation diese Persistierung vornimmt mit separater Datenbank (nicht Process Engine-DB) und dafür noch einem kleinen WebGUI, wo Angestellte der Verwaltung jederzeit für einen Meldepflichtigen seinen aktuellen Status anschauen können. Anderseits: Warum hierzu nicht einfach das Camunda Cockpit nutzen mit dem Filter nach einem bestimmten BusinessKey, welcher dem Benutzer auf dem "Abschlussbestätigung anzeigen"-Dialog angezeigt wird, damit er bei Telefonaten die richtige Id nennt?
 3. **Grundversicherung prüfen extended**: Statt einer Multi-Instance-Activity soll ein einziger User Task "Grundversicherung prüfen" erstellt werden, welcher alle Personen und Versicherungs-Nummer-Formularfelder als Tabelle darstellt. Jedes Mal, wenn der Benutzer eine Versicherungsnummer erfasst und das Formularfeld verlässt, wird asynchron aus AngularJS heraus der REST-Service abgefragt (https://spring.io/guides/gs/consuming-rest-angularjs/) und das Resultat als Icon (Grüner Haken vs. Rotes Ausrufezeichen) angezeigt bei der jeweiligen Tabellenzeile als auch im Fall von Ausrufezeichen mit den Details als Text.
 4. **Benutzerverwaltung**: Neue Benutzer sollen sich bei der BEservices-Plattform zunächst registrieren. Im Idealfall bedeutet dies:
     1. Zusätzliche eigene "Webapp" mit Registrierungs-Formular
@@ -232,10 +231,10 @@ Die **Farben** bedeuten dabei:
         3. Wenn man möchte, dass in "Alle Angaben prüfen" eine Google Maps-Karte für die Zuzugsadresse verwendet wird, muss diese Adresse in der Realität natürlich auch existieren, das ist z.B. der Fall für **Bahnhofstrasse 1, 3073 Gümligen**
     3. **E-Mail-Adresse bei Kontaktangaben**: Wenn man wirklich eine Mail erhalten möchte und mail.debug nicht auf true gesetzt ist, dann muss hier die eigene Mail-Adresse angegeben werden.
     4. **Grundversicherung prüfen**: Hinterlegt sind folgende vier Karten:
-        1. 36026946698526862: Gehört zu Hans Meier, ist aber 2016 abgelaufen.
-        2. 743794085316616163: Gehört zu Hans Meier und ist gültig
-        3. 78847589268403592: Gehört zu Anna Meier und ist gültig
-        4. 596947027238113990: Gehört zu Annaliese Meier und ist gültig
+        1. 360269466985268: Gehört zu Hans Meier, ist aber 2016 abgelaufen.
+        2. 743794085316616: Gehört zu Hans Meier und ist gültig
+        3. 788475892684035: Gehört zu Anna Meier und ist gültig, aber nicht grundversichert
+        4. 596947027238113: Gehört zu Annaliese Meier und ist gültig und grundversichert
     5. **Zahlungsdetails**:
         1. Für das Testen von Stripe Checkout kann man eine beliebige CVC verwenden und je nach gewünschtem Testergebnis ein Datum in der Zukunft oder Vergangenheit.
         2. Je nachdem, welches Testergebnis man wünscht, gibt es die verschiedensten Kartnnummern, welche [hier](https://stripe.com/docs/testing#cards) aufgelistet sind. Die wohl am häufigsten benötigten sind:
