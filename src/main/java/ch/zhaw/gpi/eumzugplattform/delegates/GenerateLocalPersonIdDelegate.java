@@ -26,10 +26,10 @@ public class GenerateLocalPersonIdDelegate implements JavaDelegate {
         String firstName = (String) execution.getVariable("firstName");
         String officialName = (String) execution.getVariable("officialName");
         Date dateOfBirth = (Date) execution.getVariable("dateOfBirth");
-        String sex = (String) execution.getVariable("sex");
+        Integer sex = (Integer) execution.getVariable("sex");
         
         // Lokale PersonenId generieren
-        String localPersonId = localPersonIdGenerator.generateId(vn, firstName, officialName, dateOfBirth, sex);
+        String localPersonId = localPersonIdGenerator.generateId(vn, firstName, officialName, dateOfBirth, sex.toString());
 
         // Die generierte localPersonId soll der entsprechenden Prozessvariable
         // zugewiesen werden

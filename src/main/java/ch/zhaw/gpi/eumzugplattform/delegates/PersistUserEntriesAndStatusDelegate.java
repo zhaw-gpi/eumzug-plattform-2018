@@ -53,7 +53,7 @@ public class PersistUserEntriesAndStatusDelegate implements JavaDelegate {
             String firstName = (String) execution.getVariable("firstName");
             String officialName = (String) execution.getVariable("officialName");
             Date dateOfBirth = (Date) execution.getVariable("dateOfBirth");
-            String sex = (String) execution.getVariable("sex");
+            Integer sex = (Integer) execution.getVariable("sex");
 
             // Ein neues PersonEntity-Objekt erstellen
             PersonEntity personNeu = new PersonEntity();
@@ -63,7 +63,7 @@ public class PersistUserEntriesAndStatusDelegate implements JavaDelegate {
             personNeu.setDateOfBirth(dateOfBirth);
             personNeu.setFirstName(firstName);
             personNeu.setOfficialName(officialName);
-            personNeu.setSex(Integer.parseInt(sex));
+            personNeu.setSex(sex);
             // AHV-Nummer ist optional und soll daher nur dann gesetzt werden, wenn vorhanden
             if (vn != null) {
                 personNeu.setVn(vn);

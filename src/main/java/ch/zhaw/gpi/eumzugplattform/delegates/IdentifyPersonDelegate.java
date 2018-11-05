@@ -53,7 +53,7 @@ public class IdentifyPersonDelegate implements JavaDelegate {
 
         String firstName = (String) execution.getVariable("firstName");
         String officialName = (String) execution.getVariable("officialName");
-        String sex = (String) execution.getVariable("sex");
+        Integer sex = (Integer) execution.getVariable("sex");
         Date dateOfBirth = (Date) execution.getVariable("dateOfBirth");
         Long vn = (Long) execution.getVariable("vn");
         String localPersonId = (String) execution.getVariable("localPersonId");
@@ -75,7 +75,7 @@ public class IdentifyPersonDelegate implements JavaDelegate {
         personIdentification.setDateOfBirth(datePartiallyKnown);
         personIdentification.setFirstName(firstName);
         personIdentification.setOfficialName(officialName);
-        personIdentification.setSex(sex);
+        personIdentification.setSex(sex.toString());
         if (vn != null) {
             personIdentification.setVn(BigInteger.valueOf(vn));
         }
@@ -108,7 +108,7 @@ public class IdentifyPersonDelegate implements JavaDelegate {
                         .setFirstName(firstName)
                         .setOfficialName(officialName)
                         .setLocalPersonId(localPersonId)
-                        .setSex(sex)
+                        .setSex(sex.toString())
                         .setIsMainPerson(true);
                 personList.addPerson(meldePflichtiger);
 

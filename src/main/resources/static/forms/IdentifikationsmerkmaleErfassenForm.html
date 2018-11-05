@@ -78,7 +78,7 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
                     <!-- select, damit eine Auswahlkombobox angezeigt wird -->
                     <select class="form-control" 
                             name="sex" 
-                            cam-variable-type="String" 
+                            cam-variable-type="Integer" 
                             cam-variable-name="sex" 
                             required>
                         <!-- Die drei zur Verfügung stehenden Optionen, welche als String "1", 2 oder 3 abgespeichert werden
@@ -86,10 +86,10 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
                              kann ignoriert werden, weil AngularJS eine solche Option automatisch zur Laufzeit einfügt 
                              Bug: https://app.camunda.com/jira/browse/CAM-4289
                         -->
-                        <option/>
-                        <option value="1">Männlich</option>
-                        <option value="2">Weiblich</option>
-                        <option value="3">Unbestimmt</option>
+                        <option></option>
+                        <option value=1>Männlich</option>
+                        <option value=2>Weiblich</option>
+                        <option value=3>Unbestimmt</option>
                     </select>
                 </div>
 

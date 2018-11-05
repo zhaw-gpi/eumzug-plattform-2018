@@ -70,6 +70,7 @@ public class GetDocumentsDelegate implements JavaDelegate {
                     municipalityDocumentUploadedFile.setMunicipalityDocumentRelationEntity(municipalityDocument);
                     documentList.addMunicipalityDocumentUploadedFile(municipalityDocumentUploadedFile);
                 }
+                documentsExist = true;
             }
         } // Falls nicht, dann muss nichts gemacht werden, weil die entsprechenden Variablen schon gesetzt sind
 
