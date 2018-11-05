@@ -135,7 +135,7 @@ Vorbedingungen: Personenregister, GWR und Umzugsplattform müssen auf localhost 
                            "municipalityIdMoveIn": {"value": "311", "type": "Integer"},
                            "departureDate": {"value": "2017-01-01T00:00:00.000+0100", "type": "Date"},
                            "arrivalDate": {"value": "2017-01-02T00:00:00.000+0100", "type": "Date"},
-                           "apartmentIdMoveIn": {"value":"237123456780","type":"String"},
+                           "apartmentIdMoveIn": {"value":"223123456789","type":"String"},
                            "phoneNumber": {"value": "0980987766", "type": "String"},
                            "emailAddress": {"value": "hans.meier@privat.ch", "type": "String"},
                            "housingSituationType": {"value": "2", "type": "String"},

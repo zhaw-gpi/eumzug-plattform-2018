@@ -44,7 +44,6 @@ Unter anderem befindet sich dort im Ordner **exception-handling** eine Excel-Dat
     2. Es muss ein REST-Endpoint registriert werden, um die Stripe Webhook-Notifications empfangen zu können.
     3. Falls von Stripe eine Ablehnung kommt, dann muss der Meldepflichtige benachrichtigt werden und ihm erneut ein User Task für einen neuen Zahlungsversuch angezeigt werden.
     4. (Falls von den Einwohnergemeinden eine Ablehnung kommt, dann muss per Stripe eine Rückerstattung veranlasst werden)
-3. **Grundversicherung prüfen extended**: Statt einer Multi-Instance-Activity soll ein einziger User Task "Grundversicherung prüfen" erstellt werden, welcher alle Personen und Versicherungs-Nummer-Formularfelder als Tabelle darstellt. Jedes Mal, wenn der Benutzer eine Versicherungsnummer erfasst und das Formularfeld verlässt, wird asynchron aus AngularJS heraus der REST-Service abgefragt (https://spring.io/guides/gs/consuming-rest-angularjs/) und das Resultat als Icon (Grüner Haken vs. Rotes Ausrufezeichen) angezeigt bei der jeweiligen Tabellenzeile als auch im Fall von Ausrufezeichen mit den Details als Text.
 4. **Benutzerverwaltung**: Neue Benutzer sollen sich bei der BEservices-Plattform zunächst registrieren. Im Idealfall bedeutet dies:
     1. Zusätzliche eigene "Webapp" mit Registrierungs-Formular
     2. Über REST wird ein neuer Benutzer in Camunda angelegt

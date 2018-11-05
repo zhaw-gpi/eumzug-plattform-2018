@@ -12,23 +12,23 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
 
     <table class="table">
         <tr>
-            <td ng-show="vn !== null">AHV-Nummer</td>  
+            <th ng-show="vn !== null">AHV-Nummer</th>  
             <td ng-show="vn !== null">{{vn}}</td>
         </tr>
         <tr>
-            <td>Vorname</td>
+            <th>Vorname</th>
             <td>{{firstName}}</td>
         </tr>
         <tr>
-            <td>Nachname</td>
+            <th>Nachname</th>
             <td>{{officialName}}</td>
         </tr>
         <tr>
-            <td>Geschlecht</td>
+            <th>Geschlecht</th>
             <td>{{sexText}}</td>
         </tr>
         <tr>
-            <td>Geburtsdatum</td>
+            <th>Geburtsdatum</th>
             <td>{{dateOfBirth| date:'dd.MM.yyyy'}}</td>
         </tr>
     </table>
@@ -58,13 +58,13 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
             
             // Geschlecht von 1,2,3 in richtigen text umwandeln
             switch($scope.sex){
-                case '1':
+                case 1:
                     $scope.sexText = 'Männlich';
                     break;
-                case '2':
+                case 2:
                     $scope.sexText = 'Weiblich';
                     break;
-                case '3':
+                case 3:
                     $scope.sexText = 'Unbestimmt';
                     break;
             }

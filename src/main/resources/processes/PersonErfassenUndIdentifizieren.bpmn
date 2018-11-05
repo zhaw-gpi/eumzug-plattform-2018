@@ -85,7 +85,7 @@ Der Header wiederum muss ebenfalls gesetzt werden mit Variablen:
 senderId (sedex://umzugsplattform), manufacturer (Kanton Bern), product (Umzugsplattform), productVersion (1.0), messageDate (aktuelles Datum/Uhrzeit), testDeliveryFlag (true), action (1), messageType (sedex://personMoveRequest), messageId (businessCaseId + "." + messageType).
 Header und personMoveRequest werden dann in der eigentlichen Request-Klasse DeliveryType zugewiesen.
 
-Die Response ist ebenfalls vom Typ DeliveryType und enthält den Header sowie entweder eine personMoveResponse oder bei einem Fehler (action ist nicht 9) NegativeReportType. Falls ein NegativeReportType zurückkommt, dann wird lediglich der darin enthaltene textGerman als Fehlermeldung zu einer BPMNException geworfen. Ansonsten werden die zwei in personMoveResponse enthaltenen Eigenschaften personKnown und sofern vorhanden moveAllowed den gleich benannten Prozessvariablen übergeben.</bpmn:documentation>
+Die Response ist ebenfalls vom Typ DeliveryType und enthält den Header sowie entweder eine personMoveResponse oder bei einem Fehler (action ist nicht 9) NegativeReportType. Falls ein NegativeReportType zurückkommt, dann wird lediglich der darin enthaltene textGerman als Fehlermeldung zu einer BPMNException geworfen. Ansonsten werden die zwei in personMoveResponse enthaltenen Eigenschaften personKnown und sofern vorhanden moveAllowed den gleich benannten Prozessvariablen übergeben. Zudem werden für die mitumziehenden Personen die zwei Prozessvariablen personList (List&lt;PersonEntity&gt;) und relativesExist (Boolean) zurückgegeben.</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_0bbx1ag</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1nn0lr5</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -165,7 +165,10 @@ Und schliesslich soll die Frage gestellt werden, ob er die Personalien überarbe
       <bpmn:outgoing>SequenceFlow_0n90szt</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:userTask id="MitumziehendePersonenAuswaehlen" name="Mitumziehende Personen auswählen" camunda:formKey="embedded:app:forms/MitumziehendePersonenWaehlenForm.html" camunda:assignee="${meldePflichtiger}">
-      <bpmn:documentation>Liste von Checkboxes mit jeweils dem Vornamen der mitumziehenden Personen. Als Resultat werden die Namen der ausgewählten Personen als serialisierte Liste zurückgegeben (movingAlongPersons).</bpmn:documentation>
+      <bpmn:documentation>Aus der Liste von Personen im gleichen Haushalt (personList) wird für jede Person (ausser dem Meldepflichtigen) eine Checkbox und die Vornamen der Person angezeigt.
+
+Diejenigen Personen, welche vom Meldepflichtigen nicht angehakt wurden, werden vor dem Senden des Formulars aus personList entfernt.
+</bpmn:documentation>
       <bpmn:incoming>MitzuziehendePersonenVorhanden</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_125p6va</bpmn:outgoing>
     </bpmn:userTask>
