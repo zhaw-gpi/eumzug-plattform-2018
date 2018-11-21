@@ -1,3 +1,13 @@
+/*INSERTS STATUS*/
+INSERT INTO STATE (STATE_ID, NAME, GERMAN_TEXT, ENGLISH_TEXT) VALUES(1, 'FINISHED_SUCCESSFUL', 'Erfolgreicher Abschluss des eUmzugsmeldung', 'Successful completion of eUmzugsmeldung');
+INSERT INTO STATE (STATE_ID, NAME, GERMAN_TEXT, ENGLISH_TEXT) VALUES(2, 'RELOCATIONFORM_REJECTED', 'Fehlgeschlagen wegen Ablehnung einer Einwohnergemeinde', 'Failed due to rejection of the relocation form from a municipality');
+INSERT INTO STATE (STATE_ID, NAME, GERMAN_TEXT, ENGLISH_TEXT) VALUES(3, 'RESPONSETIME_EXCEEDED', 'Fehlgeschlagen wegen Zeitüberschreitung bei der Kommunikation mit den Einwohnerkontrollsystemen', 'Failed due to exceeded response time with the registration office');
+INSERT INTO STATE (STATE_ID, NAME, GERMAN_TEXT, ENGLISH_TEXT) VALUES(4, 'IDENTIFICATION_UNSUCCESSFUL', 'Wegen negativer Personenidentifikation abgebrochen', 'Failed due to unsuccessful identification of the personal data');
+INSERT INTO STATE (STATE_ID, NAME, GERMAN_TEXT, ENGLISH_TEXT) VALUES(5, 'FEEPAYMENT_FAILED', 'Fehlgeschlagen wegen nicht akzeptierter Gebühren', 'Failed due to rejected fees');
+INSERT INTO STATE (STATE_ID, NAME, GERMAN_TEXT, ENGLISH_TEXT) VALUES(6, 'RELOCATIONFORM_ACCEPTED', 'Erfolgreiche Erfassung der Umzugsmeldung', 'Successful creation of the relocation form');
+INSERT INTO STATE (STATE_ID, NAME, GERMAN_TEXT, ENGLISH_TEXT) VALUES(7, 'CANCEL_DUE_TIMEOUT', 'Fehlgeschlagen wegen Zeitüberschreitung', 'Failed due to a timeout.');
+INSERT INTO STATE (STATE_ID, NAME, GERMAN_TEXT, ENGLISH_TEXT) VALUES(8, 'CANCEL_PAYMENTERROR', 'Fehlgeschlagen wegen fehlgeschlagener Zahlung', 'Failed due to an error while paying the fees.');
+
 /*INSERTS DOCUMENT*/
 INSERT INTO DOCUMENT (DOCUMENT_ID, NAME) VALUES(1, 'Heiratsurkunde');
 INSERT INTO DOCUMENT (DOCUMENT_ID, NAME) VALUES(2, 'Geburtsurkunde');

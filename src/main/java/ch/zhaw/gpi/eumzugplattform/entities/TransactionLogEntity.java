@@ -10,7 +10,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * Enitity-Klasse für Bewegungsdaten zu einem Transaktions-Log-Eintrag der Umzugsplattform
@@ -30,15 +29,14 @@ public class TransactionLogEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date logTimeStamp;
     
-    // Status-Eintrag
-    @NotNull
-    @Size(min = 1, max = 100)
-    private String status;
+    // Referenz auf Status
+    @ManyToOne
+    private StateEntity state;
     
     // Beziehung zu einer Person
     @ManyToOne
-    private PersonEntity person;
-
+    private PersonEntity person;    
+    
     // GETTER und SETTER
     public Long getLogId() {
         return logId;
@@ -56,12 +54,12 @@ public class TransactionLogEntity implements Serializable {
         this.logTimeStamp = logTimeStamp;
     }
 
-    public String getStatus() {
-        return status;
+    public StateEntity getState() {
+        return state;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setState(StateEntity state) {
+        this.state = state;
     }
 
     public PersonEntity getPerson() {

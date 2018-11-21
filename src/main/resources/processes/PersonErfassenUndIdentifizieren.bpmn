@@ -206,7 +206,7 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
 In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Wegen negativer Personenidentifikation abgebrochen".</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="status">Wegen negativer Personenidentifikation abgebrochen</camunda:inputParameter>
+          <camunda:inputParameter name="status">IDENTIFICATION_UNSUCCESSFUL</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1jlptqu</bpmn:incoming>

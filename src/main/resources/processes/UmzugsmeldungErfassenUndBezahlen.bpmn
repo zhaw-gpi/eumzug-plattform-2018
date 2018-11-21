@@ -185,7 +185,7 @@ Zuunterst zwei Checkboxes:
 Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex). In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Fehlgeschlagen wegen nicht akzeptierter Gebühren".</bpmn:documentation>
         <bpmn:extensionElements>
           <camunda:inputOutput>
-            <camunda:inputParameter name="status">Fehlgeschlagen wegen nicht akzeptierter Gebühren</camunda:inputParameter>
+            <camunda:inputParameter name="status">FEEPAYMENT_FAILED</camunda:inputParameter>
           </camunda:inputOutput>
         </bpmn:extensionElements>
         <bpmn:incoming>Abbrechen</bpmn:incoming>
@@ -203,13 +203,7 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
       <bpmn:documentation>Es soll vermieden werden, dass Prozessinstanzen ewig hängen bleiben, weil ein Meldepflichtiger zwar Formulare aufruft, aber eines dieser Formulare nie absendet, sondern z.B. den Browser vorher schliesst. Daher ein Timeout von 48 h (PT48H).
 
 Fürs Testing Zeitdauer auf wenige Sekunden (PT30S) bis Minuten (PT3M) stellen.
-
-In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschlagen wegen Zeitüberschreitung beim Erfassen der Umzugsmeldung".</bpmn:documentation>
-      <bpmn:extensionElements>
-        <camunda:executionListener event="end">
-          <camunda:script scriptFormat="JavaScript">execution.setVariable("status", "Fehlgeschlagen wegen Zeitüberschreitung beim Erfassen der Umzugsmeldung");</camunda:script>
-        </camunda:executionListener>
-      </bpmn:extensionElements>
+</bpmn:documentation>
       <bpmn:outgoing>SequenceFlow_11zgl40</bpmn:outgoing>
       <bpmn:timerEventDefinition>
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT48H</bpmn:timeDuration>
@@ -234,11 +228,10 @@ In einem End-Listener wird die Prozessvariable 'status' gesetzt mit "Fehlgeschla
 
 Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex), ebenfalls der Status (status).
 
-In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Wegen Zeitüberschreitung abgebrochen".
-</bpmn:documentation>
+In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Wegen Zeitüberschreitung abgebrochen".</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="status">Wegen Zeitüberschreitung abgebrochen</camunda:inputParameter>
+          <camunda:inputParameter name="status">CANCEL_DUE_TIMEOUT</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>PersonIdentifikationErfasst</bpmn:incoming>
@@ -369,7 +362,7 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
 In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgreiche Erfassung der Umzugsmeldung".</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="status">Erfolgreiche Erfassung der Umzugsmeldung</camunda:inputParameter>
+          <camunda:inputParameter name="status">RELOCATIONFORM_ACCEPTED</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_12n4w31</bpmn:incoming>
@@ -379,13 +372,7 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgre
     <bpmn:sequenceFlow id="SequenceFlow_1bqdavl" sourceRef="ErfolgreicheUmzugsmeldungErfassungPersistieren" targetRef="UmzugsmeldungErfolgreichErfasst" />
     <bpmn:boundaryEvent id="ZahlungFehlgeschlagen" name="Zahlung fehlgeschlagen" attachedToRef="ZahlungDurchfuehren">
       <bpmn:documentation>Kommt es innerhalb des Zahlungsprozesses zu einem Business-Fehler (z.B. Zahlung nicht innerhalb der Frist durchgeführt), so wird dieser hier abgefangen und im folgenden Sequenzfluss behandelt.
-
-In einem End-Listener wird die Prozessvariable 'status' gesetzt auf "Fehlgeschlagen bei Zahlung durchführen".</bpmn:documentation>
-      <bpmn:extensionElements>
-        <camunda:executionListener event="end">
-          <camunda:script scriptFormat="JavaScript">execution.setVariable("status", "Fehlgeschlagen bei Zahlung durchführen.");</camunda:script>
-        </camunda:executionListener>
-      </bpmn:extensionElements>
+</bpmn:documentation>
       <bpmn:outgoing>SequenceFlow_1d0k5r8</bpmn:outgoing>
       <bpmn:errorEventDefinition errorRef="Error_1ak9z8o" />
     </bpmn:boundaryEvent>

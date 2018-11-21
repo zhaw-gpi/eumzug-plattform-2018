@@ -1,8 +1,10 @@
 package ch.zhaw.gpi.eumzugplattform.delegates;
 
 import ch.zhaw.gpi.eumzugplattform.entities.PersonEntity;
+import ch.zhaw.gpi.eumzugplattform.entities.StateEntity;
 import ch.zhaw.gpi.eumzugplattform.entities.TransactionLogEntity;
 import ch.zhaw.gpi.eumzugplattform.repositories.PersonRepository;
+import ch.zhaw.gpi.eumzugplattform.repositories.StateRepository;
 import ch.zhaw.gpi.eumzugplattform.repositories.TransactionLogRepository;
 import java.util.Date;
 import java.util.Optional;
@@ -25,11 +27,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Named("persistUserEntriesAndStatusAdapter")
 public class PersistUserEntriesAndStatusDelegate implements JavaDelegate {
 
-    // Die Referenzen auf die PersonEntity- und TransactionLogRepository-Instanzen erhalten
+    // Die Referenzen auf die PersonEntity-, TransactionLog- und StateRepository-Instanzen erhalten
     @Autowired
     private PersonRepository personRepository;
     @Autowired
     private TransactionLogRepository transactionLogRepository;
+    @Autowired
+    private StateRepository stateRepository;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -73,18 +77,17 @@ public class PersistUserEntriesAndStatusDelegate implements JavaDelegate {
             personEntity = personRepository.save(personNeu);
         }
 
-        // Ein neues TransaktionsLog-Objekt erstellen
-        TransactionLogEntity transactionLog = new TransactionLogEntity();
-
-        // Aktuelle Uhrzeit der logTimeStamp-Eigenschaft zuweisen
-        transactionLog.setLogTimeStamp(new Date());
-
-        // Status-Variable auslesen und der passenden Transaktionslog-Eigenschaft zuweisen
+        // Status-Variable auslesen
         String status = (String) execution.getVariable("status");
-        transactionLog.setStatus(status);
-
-        // Die gefundene oder neu erstellte PersonEntity der passenden Transaktionslog-Eigenschaft zuweisen
+        
+        // Zugehörigen Status finden
+        StateEntity stateEntity = stateRepository.findByName(status);
+        
+        // Ein neues TransaktionsLog-Objekt mit den relevanten Angaben inkl. aktuellem Datum/Uhrzeit erstellen
+        TransactionLogEntity transactionLog = new TransactionLogEntity();
+        transactionLog.setLogTimeStamp(new Date());
         transactionLog.setPerson(personEntity);
+        transactionLog.setState(stateEntity);
 
         // Das neue TransaktionsLog-Objekt persistieren
         transactionLogRepository.save(transactionLog);
