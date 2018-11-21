@@ -1,22 +1,20 @@
 <!--
-Formular zum UserTask "Korrekturbedarf mitteilen"
-Mehr Infos zu Bootstrap: https://www.w3schools.com/bootstrap/default.asp
-Mehr Infos zu AngularJS: https://angularjs.org/ und https://www.w3schools.com/angular/default.asp
-Mehr Infos zu Camunda Embedded Forms: https://docs.camunda.org/manual/7.7/reference/embedded-forms/
-Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
+Formular für den UserTask 'Korrekturbedarf mitteilen'
 -->
-<form name="camundaForm">
-    <div class="alert alert-warning">
+<form>
+    <!-- FEHLERMELDUNG -->
+    <div class="alert alert-warning">      
         Ihre Personalien sind nicht korrekt, respektive können im Personenregister nicht verifiziert werden.
-    </div>    
+    </div>
 
+    <!-- TABELLE MIT PERSONALIEN -->
     <table class="table">
-        <tr>
-            <th ng-show="vn !== null">AHV-Nummer</th>  
-            <td ng-show="vn !== null">{{vn}}</td>
+        <tr ng-show="vn !== null">
+            <th>AHV-Nummer</th>
+            <td>{{vn}}</td>
         </tr>
         <tr>
-            <th>Vorname</th>
+            <th>Vornamen</th>
             <td>{{firstName}}</td>
         </tr>
         <tr>
@@ -29,26 +27,29 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
         </tr>
         <tr>
             <th>Geburtsdatum</th>
-            <td>{{dateOfBirth| date:'dd.MM.yyyy'}}</td>
+            <td>{{dateOfBirth}}</td>
         </tr>
     </table>
 
-    <div>
-        <label>Wollen Sie Ihre Eingaben korrigieren?</label>
-        <input type="checkbox"
-               cam-variable-name="revisionDesired"
-               cam-variable-type="Boolean">
-    </div>
+    <!-- CHECKBOX KORREKTURBEDARF -->
+    <label>Wollen Sie Ihre Eingaben korrigieren?</label>
+    <input type="checkbox" cam-variable-name="revisionDesired" cam-variable-type="Boolean">
 
+    <!-- CUSTOM JAVASCRIPT -->
     <script cam-script type="text/form-script">
+        // AngularJS-Scope-Variable camForm.variableManager wird lokalen Variable zugewiesen
+        var variableManager = camForm.variableManager;
+        
+        // Camunda Form Lifecycle: Nach dem Laden des Formulars werden Prozessvariablen von der Process Engine (Server) in den variableManager geladen
         camForm.on('form-loaded', function() {
-            camForm.variableManager.fetchVariable('vn');
-            camForm.variableManager.fetchVariable('firstName');
-            camForm.variableManager.fetchVariable('officialName');
-            camForm.variableManager.fetchVariable('sex')
-            camForm.variableManager.fetchVariable('dateOfBirth');
+            variableManager.fetchVariable('vn');
+            variableManager.fetchVariable('firstName');
+            variableManager.fetchVariable('officialName');
+            variableManager.fetchVariable('sex')
+            variableManager.fetchVariable('dateOfBirth');
         });
-
+        
+        // Camunda Form Lifecycle: Nach dem Laden der Variablen werden diese direkt an den AngularJS-Scope gehängt für den einfachen Zugriff aus der View
         camForm.on('variables-fetched', function() {
             $scope.vn = camForm.variableManager.variableValue('vn');
             $scope.firstName = camForm.variableManager.variableValue('firstName');
@@ -56,7 +57,7 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
             $scope.sex = camForm.variableManager.variableValue('sex');
             $scope.dateOfBirth = camForm.variableManager.variableValue('dateOfBirth');
             
-            // Geschlecht von 1,2,3 in richtigen text umwandeln
+            // Geschlecht von 1,2,3 in zugehörigen Text umwandeln
             switch($scope.sex){
                 case 1:
                     $scope.sexText = 'Männlich';
@@ -68,6 +69,6 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
                     $scope.sexText = 'Unbestimmt';
                     break;
             }
-        });        
+        });
     </script>
 </form>

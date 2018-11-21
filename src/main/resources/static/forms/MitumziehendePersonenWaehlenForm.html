@@ -1,79 +1,72 @@
 <!--
 Formular zum UserTask "Mitumziehende Personen wählen"
 -->
-<form name="camundaForm" style="padding-top: 10px;">
+<form>
+    <!-- INFOMELDUNG MIT ANLEITUNG -->
     <div class="alert alert-info">      
-        Wählen Sie alle Personen aus, die mit Ihnen umziehen. Aus Datenschutzgründen
-        werden nur die Vornamen angezeigt.
+        Wählen Sie alle Personen aus, die mit Ihnen umziehen. Aus Datenschutzgründen werden nur die Vornamen angezeigt.
     </div>
     
-    <!-- Mittels ng-repeat wird über jeden Eintrag der in der in relativesList enthaltenen Liste
-    iteriert und Label gebildet bestehend aus dem Vornamen der potentiell mitumziehenden Person
-    sowie eine Checkbox, welche als Id die localPersonId enthält (da mehrere Personen den gleichen Vornamen)
-    haben könnten. Als Value wird das relative-Objekt selbst gespeichert.
-    
-    Wichtig: In einer produktiven Lösung dürfte man nicht das relative-Objekt selbst verwenden, 
-    da dieses z.B. das Geburtsdatum enthält, welches zwar wohl nicht angezeigt wird, aber 
-    natürlich client-seitig leicht durch ein Debugging ausgelesen werden könnte. Stattdessen
-    müsste man wirklich nur die Liste der Vornamen plus eine anonymisierte Id für die Rückreferenzierung serverseitig ausgeben
-    
-    "track by" wird benötigt, weil sonst ein $$hashKey-Attribut dem relatives-Objekt angehängt wird, was eine
-    Deserialisierung verunmöglicht.
-    -->
-    <div class="checkbox" ng-repeat="relative in relatives track by relative.localPersonId" ng-show="!relative.isMainPerson">
+    <!-- LISTE VON CHECKBOXES -->
+    <div class="checkbox" ng-repeat="person in personsModel track by person.localPersonId" ng-show="!person.isMainPerson">
         <label>
-            <input type="checkbox" id="{{relative.localPersonId}}" name="movingAlongPerson" value="{{relative}}">
-            {{relative.firstName}}
+            <input type="checkbox" ng-model="dummy" ng-change="changedCheckbox(person)">
+            {{person.firstName}}
         </label>
     </div>
 
     <script cam-script type="text/from-script">
-        // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
-        // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
-        // folgenden Funktionen
+        // AngularJS-Scope-Variable camForm.variableManager wird lokalen Variable zugewiesen
         var variableManager = camForm.variableManager;
 
-        // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
-        // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im
-        // variableManager-Objekt (Client)
+        // Camunda Form Lifecycle: Nach dem Laden des Formulars werden Prozessvariablen von der Process Engine (Server) in den variableManager geladen
+        // Liste der mitumziehenden Personen
         camForm.on('form-loaded', function(){
             // Streng genommen geht das aus Datenschutzgründen nicht (Grund siehe erster Kommentar oben)
             variableManager.fetchVariable("personList");
         });
 
-        // Sobald alle Variablen client-seitig zur Verfügung stehen, werden diese
-        // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
-        // angezeigt werden können.
+        // Camunda Form Lifecycle: Nach dem Laden der Variablen ...
         camForm.on('variables-fetched', function(){
-            // Die eigentliche Liste wird ausgegeben
-            $scope.relatives = variableManager.variableValue("personList").persons;
-        });
-
-        // Vor dem Submit wird geprüft, welche Personen ausgewählt wurden. Alle
-        // übrigen (ausser der Meldepflichtige) werden aus der Personenliste
-        // entfernt
-        camForm.on('submit', function(){
-            // Leider kann man nicht direkt mehrere Elemente in einem Array entfernen
-            // Daher zunächst bestimmen, welche Elemente zu entfernen sind...
-            var indexesToRemove = [];
+            // ... Personenliste in Model-Variable speichern
+            $scope.personsModel = variableManager.variableValue("personList").persons;
             
-            $scope.relatives.forEach(function(item, index){
-                if(!item.isMainPerson){
-                    var inputElement = document.getElementById(item.localPersonId);
-                    if(!inputElement.checked){
-                        indexesToRemove.push(index);
+            // ... Model-Variable für selektierte Personen initiieren (zunächst leeres Array)
+            $scope.checkedPersons = [];
+        });
+        
+        // Listener-Methode, wenn eine Checkbox zu einer Person an- oder abgewählt wurde mit Übergabe der ausgewählten Person
+        $scope.changedCheckbox = function(person){
+            // Wenn die ausgewählte Person (noch) nicht im Array der ausgewählten Personen ist, ...
+            if($scope.checkedPersons.indexOf(person) === -1) {
+                // ... diese dem Array hinzufügen
+                $scope.checkedPersons.push(person);
+            } else {
+                // ansonsten diese aus dem Array entfernen über ihren Index
+                $scope.checkedPersons.splice($scope.checkboxPersons.indexOf(person), 1);
+            }
+        }
+
+        // Camunda Form Lifecycle: Vor dem Senden der Formulardaten an den Server ausgeführt
+        camForm.on('submit', function(){
+            // Anzahl Personen in der Personenliste als Zählervariable auslesen
+            var i = $scope.personsModel.length
+            
+            // Solange die Bedingung in der while-Klammer true ist (was gleichbedeutend ist mit i = 0, da in JavaScript als false interpretiert), jeweils um 1 abzählen ...
+            while(i--){
+                // ... die Person aus der Liste der Personen an einem bestimmten Index auslesen
+                var personAtIndex = $scope.personsModel[i]
+                
+                // ... und für diese prüfen, ob es sich NICHT um den Haupt-Meldepflichtigen handelt...
+                if(!personAtIndex.isMainPerson){
+                    // ... und für diese prüfen, ob sie NICHT in der Liste der ausgewählten Personen ist
+                    if($scope.checkedPersons.indexOf(personAtIndex) === -1){
+                        // In dem Fall aus der Liste der Personen entfernen
+                        $scope.personsModel.splice(i, 1);
                     }
                 }
-            });
-            
-            // ... dann diese Elemente tatsächlich entfernen. Die Indizes des verbleibenden
-            // Arrays verändern sich dadurch => bei jedem Durchgang ist der zu entfernende
-            // Index um 1 zu verringern
-            var removedCounter = 0;
-            for(var i=0;i<indexesToRemove.length;i++){
-                $scope.relatives.splice(indexesToRemove[i] - removedCounter, 1);
-                removedCounter++;
             }
+            debugger;
         });
     </script> 
 </form>

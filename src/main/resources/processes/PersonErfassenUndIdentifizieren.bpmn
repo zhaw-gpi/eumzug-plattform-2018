@@ -126,7 +126,7 @@ Die Response ist ebenfalls vom Typ DeliveryType und enthält den Header sowie en
     <bpmn:sequenceFlow id="PersonNichtGefunden" name="Person nicht gefunden" sourceRef="ExclusiveGateway_1kbj40j" targetRef="ExclusiveGateway_05wiahg">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!personKnown}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="AnSchalterVerwiesenWerden" name="An Schalter verwiesen werden" camunda:asyncAfter="true" camunda:formKey="embedded:app:forms/AnSchalterVerweisenForm.html" camunda:assignee="${meldePflichtiger}">
+    <bpmn:userTask id="AnSchalterVerwiesenWerden" name="An Schalter verwiesen werden" camunda:asyncAfter="true" camunda:formKey="embedded:app:forms/AnSchalterVerwiesenWerdenForm.html" camunda:assignee="${meldePflichtiger}">
       <bpmn:documentation>Fehlermeldung (Bootstrap alert-warning): "Sie können den Umzug nicht elektronisch melden. Bitte melden Sie sich bei Ihrer Wegzugsgemeinde xyz am Schalter."
 xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_0d6anna</bpmn:incoming>
@@ -167,8 +167,7 @@ Und schliesslich soll die Frage gestellt werden, ob er die Personalien überarbe
     <bpmn:userTask id="MitumziehendePersonenAuswaehlen" name="Mitumziehende Personen auswählen" camunda:formKey="embedded:app:forms/MitumziehendePersonenWaehlenForm.html" camunda:assignee="${meldePflichtiger}">
       <bpmn:documentation>Aus der Liste von Personen im gleichen Haushalt (personList) wird für jede Person (ausser dem Meldepflichtigen) eine Checkbox und die Vornamen der Person angezeigt.
 
-Diejenigen Personen, welche vom Meldepflichtigen nicht angehakt wurden, werden vor dem Senden des Formulars aus personList entfernt.
-</bpmn:documentation>
+Diejenigen Personen, welche vom Meldepflichtigen nicht angehakt wurden, werden vor dem Senden des Formulars aus personList entfernt.</bpmn:documentation>
       <bpmn:incoming>MitzuziehendePersonenVorhanden</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_125p6va</bpmn:outgoing>
     </bpmn:userTask>

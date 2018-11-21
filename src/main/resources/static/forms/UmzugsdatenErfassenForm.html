@@ -1,23 +1,21 @@
 <!--
 Formular zum UserTask "Umzugsdaten erfassen"
-Mehr Infos zu Bootstrap: https://www.w3schools.com/bootstrap/default.asp
-Mehr Infos zu AngularJS: https://angularjs.org/ und https://www.w3schools.com/angular/default.asp
-Mehr Infos zu Camunda Embedded Forms: https://docs.camunda.org/manual/7.7/reference/embedded-forms/
-Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
 -->
-<form name="camundaForm">    
+<form name="camundaForm">
+    <!-- INFOMELDUNG MIT ANLEITUNG -->
     <div class="alert alert-info">
         <p>Im Normalfall stimmen Weg- und Zuzugsdatum überein. Falls nicht, setzen Sie ein Häkchen bei 'Abweichendes Zuzugsdatum'.</p>
         <p>* Diese Felder müssen ausgefüllt werden.</p>
     </div>
 
+    <!-- FORMULARFELDER -->
     <div class="form-group row">
         <div class="col-xs-4">
             <label>Wegzugsdatum*</label>
             <div class="input-group">
                 <input type="text"
                        name="departureDate"
-                       ng-model="departureDateUnformated"
+                       ng-model="departureDateModel"
                        placeholder="Datumswahl -->"
                        class="form-control"
                        datepicker-popup="dd.MM.yyyy"
@@ -32,7 +30,14 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
                     </button>
                 </span>
             </div>
-            <p class="help-block" ng-show="camundaForm.departureDate.$error.date">Geben Sie das Datum im Format JJJJ-MM-DDT00:00:00 ein.</p>
+            <p class="help-block" ng-show="camundaForm.departureDate.$error.date">Geben Sie das Datum im Format TT.MM.JJJJ ein.</p>
+            <script cam-script type="text/form-script">
+                $scope.departureDateOpenClicked = function($event) {
+                    $event.preventDefault();
+                    $event.stopPropagation();
+                    $scope.departureDateOpened = true;
+                };
+            </script>
         </div>
     </div>
 
@@ -40,7 +45,7 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
         <div class="col-xs-4">    
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" ng-model="abweichendesZuzugsdatum">
+                    <input class="checkbox" type="checkbox" ng-model="abweichendesZuzugsdatum">
                     Abweichendes Zuzugsdatum?
                 </label>
             </div>
@@ -53,7 +58,7 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
             <div class="input-group">
                 <input type="text"
                        name="arrivalDate"
-                       ng-model="arrivalDateUnformated"
+                       ng-model="arrivalDateModel"
                        placeholder="Datumswahl -->"
                        class="form-control"
                        datepicker-popup="dd.MM.yyyy"
@@ -67,85 +72,70 @@ Mehr Infos zu HTML Forms: https://www.w3schools.com/html/html_forms.asp
                     </button>
                 </span>
             </div>
-            <p class="help-block" ng-show="camundaForm.arrivalDate.$error.date">Geben Sie das Datum im Format JJJJ-MM-DDT00:00:00 ein.</p>
+            <p class="help-block" ng-show="camundaForm.arrivalDate.$error.date">Geben Sie das Datum im Format TT.MM.JJJJ ein.</p>
+            <script cam-script type="text/form-script">
+                $scope.arrivalDateOpenClicked = function($event) {
+                    $event.preventDefault();
+                    $event.stopPropagation();
+                    $scope.arrivalDateOpened = true;
+                };
+            </script>
         </div>
     </div>
 
     <script cam-script type="text/form-script">    
-        // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
-        // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
-        // folgenden Funktionen
+        // AngularJS-Scope-Variable camForm.variableManager wird lokalen Variable zugewiesen
         var variableManager = camForm.variableManager;
 
-        // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
-        // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im 
-        // variableManager-Objekt (Client)
+        // Camunda Form Lifecycle: Nach dem Laden des Formulars werden Prozessvariablen von der Process Engine (Server) in den variableManager geladen
+        // Wegzugsdatum, Zuzugsdatum
         camForm.on('form-loaded', function() {
-        variableManager.fetchVariable("departureDate");
-        variableManager.fetchVariable("arrivalDate");
+            variableManager.fetchVariable("departureDate");
+            variableManager.fetchVariable("arrivalDate");
         });
 
-        // Sobald alle Variablen client-seitig zur Verfügung stehen, werden diese 
-        // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
-        // angezeigt werden können
+        // Camunda Form Lifecycle: Nach dem Laden der Variablen ...
         camForm.on('variables-fetched', function() {
-        $scope.departureDateUnformated = variableManager.variableValue("departureDate");
-        $scope.arrivalDateUnformated = variableManager.variableValue("arrivalDate");
-        // Falls die beiden Daten unterschiedlich sind und arrivalDateUnformated nicht leer, dann soll abweichendesZuzugsdatum auf true gesetzt werden
-        if($scope.departureDateUnformated !== $scope.arrivalDateUnformated && $scope.arrivalDateUnformated) {
-            $scope.abweichendesZuzugsdatum = true;
-        }
+            // ... werden diese direkt an den AngularJS-Scope gehängt für das Model-View-Binding
+            $scope.departureDateModel = variableManager.variableValue("departureDate");
+            $scope.arrivalDateModel = variableManager.variableValue("arrivalDate");
+            // ... und falls die beiden Daten unterschiedlich sind und arrivalDateModel nicht leer, dann soll abweichendesZuzugsdatum auf true gesetzt werden
+            if($scope.departureDateModel !== $scope.arrivalDateModel && $scope.arrivalDateModel) {
+                $scope.abweichendesZuzugsdatum = true;
+            }
         });        
 
-        // Unmittelbar vor dem Ausführen der HTTP-Post-Anfrage des Formulars
-        // wird sichergestellt, dass die Id und der Name der im Select ausgewählten
-        // politische Gemeinde den entsprechenden Prozessvariablen zugewiesen werden
-        // Weil das Formular unter Umständen schon zum zweiten Mal aufgerufen wird, müssen
-        // zuvor dieselben Variablen gelöscht werden, damit kein Fehler auftritt
+        // Camunda Form Lifecycle: Vor dem Senden der Formulardaten an den Server ausgeführt
         camForm.on('submit', function() {
             // Wenn arrivalDate nicht gesetzt wurde, dann wird es automatisch auf den Wert von departureDate gesetzt
-            if(!$scope.arrivalDateUnformated){
-                $scope.arrivalDateUnformated = $scope.departureDateUnformated;
+            if(!$scope.arrivalDateModel){
+                $scope.arrivalDateModel = $scope.departureDateModel;
             }
+            
+            // $scope.***DateModel ist ein String, sofern das Datum nicht im Datepicker verändert wurde => In ein Javascript-Date-Objekt umwandeln
+            var departureDateModelDate = new Date($scope.departureDateModel);
+            var arrivalDateModelDate = new Date($scope.arrivalDateModel);
+            
+            // Gemäss https://www.w3schools.com/jsref/jsref_toisostring.asp  und https://stackoverflow.com/questions/10830357/javascript-toisostring-ignores-timezone-offset kann wird das normale JavaScript-Datumsobjekt in ein ISO-Format-Datumszeichenfolge umgewandelt
+            var departureDateIsoString = new Date(departureDateModelDate.getTime() - (departureDateModelDate.getTimezoneOffset() * 60000)).toISOString();
+            var arrivalDateIsoString = new Date(arrivalDateModelDate.getTime() - (arrivalDateModelDate.getTimezoneOffset() * 60000)).toISOString();
 
-        // Die Date-Prozessvariablen verlangen das Format "yyyy-MM-ddThh:mm:ss".
-        // Die $scope-Datevariablen werden von den Datepicker im Format "dd.MM.yyyy" gesetzt.
-        var departureDateUnformated = new Date($scope.departureDateUnformated);
-        var arrivalDateUnformated = new Date($scope.arrivalDateUnformated);
-
-        // Gemäss https://www.w3schools.com/jsref/jsref_toisostring.asp  und
-        // https://stackoverflow.com/questions/10830357/javascript-toisostring-ignores-timezone-offset kann 
-        // das Datum einfach in ein ISO-Format umgewandelt werden
-        var departureDateFormated = new Date(departureDateUnformated.getTime() - (departureDateUnformated.getTimezoneOffset() * 60000)).toISOString();
-        var arrivalDateFormated = new Date(arrivalDateUnformated.getTime() - (arrivalDateUnformated.getTimezoneOffset() * 60000)).toISOString();
-
-        // Gleichnamige Prozessvariable löschen und dann neu erstellen
-        variableManager.destroyVariable('departureDate');
-        variableManager.destroyVariable('arrivalDate');
-        variableManager.createVariable({
-        'name':'departureDate',
-        'type':'Date',
-        'value': departureDateFormated
+            // Bestehende Prozessvariable für Wegzugsdatum löschen und eine neue erstellen mit der ISO-Format-Datumszeichenfolge
+            variableManager.destroyVariable('departureDate');
+            variableManager.createVariable({
+                'name':'departureDate',
+                'type':'Date',
+                'value': departureDateIsoString
+            });
+            
+            // Bestehende Prozessvariable für Zuzugsdatum löschen und eine neue erstellen mit der ISO-Format-Datumszeichenfolge
+            variableManager.destroyVariable('arrivalDate');
+            variableManager.createVariable({
+                'name':'arrivalDate',
+                'type':'Date',
+                'value': arrivalDateIsoString
+            });
+            debugger;
         });
-        variableManager.createVariable({
-        'name':'arrivalDate',
-        'type':'Date',
-        'value': arrivalDateFormated
-        });
-        });
-
-        $scope.departureDateOpenClicked = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-
-        $scope.departureDateOpened = true;
-        };
-
-        $scope.arrivalDateOpenClicked = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-
-        $scope.arrivalDateOpened = true;
-        };
     </script>
 </form>

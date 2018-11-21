@@ -2,18 +2,21 @@
 Formular zum UserTask "Wegzugsadresse erfassen"
 -->
 <form role="form" name="camundaForm">
-    <div class="alert alert-warning" ng-show="adresseUngueltigZaehler > 0">      
-        Die Adresse ist<span ng-show="adresseUngueltigZaehler > 1"> erneut</span> nicht gültig, respektive kann im GWR nicht gefunden werden.
+    <!-- WARNMELDUNG FALLS NICHT GEFUNDENE ADRESSE EINGEGEBEN WURDE -->
+    <div class="alert alert-warning" ng-show="adresseUngueltigZaehlerModel > 0">      
+        Die Adresse ist<span ng-show="adresseUngueltigZaehlerModel > 1"> erneut</span> nicht gültig, respektive kann im GWR nicht gefunden werden.
 
-        Bitte korrigieren Sie entweder Ihre Eingaben im nächsten Formular oder melden Sie sich bei Ihrer Wegzugsgemeinde {{municipalityNameMoveOut}} am Schalter, wenn Sie der Meinung sind, eigentlich die korrekte Adresse erfasst zu haben. In diesem Fall können Sie einfach diese Webseite schliessen, denn Ihre elektronische Umzugsmeldung wird automatisch nach 48 Stunden archiviert. 
+        Bitte korrigieren Sie entweder Ihre Eingaben im nächsten Formular oder melden Sie sich bei Ihrer Wegzugsgemeinde {{municipalityNameMoveOutModel}} am Schalter, wenn Sie der Meinung sind, eigentlich die korrekte Adresse erfasst zu haben. In diesem Fall können Sie einfach diese Webseite schliessen, denn Ihre elektronische Umzugsmeldung wird automatisch nach 48 Stunden archiviert. 
     </div>
 
+    <!-- INFOMELDUNG, DAMIT ADRESSE KORREKT ERFASST WIRD -->
     <div class="alert alert-info">      
         <p>Erfassen Sie Ihre Daten, wie diese in einem amtlichen Dokument, Ihrer Meldebestätigung 
             oder Ihrem Schriftenempfangsschein aufgeführt sind.</p>
         <p>* Diese Felder müssen ausgefüllt werden.</p>
     </div>
 
+    <!-- ADRESS-FORMULARFELDER -->
     <div class="form-group row">
         <div class="col-xs-8">
             <label>Strasse*</label>
@@ -71,26 +74,22 @@ Formular zum UserTask "Wegzugsadresse erfassen"
         </div>     
     </div>
 
+    
     <script cam-script type="text/form-script">
-        // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
-        // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
-        // folgenden Funktionen
+        // AngularJS-Scope-Variable camForm.variableManager wird lokalen Variable zugewiesen
         var variableManager = camForm.variableManager;
 
-        // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
-        // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im 
-        // variableManager-Objekt (Client)
+        // Camunda Form Lifecycle: Nach dem Laden des Formulars werden Prozessvariablen von der Process Engine (Server) in den variableManager geladen
+        // Name der Wegzugsgemeinde, Anzahl ungültige Adress-Erfassungen
         camForm.on('form-loaded', function() {        
-        variableManager.fetchVariable('municipalityNameMoveOut');
-        variableManager.fetchVariable('adresseUngueltigZaehler');
+            variableManager.fetchVariable('municipalityNameMoveOut');
+            variableManager.fetchVariable('adresseUngueltigZaehler');
         });
 
-        // Sobald alle Variablen client-seitig zur Verfügung stehen, werden diese 
-        // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
-        // angezeigt werden können
+        // Camunda Form Lifecycle: Nach dem Laden der Variablen werden diese direkt an den AngularJS-Scope gehängt für das Model-View-Binding
         camForm.on('variables-fetched', function() {
-        $scope.municipalityNameMoveOut = variableManager.variableValue('municipalityNameMoveOut');
-        $scope.adresseUngueltigZaehler = variableManager.variableValue("adresseUngueltigZaehler");
+            $scope.municipalityNameMoveOutModel = variableManager.variableValue('municipalityNameMoveOut');
+            $scope.adresseUngueltigZaehlerModel = variableManager.variableValue("adresseUngueltigZaehler");
         });
     </script>
 </form>

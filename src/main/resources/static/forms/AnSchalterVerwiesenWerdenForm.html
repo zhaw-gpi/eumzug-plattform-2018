@@ -1,0 +1,16 @@
+<!--
+Formular zum UserTask "An Schalter verwiesen werden"
+-->
+<form>
+    <!-- VERSTECKTES FELD, UM WEGZUGSGEMEINDE-NAME AUSZULESEN -->
+    <input type="hidden"
+           cam-variable-name="municipalityNameMoveOut"
+           cam-variable-type="String"/>
+    
+    <!-- BOOTSTRAP-ALERT INKL. ANZEIGE DES WEGZUGGEMEINDENAMENS ÜBER municipalityNameMoveOut IM ANGULARJS-SCOPE -->
+    <div class="alert alert-warning">
+        Sie können den Umzug nicht elektronisch melden. 
+        Bitte melden Sie sich bei Ihrer Wegzugsgemeinde {{municipalityNameMoveOut}} am Schalter,
+        um mehr über die Gründe hierfür zu erfahren.
+    </div>
+</form>

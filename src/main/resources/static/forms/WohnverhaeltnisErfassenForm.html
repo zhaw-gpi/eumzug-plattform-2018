@@ -2,11 +2,12 @@
 Formular zum UserTask "Wohnverhältnis erfassen"
 -->
 <form role="form" name="camundaForm">
+    <!-- INFOMELDUNG FÜR DIE KORREKTE ERFASSUNG -->
     <div class="alert alert-info">      
         <p>Erfassen Sie Ihr Verhältnis zum neuen Wohnobjekt. Falls Sie Mieter oder Untermieter sind, benötigen wir auch Angaben zu Ihrem Vermieter.</p>
     </div>
     
-    <!-- Typ des Wohnverhältnisses-Auswahl-Box -->
+    <!-- TYP DES WOHNVERHÄLTNISSES -->
     <div class="form-group row">
         <div class="col-xs-6">
             <label>Wohnverhältnis*</label>
@@ -15,12 +16,7 @@ Formular zum UserTask "Wohnverhältnis erfassen"
                     cam-variable-type="String" 
                     cam-variable-name="housingSituationType" 
                     required>
-                <!-- Die drei zur Verfügung stehenden Optionen, welche als String "1", 2 oder 3 abgespeichert werden
-                     Die Warnung von Netbeans, dass ein erster Empty-Value zur Verfügung gestellt werden soll,
-                     kann ignoriert werden, weil AngularJS eine solche Option automatisch zur Laufzeit einfügt 
-                     Bug: https://app.camunda.com/jira/browse/CAM-4289
-                -->
-                <option/>
+                <option></option>
                 <option value="1">Eigentümer</option>
                 <option value="2">Mieter</option>
                 <option value="3">Untermieter</option>
@@ -28,14 +24,12 @@ Formular zum UserTask "Wohnverhältnis erfassen"
         </div>
     </div>
     
-    <!-- Vermieter-Angaben-Panel (nur falls nicht Eigentümer) -->
+    <!-- VERMIETER-ANGABEN (FALLS MIETER ODER UNTERMIETER) -->
     <div class="panel panel-default" ng-show="housingSituationType === '2' || housingSituationType === '3'">
         <div class="panel-heading">
             <b>Angaben zum Vermieter</b>
         </div>
         <div class="panel-body">
-            
-            <!-- Vorname Nachname oder Firmenname -->
             <div class="form-group row">
                 <div class="col-xs-12">
                     <label>Vorname Nachname oder Firmenname*</label>

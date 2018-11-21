@@ -1,37 +1,38 @@
 <!--
 Formular zum UserTask "Abschlussbestätigung anzeigen"
 -->
+<!-- FALLS GEBÜHREN EXISTIEREN, WIRD EINE MELDUNG ÜBER ERFOLGREICHEN ZAHLUNGSABSCHLUSS GEZEIGT -->
 <div class="alert alert-success" style="text-align: center" ng-show="feesExist">
     Die Zahlung wurde erfolgreich durchgeführt.
 </div>
 
+<!-- IN JEDEM FALL ANGEZEIGTE MELDUNG ÜBER DAS WEITERE VORGEHEN -->
 <div class="alert alert-info" style="text-align: center">
     <p>Sobald Sie auf Complete drücken, werden wir Ihre Angaben an die zuständigen Einwohnergemeinde(n) weiterleiten und Ihnen zudem eine Bestätigung zukommen lassen.</p>
     <p>Je nach Antwortzeiten der Gemeinden werden Sie dann in den nächsten Stunden oder Tagen von uns über die Entscheidungen der Gemeinde(n) benachrichtigt.</p>
 </div>
 
 <script cam-script type="text/form-script">
-    // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
-    // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
-    // folgenden Funktionen
+    // AngularJS-Scope-Variable camForm.variableManager wird lokalen Variable zugewiesen
     var variableManager = camForm.variableManager;
 
-    // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
-    // die Prozessvariablen feeMap von der Process Engine (Server) 
-    // in das variableManager-Objekt (Client)
+    // Camunda Form Lifecycle: Nach dem Laden des Formulars werden Prozessvariablen von der Process Engine (Server) in den variableManager geladen
+    // Liste der Gebühren
     camForm.on('form-loaded', function() {
         variableManager.fetchVariable('feeMap');
     });
 
-    // Sobald alle Variablen client-seitig zur Verfügung stehen, wird zum einen
-    // die feeMap einer Variable im AngularJS-Scope-Objekt übergeben
-    // Zudem wird das Total aller Gebühren berechnet
+    // Camunda Form Lifecycle: Nach dem Laden der Variablen ...
     camForm.on('variables-fetched', function() {
-        $scope.feeMap = variableManager.variableValue('feeMap');
+        // ... wird die Liste der Gebühren einer neuen AngularJS-Scope-Variable zugewiesen
+        $scope.feeMapModel = variableManager.variableValue('feeMap');
 
+        // Eine neue Variable feesExist wird standardmässig auf falsch gesetzt
         $scope.feesExist = false;
         
-        if($scope.feeMap !== null){
+        // Wenn die Liste der Gebühren vorhanden ist, also Gebühren existieren ...
+        if($scope.feeMapModel !== null){
+            // ... wird hingegen die Variable feesExist auf wahr gesetzt
             $scope.feesExist = true;
         }
     });
