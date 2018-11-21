@@ -41,7 +41,7 @@ public class ResidentRegisterWebServiceClient {
     @Value("${pr.endpoint}")
     private String webserviceUrl;
 
-    public PersonMoveResponse identifyPerson(PersonMoveRequest personMoveRequest, String businessCaseId) {
+    public Object identifyPerson(PersonMoveRequest personMoveRequest, String businessCaseId) {
         WebServiceDefaultHeaderHelper defaultHeaderHelper = new WebServiceDefaultHeaderHelper();
         HeaderType headerRequest = defaultHeaderHelper.getHeaderRequest();
         String messageType = MESSAGE_TYPE;
@@ -71,7 +71,7 @@ public class ResidentRegisterWebServiceClient {
             } else {
                 NegativeReportType negativeReport = deliveryResponse.getNegativeReport();
                 InfoType info = negativeReport.getGeneralError().get(0);
-                throw new UnsupportedOperationException("Web Service hat Fehlermeldung zurück gesendet: " + info.getTextGerman());
+                return info;
             }
         } else {
             throw new UnsupportedOperationException("Webservice reutrned unsupported type: " + jAXBElement.getClass().getName());

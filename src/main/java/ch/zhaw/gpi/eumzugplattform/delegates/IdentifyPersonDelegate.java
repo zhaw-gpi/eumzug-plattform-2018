@@ -4,6 +4,7 @@ import ch.ech.xmlns.ech_0007._5.SwissMunicipalityType;
 import ch.ech.xmlns.ech_0044._4.DatePartiallyKnownType;
 import ch.ech.xmlns.ech_0044._4.NamedPersonIdType;
 import ch.ech.xmlns.ech_0044._4.PersonIdentificationType;
+import ch.ech.xmlns.ech_0194._1.InfoType;
 import ch.ech.xmlns.ech_0194._1.PersonMoveRequest;
 import ch.ech.xmlns.ech_0194._1.PersonMoveResponse;
 import static ch.zhaw.gpi.eumzugplattform.helpers.DateConversionHelper.DateToXMLGregorianCalendar;
@@ -16,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import javax.inject.Named;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +87,13 @@ public class IdentifyPersonDelegate implements JavaDelegate {
         personMoveRequest.setMunicipality(swissMunicipality);
         personMoveRequest.setPersonIdentification(personIdentification);
 
-        PersonMoveResponse personMoveResponse = personenRegisterClient.identifyPerson(personMoveRequest, businessCaseId);
+        Object personenRegisterResponse = personenRegisterClient.identifyPerson(personMoveRequest, businessCaseId);
+        
+        if(personenRegisterResponse instanceof InfoType) {
+            throw new BpmnError("NegativeReportErhalten", ((InfoType) personenRegisterResponse).getTextGerman());
+        }
+        
+        PersonMoveResponse personMoveResponse = (PersonMoveResponse) personenRegisterResponse;
 
         Boolean personKnown = personMoveResponse.isPersonKnown();
         execution.setVariable("personKnown", personKnown);

@@ -3,8 +3,12 @@ Formular für den UserTask 'Korrekturbedarf mitteilen'
 -->
 <form>
     <!-- FEHLERMELDUNG -->
-    <div class="alert alert-warning">      
+    <div class="alert alert-warning" ng-show="negativeReportTextGerman === undefined">      
         Ihre Personalien sind nicht korrekt, respektive können im Personenregister nicht verifiziert werden.
+    </div>
+    
+    <div class="alert alert-warning" ng-show="negativeReportTextGerman !== undefined">      
+        {{negativeReportTextGerman}}
     </div>
 
     <!-- TABELLE MIT PERSONALIEN -->
@@ -47,6 +51,7 @@ Formular für den UserTask 'Korrekturbedarf mitteilen'
             variableManager.fetchVariable('officialName');
             variableManager.fetchVariable('sex')
             variableManager.fetchVariable('dateOfBirth');
+            variableManager.fetchVariable('negativeReportTextGerman');
         });
         
         // Camunda Form Lifecycle: Nach dem Laden der Variablen werden diese direkt an den AngularJS-Scope gehängt für den einfachen Zugriff aus der View
@@ -56,6 +61,7 @@ Formular für den UserTask 'Korrekturbedarf mitteilen'
             $scope.officialName = camForm.variableManager.variableValue('officialName');
             $scope.sex = camForm.variableManager.variableValue('sex');
             $scope.dateOfBirth = camForm.variableManager.variableValue('dateOfBirth');
+            $scope.negativeReportTextGerman = camForm.variableManager.variableValue('negativeReportTextGerman');
             
             // Geschlecht von 1,2,3 in zugehörigen Text umwandeln
             switch($scope.sex){

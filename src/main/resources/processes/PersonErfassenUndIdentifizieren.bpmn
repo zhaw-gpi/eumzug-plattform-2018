@@ -183,9 +183,9 @@ Diejenigen Personen, welche vom Meldepflichtigen nicht angehakt wurden, werden v
       <bpmn:outgoing>FuerEumzugBerechtigt</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:boundaryEvent id="NegativeReportErhalten" name="NegativeReport erhalten" attachedToRef="PersonIdentifizieren">
-      <bpmn:documentation>Der geworfene NegativeReportErhalten-Fehler wird abgefangen. Die Fehlermeldung selbst wird in der Prozessvariable NegativeReportTextGerman gespeichert.</bpmn:documentation>
+      <bpmn:documentation>Der geworfene negativeReportErhalten-Fehler wird abgefangen. Die Fehlermeldung selbst wird in der Prozessvariable NegativeReportTextGerman gespeichert.</bpmn:documentation>
       <bpmn:outgoing>SequenceFlow_0slbt2s</bpmn:outgoing>
-      <bpmn:errorEventDefinition errorRef="Error_0b0fhfh" camunda:errorMessageVariable="NegativeReportTextGerman" />
+      <bpmn:errorEventDefinition errorRef="Error_0b0fhfh" camunda:errorMessageVariable="negativeReportTextGerman" />
     </bpmn:boundaryEvent>
     <bpmn:exclusiveGateway id="ExclusiveGateway_05wiahg">
       <bpmn:incoming>PersonNichtGefunden</bpmn:incoming>
