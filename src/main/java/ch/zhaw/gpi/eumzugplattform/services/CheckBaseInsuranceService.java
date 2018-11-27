@@ -1,9 +1,8 @@
 package ch.zhaw.gpi.eumzugplattform.services;
 
 import ch.zhaw.gpi.eumzugplattform.helpers.DateConversionHelper;
-import ch.zhaw.gpi.eumzugplattform.processdata.CheckBaseInsuranceResult;
+import ch.zhaw.gpi.eumzugplattform.processdata.Person;
 import ch.zhaw.gpi.eumzugplattform.processdata.VeKaCard;
-import ch.zhaw.gpi.eumzugplattform.processdata.VeKaPerson;
 import java.time.LocalDate;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,52 +24,37 @@ public class CheckBaseInsuranceService {
     @Autowired
     private DateConversionHelper dateConversionHelper;
     
-    /**
-     * Methode, welche prüft, ob eine Person grundversichert ist, indirekt über
-     * die Kartennummer, deren Vorhandensein und Gültigkeit und über die
-     * Übereinstimmung der Personalien
-     * 
-     * @param baseInsuranceNumber   Grundversicherungskartennummer
-     * @param firstName             Vorname
-     * @param officialName          Nachname
-     * @param dateOfBirth           Geburtsdatum
-     * @return                      Objekt der CheckBaseInsuranceResult-Klasse
-     */
-    public CheckBaseInsuranceResult checkBaseInsuranceValidity(Long baseInsuranceNumber, String firstName, String officialName, Date dateOfBirth){
-        // Result-Objekt instanzieren
-        CheckBaseInsuranceResult checkBaseInsuranceResult = new CheckBaseInsuranceResult();
-        
+    public void checkBaseInsuranceValidity(Person person){        
         // Zur Kartennummer passende Karte suchen
-        VeKaCard veKaCard = veKaClientService.getVeKaCard(baseInsuranceNumber);
+        VeKaCard veKaCard = veKaClientService.getVeKaCard(person.getBaseInsuranceNumber());
         
-        // Falls keine Karte gefunden wurde, dann entsprechende Antwort zurück geben
+        // Falls keine Karte gefunden wurde, dann entsprechende Antwort setzen und die weitere Ausführung abbrechen
         if(veKaCard == null) {
-            checkBaseInsuranceResult
-                    .setCheckResult("Unknown")
-                    .setCheckResultDetails("Keine Karte zu dieser Nummer gefunden. Mögliche Gründe: (Un)bewusste Falscheingabe oder der Kartenaussteller ist nicht bei der VeKa registriert.");
-            return checkBaseInsuranceResult;
+            person.setCheckBaseInsuranceResult("Unknown");
+            person.setCheckBaseInsuranceResultDetails("Keine Karte zu dieser Nummer gefunden. Mögliche Gründe: (Un)bewusste Falscheingabe oder der Kartenaussteller ist nicht bei der VeKa registriert.");
+            return;
         }
         
-        // Falls Karte abgelaufen ist, entsprechende Antwort zurück geben
+        // Falls Karte abgelaufen ist, entsprechende Antwort setzen und die weitere Ausführung abbrechen
         if(veKaCard.getExpiryDate().before(new Date())){
-            checkBaseInsuranceResult
-                    .setCheckResult("No")
-                    .setCheckResultDetails("Karte abgelaufen");
-            return checkBaseInsuranceResult;
+            person.setCheckBaseInsuranceResult("No");
+            person.setCheckBaseInsuranceResultDetails("Karte abgelaufen");
+            return;
         }
         
         /**
          * Falls Personendaten zur Karte nicht mit übergebenen Personendaten 
-         * übereinstimmen, entsprechende Antwort zurück geben
+         * übereinstimmen, entsprechende Antwort setzen
          */
         // Person aus der Karte auslesen
-        VeKaPerson insuredPerson = veKaCard.getInsuredPerson();
+        Person insuredPerson = veKaCard.getInsuredPerson();
         
         // Hilfsvariable, um die allenfalls abweichenden Typen von Personalien aufzunehmen
         String abweichendePersonalien = "";
         
         // Für Vergleich der Geburtsdaten müssen beide Daten ins gleiche Format gebracht werden (v.a. wegen unterschiedlicher Zeitzonen)
-        LocalDate paramDate = dateConversionHelper.convertToLocalDateViaInstant(dateOfBirth);
+        // Hinweis: Gibt keinen Abzug, falls nicht implementiert, da mit den in soapUI übergebenen Testdaten dieses Problem nicht auftritt
+        LocalDate paramDate = dateConversionHelper.convertToLocalDateViaInstant(person.getDateOfBirth());
         LocalDate vekaDate = dateConversionHelper.convertToLocalDateViaInstant(insuredPerson.getDateOfBirth());
         
         // Geburtsdatum auf Abweichung prüfen (compareTo gibt Abweichung der Tage als int zurück)
@@ -80,38 +64,34 @@ public class CheckBaseInsuranceService {
         }
         
         // Vornamen auf Abweichung prüfen
-        if(!insuredPerson.getFirstName().equals(firstName)){
+        if(!insuredPerson.getFirstName().equals(person.getFirstName())){
             // Falls abweichend, dann die Hilfsvariable um den Typ der Personalie erweitern
             abweichendePersonalien += (abweichendePersonalien.isEmpty() ? "" : ", ") + "Vorname";
         }
         
         // Nachname auf Abweichung prüfen
-        if(!insuredPerson.getOfficialName().equals(officialName)){
+        if(!insuredPerson.getOfficialName().equals(person.getOfficialName())){
             // Falls abweichend, dann die Hilfsvariable um den Typ der Personalie erweitern
             abweichendePersonalien += (abweichendePersonalien.isEmpty() ? "" : ", ") + "Nachname";
         }
         
         // Falls es Abweichungen gibt (also die Hilfsvariable nicht leer ist)
         if(!abweichendePersonalien.isEmpty()){
-            // Entsprechendes Resultat zurückgeben
-            checkBaseInsuranceResult
-                    .setCheckResult("No")
-                    .setCheckResultDetails("Karte gültig, aber Personalien nicht passend (" + abweichendePersonalien + ")");
-            return checkBaseInsuranceResult;
+            // Entsprechendes Resultat setzen und die weitere Ausführung abbrechen
+            person.setCheckBaseInsuranceResult("No");
+            person.setCheckBaseInsuranceResultDetails("Karte gültig, aber Personalien nicht passend (" + abweichendePersonalien + ")");
+            return;
         }
         
         // Falls Karte (Versicherung) keine Grundversicherung beinhaltet
         if(!veKaCard.isBaseInsured()){
-            // Entsprechendes Resultat zurückgeben
-            checkBaseInsuranceResult
-                    .setCheckResult("No")
-                    .setCheckResultDetails("Karte gültig, Personalien passend, aber nicht grundversichert");
-            return checkBaseInsuranceResult;
+            // Entsprechendes Resultat setzen und die weitere Ausführung abbrechen
+            person.setCheckBaseInsuranceResult("No");
+            person.setCheckBaseInsuranceResultDetails("Karte gültig, Personalien passend, aber nicht grundversichert");
+            return;
         }
         
-        // Falls alles in Ordnung ist, dann ein positives Resultat zurück geben
-        return checkBaseInsuranceResult.setCheckResult("Yes");
+        // Falls alles in Ordnung ist, dann ein positives Resultat setzen
+        person.setCheckBaseInsuranceResult("Yes");
     }
-    
-    
 }

@@ -82,7 +82,7 @@ Formular zum UserTask "Zuzugsadresse erfassen"
             <select class="form-control" 
                     name="municipalityMoveIn"
                     ng-model="municipalityMoveInModel"
-                    ng-options="municipality.municipalityName for municipality in municipalityListModel | orderBy:'municipalityName' track by municipality.municipalityId">
+                    ng-options="municipality.municipalityName for municipality in municipalityListModel | orderBy:'municipalityName' track by municipality.municipalityId" required>
             </select>
         </div>
     </div>

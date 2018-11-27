@@ -106,7 +106,7 @@ Formular für den Schritt 'Identifikationsmerkmale erfassen'
                     <select 
                         class="form-control"
                         ng-model="municipalityMoveOutModel"
-                        ng-options="municipality.municipalityName for municipality in municipalityListModel | orderBy:'municipalityName' track by municipality.municipalityId">
+                        ng-options="municipality.municipalityName for municipality in municipalityListModel | orderBy:'municipalityName' track by municipality.municipalityId" required>
                     </select>
                 </div>
             </div>

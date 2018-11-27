@@ -1,43 +1,41 @@
 <!--
 Formular zum UserTask "Abschlussbestätigung anzeigen"
 -->
-<!-- FALLS GEBÜHREN EXISTIEREN, WIRD EINE MELDUNG ÜBER ERFOLGREICHEN ZAHLUNGSABSCHLUSS GEZEIGT -->
-<div class="alert alert-success" style="text-align: center" ng-show="feesExist">
-    Die Zahlung wurde erfolgreich durchgeführt.
-</div>
-
-<!-- IN JEDEM FALL ANGEZEIGTE MELDUNG ÜBER DAS WEITERE VORGEHEN -->
-<div class="alert alert-info" style="text-align: center">
-    <p>Sobald Sie auf Complete drücken, werden wir Ihre Angaben an die zuständigen Einwohnergemeinde(n) weiterleiten und Ihnen zudem eine Bestätigung zukommen lassen.</p>
-    <p>Je nach Antwortzeiten der Gemeinden werden Sie dann in den nächsten Stunden oder Tagen von uns über die Entscheidungen der Gemeinde(n) benachrichtigt.</p>
-</div>
-
-<script cam-script type="text/form-script">
-    // AngularJS-Scope-Variable camForm.variableManager wird lokalen Variable zugewiesen
-    var variableManager = camForm.variableManager;
-
-    // Camunda Form Lifecycle: Nach dem Laden des Formulars werden Prozessvariablen von der Process Engine (Server) in den variableManager geladen
-    // Liste der Gebühren
-    camForm.on('form-loaded', function() {
-        variableManager.fetchVariable('feeMap');
-    });
-
-    // Camunda Form Lifecycle: Nach dem Laden der Variablen ...
-    camForm.on('variables-fetched', function() {
-        // ... wird die Liste der Gebühren einer neuen AngularJS-Scope-Variable zugewiesen
-        $scope.feeMapModel = variableManager.variableValue('feeMap');
-
-        // Eine neue Variable feesExist wird standardmässig auf falsch gesetzt
-        $scope.feesExist = false;
-        
-        // Wenn die Liste der Gebühren vorhanden ist, also Gebühren existieren ...
-        if($scope.feeMapModel !== null){
-            // ... wird hingegen die Variable feesExist auf wahr gesetzt
-            $scope.feesExist = true;
-        }
-    });
-</script>
-
 <form>
+    <!-- FALLS GEBÜHREN EXISTIEREN, WIRD EINE MELDUNG ÜBER ERFOLGREICHEN ZAHLUNGSABSCHLUSS GEZEIGT -->
+    <div class="alert alert-success" style="text-align: center" ng-show="feesExist">
+        Die Zahlung wurde erfolgreich durchgeführt.
+    </div>
 
+    <!-- IN JEDEM FALL ANGEZEIGTE MELDUNG ÜBER DAS WEITERE VORGEHEN -->
+    <div class="alert alert-info" style="text-align: center">
+        <p>Sobald Sie auf Complete drücken, werden wir Ihre Angaben an die zuständigen Einwohnergemeinde(n) weiterleiten und Ihnen zudem eine Bestätigung zukommen lassen.</p>
+        <p>Je nach Antwortzeiten der Gemeinden werden Sie dann in den nächsten Stunden oder Tagen von uns über die Entscheidungen der Gemeinde(n) benachrichtigt.</p>
+    </div>
+
+    <script cam-script type="text/form-script">
+        // AngularJS-Scope-Variable camForm.variableManager wird lokalen Variable zugewiesen
+        var variableManager = camForm.variableManager;
+
+        // Camunda Form Lifecycle: Nach dem Laden des Formulars werden Prozessvariablen von der Process Engine (Server) in den variableManager geladen
+        // Liste der Gebühren
+        camForm.on('form-loaded', function() {
+            variableManager.fetchVariable('feeMap');
+        });
+
+        // Camunda Form Lifecycle: Nach dem Laden der Variablen ...
+        camForm.on('variables-fetched', function() {
+            // ... wird die Liste der Gebühren einer neuen AngularJS-Scope-Variable zugewiesen
+            $scope.feeMapModel = variableManager.variableValue('feeMap');
+
+            // Eine neue Variable feesExist wird standardmässig auf falsch gesetzt
+            $scope.feesExist = false;
+
+            // Wenn die Liste der Gebühren vorhanden ist, also Gebühren existieren ...
+            if($scope.feeMapModel !== undefined){
+                // ... wird hingegen die Variable feesExist auf wahr gesetzt
+                $scope.feesExist = true;
+            }
+        });
+    </script>
 </form>

@@ -7,6 +7,7 @@ import ch.ech.xmlns.ech_0044._4.PersonIdentificationType;
 import ch.ech.xmlns.ech_0194._1.InfoType;
 import ch.ech.xmlns.ech_0194._1.PersonMoveRequest;
 import ch.ech.xmlns.ech_0194._1.PersonMoveResponse;
+import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityEntity;
 import static ch.zhaw.gpi.eumzugplattform.helpers.DateConversionHelper.DateToXMLGregorianCalendar;
 import ch.zhaw.gpi.eumzugplattform.processdata.Person;
 import ch.zhaw.gpi.eumzugplattform.processdata.PersonList;
@@ -50,8 +51,7 @@ public class IdentifyPersonDelegate implements JavaDelegate {
     public void execute(DelegateExecution execution) throws Exception {
         String businessCaseId = (String) execution.getVariable("businessCaseId");
 
-        String municipalityNameMoveOut = (String) execution.getVariable("municipalityNameMoveOut");
-        Integer municipalityIdMoveOut = (Integer) execution.getVariable("municipalityIdMoveOut");
+        MunicipalityEntity municipalityEntity = (MunicipalityEntity) execution.getVariable("municipalityMoveOut");
 
         String firstName = (String) execution.getVariable("firstName");
         String officialName = (String) execution.getVariable("officialName");
@@ -61,8 +61,8 @@ public class IdentifyPersonDelegate implements JavaDelegate {
         String localPersonId = (String) execution.getVariable("localPersonId");
 
         SwissMunicipalityType swissMunicipality = new SwissMunicipalityType();
-        swissMunicipality.setMunicipalityId(municipalityIdMoveOut);
-        swissMunicipality.setMunicipalityName(municipalityNameMoveOut);
+        swissMunicipality.setMunicipalityId(municipalityEntity.getMunicipalityId());
+        swissMunicipality.setMunicipalityName(municipalityEntity.getMunicipalityName());
 
         NamedPersonIdType namedPersonId = new NamedPersonIdType();
         namedPersonId.setPersonIdCategory("LOC.UMZUGPLATTFORM");
