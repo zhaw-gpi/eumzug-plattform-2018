@@ -1,5 +1,6 @@
 package ch.zhaw.gpi.eumzugplattform.services;
 
+import ch.zhaw.gpi.eumzugplattform.processdata.VeKaAddress;
 import ch.zhaw.gpi.eumzugplattform.processdata.VeKaCard;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -60,5 +61,23 @@ public class VeKaClientService {
                 throw httpClientErrorException;
             }
         }
+    }
+    
+    /**
+     * Methode, um die Addressinformationen zu einer Person zu ändern
+     * 
+     * @param personId      Id der Person vekaseitig
+     * @param address       Neue Adresse
+     */
+    public void updateAddressForPerson(Long personId, VeKaAddress address) {        
+        // Aufruf des REST-Services über die put-Methode von RestTemplate, welche als Parameter erwartet:
+        // - Die URL mit Parametern, wobei der in {} gesetzte Teil dann durch den Parameter Personen-Id ersetzt wird
+        // - Das Objekt für den Request-Body (wird automatisch nach JSON serialisiert)
+        // - Eine passende Anzahl an Parameter-Werten, welche die {} in der URL ersetzt (hier nur einer)
+        // Es wird kein Wert zurück genommen, da wir nichts prüfen wollen
+        restTemplate.put(
+                vekaEndpoint + "/persons/{id}/address",
+                address,
+                personId);
     }
 }

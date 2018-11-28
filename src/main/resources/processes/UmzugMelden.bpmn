@@ -16,6 +16,7 @@
         <flowNodeRef>UmzugsmeldungErfolgreichAbgeschlossen</flowNodeRef>
         <flowNodeRef>UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen</flowNodeRef>
         <flowNodeRef>UmzugsmeldungWegenAblehnungFehlgeschlagen</flowNodeRef>
+        <flowNodeRef>NeueAdresseVeKaCenterMitteilen</flowNodeRef>
         <childLaneSet id="LaneSet_072546v">
           <lane id="UmzugsplattformAutomatisch" name="Automatisch">
             <flowNodeRef>UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen</flowNodeRef>
@@ -25,6 +26,7 @@
             <flowNodeRef>UmzugsmeldungErfolgreichAbgeschlossen</flowNodeRef>
             <flowNodeRef>UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen</flowNodeRef>
             <flowNodeRef>UmzugsmeldungWegenAblehnungFehlgeschlagen</flowNodeRef>
+            <flowNodeRef>NeueAdresseVeKaCenterMitteilen</flowNodeRef>
           </lane>
           <lane id="UmzugsplattformMeldepflichtiger" name="Meldepflichtiger">
             <flowNodeRef>UmzugsmeldungGestartet</flowNodeRef>
@@ -103,21 +105,6 @@ Der eigentliche Fehler soll innerhalb des aufgerufenen Prozesses behandelt werde
       <outgoing>SequenceFlow_1312w0k</outgoing>
       <errorEventDefinition id="ErrorEventDefinition_0pb3nhb" errorRef="Error_12sd8hn" />
     </boundaryEvent>
-    <endEvent id="UmzugsmeldungErfolgreichAbgeschlossen" name="Umzugsmeldung erfolgreich abgeschlossen">
-      <incoming>SequenceFlow_1hdylfx</incoming>
-    </endEvent>
-    <serviceTask id="ErfolgreichenAbschlussPersistieren" name="Erfolgreichen Abschluss persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
-      <documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren. Erstere sollen nur gespeichert werden, wenn die entsprechende Person nicht bereits in der Datenbank existiert. Letztere sollen in der TransactionLog-Entität gespeichert werden.
-
-Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex). In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgreicher Abschluss des eUmzugsmeldung".</documentation>
-      <extensionElements>
-        <camunda:inputOutput>
-          <camunda:inputParameter name="status">FINISHED_SUCCESSFUL</camunda:inputParameter>
-        </camunda:inputOutput>
-      </extensionElements>
-      <incoming>SequenceFlow_1x0qckx</incoming>
-      <outgoing>SequenceFlow_1hdylfx</outgoing>
-    </serviceTask>
     <serviceTask id="ErfolgreichenAbschlussMitteilen" name="Erfolgreichen Abschluss mitteilen" camunda:type="external" camunda:topic="Notification">
       <documentation>Dem Meldepflichtigen wird der aktuelle Status mitgeteilt, einerseits per EMail und andererseits (sofern in KontaktangabenErfassenForm so gewählt) per SMS.
 
@@ -192,6 +179,38 @@ Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Proz
       <incoming>SequenceFlow_0qpbkoo</incoming>
       <outgoing>SequenceFlow_0ygmvzp</outgoing>
     </serviceTask>
+    <sequenceFlow id="SequenceFlow_1x0qckx" sourceRef="ErfolgreichenAbschlussMitteilen" targetRef="NeueAdresseVeKaCenterMitteilen" />
+    <sequenceFlow id="SequenceFlow_19k3fjn" name="ja" sourceRef="UmzugsmeldungAkzeptiert" targetRef="ErfolgreichenAbschlussMitteilen">
+      <conditionExpression xsi:type="tFormalExpression">${true == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_1woxygr" name="nein" sourceRef="UmzugsmeldungAkzeptiert" targetRef="AblehnungMitteilen">
+      <conditionExpression xsi:type="tFormalExpression">${false == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_1563am6" sourceRef="AblehnungMitteilen" targetRef="AblehnungPersistieren" />
+    <sequenceFlow id="SequenceFlow_1ptg35o" sourceRef="MitEKSystemenKommunizieren" targetRef="UmzugsmeldungAkzeptiert" />
+    <sequenceFlow id="SequenceFlow_0qpbkoo" sourceRef="DefinierteZeitVerstrichen" targetRef="UeberschreitenDerAntwortfristMitteilen" />
+    <sequenceFlow id="SequenceFlow_0ygmvzp" sourceRef="UeberschreitenDerAntwortfristMitteilen" targetRef="UeberschreitenDerAntwortfristPersistieren" />
+    <boundaryEvent id="DefinierteZeitVerstrichen" name="Definierte Zeit verstrichen" attachedToRef="MitEKSystemenKommunizieren">
+      <outgoing>SequenceFlow_0qpbkoo</outgoing>
+      <timerEventDefinition id="TimerEventDefinition_12hpg9n">
+        <timeDuration xsi:type="tFormalExpression">P60D</timeDuration>
+      </timerEventDefinition>
+    </boundaryEvent>
+    <endEvent id="UmzugsmeldungErfolgreichAbgeschlossen" name="Umzugsmeldung erfolgreich abgeschlossen">
+      <incoming>SequenceFlow_1hdylfx</incoming>
+    </endEvent>
+    <serviceTask id="ErfolgreichenAbschlussPersistieren" name="Erfolgreichen Abschluss persistieren" camunda:delegateExpression="#{persistUserEntriesAndStatusAdapter}">
+      <documentation>Aufruf der JavaDelegate-implementierenden Klasse 'PersistUserEntriesAndStatusDelegate', um Personenidentifikations- und Status-Angaben zu persistieren. Erstere sollen nur gespeichert werden, wenn die entsprechende Person nicht bereits in der Datenbank existiert. Letztere sollen in der TransactionLog-Entität gespeichert werden.
+
+Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden (localPersonId, vn, firstName, officialName, dateOfBirth und sex). In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Erfolgreicher Abschluss des eUmzugsmeldung".</documentation>
+      <extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">FINISHED_SUCCESSFUL</camunda:inputParameter>
+        </camunda:inputOutput>
+      </extensionElements>
+      <incoming>SequenceFlow_0m2es8o</incoming>
+      <outgoing>SequenceFlow_1hdylfx</outgoing>
+    </serviceTask>
     <endEvent id="UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen" name="Umzugsmeldung wegen Zeitüber-schreitung fehlgeschlagen">
       <incoming>SequenceFlow_13o5ois</incoming>
     </endEvent>
@@ -223,47 +242,46 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
       <outgoing>SequenceFlow_1czfkrs</outgoing>
     </serviceTask>
     <sequenceFlow id="SequenceFlow_1hdylfx" sourceRef="ErfolgreichenAbschlussPersistieren" targetRef="UmzugsmeldungErfolgreichAbgeschlossen" />
-    <sequenceFlow id="SequenceFlow_1x0qckx" sourceRef="ErfolgreichenAbschlussMitteilen" targetRef="ErfolgreichenAbschlussPersistieren" />
-    <sequenceFlow id="SequenceFlow_19k3fjn" name="ja" sourceRef="UmzugsmeldungAkzeptiert" targetRef="ErfolgreichenAbschlussMitteilen">
-      <conditionExpression xsi:type="tFormalExpression">${true == true}</conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="SequenceFlow_1woxygr" name="nein" sourceRef="UmzugsmeldungAkzeptiert" targetRef="AblehnungMitteilen">
-      <conditionExpression xsi:type="tFormalExpression">${false == true}</conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="SequenceFlow_1563am6" sourceRef="AblehnungMitteilen" targetRef="AblehnungPersistieren" />
-    <sequenceFlow id="SequenceFlow_1ptg35o" sourceRef="MitEKSystemenKommunizieren" targetRef="UmzugsmeldungAkzeptiert" />
-    <sequenceFlow id="SequenceFlow_0qpbkoo" sourceRef="DefinierteZeitVerstrichen" targetRef="UeberschreitenDerAntwortfristMitteilen" />
-    <sequenceFlow id="SequenceFlow_0ygmvzp" sourceRef="UeberschreitenDerAntwortfristMitteilen" targetRef="UeberschreitenDerAntwortfristPersistieren" />
     <sequenceFlow id="SequenceFlow_13o5ois" sourceRef="UeberschreitenDerAntwortfristPersistieren" targetRef="UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen" />
     <sequenceFlow id="SequenceFlow_1czfkrs" sourceRef="AblehnungPersistieren" targetRef="UmzugsmeldungWegenAblehnungFehlgeschlagen" />
-    <boundaryEvent id="DefinierteZeitVerstrichen" name="Definierte Zeit verstrichen" attachedToRef="MitEKSystemenKommunizieren">
-      <outgoing>SequenceFlow_0qpbkoo</outgoing>
-      <timerEventDefinition id="TimerEventDefinition_12hpg9n">
-        <timeDuration xsi:type="tFormalExpression">P60D</timeDuration>
-      </timerEventDefinition>
-    </boundaryEvent>
+    <serviceTask id="NeueAdresseVeKaCenterMitteilen" name="Neue Adresse VeKa-Center mitteilen" camunda:delegateExpression="#{updateAddressAtVekaAdapter}">
+      <documentation>Mitteilen der Adressänderung für alle umziehenden Personen an das VeKa-Center
+
+Aufgrund der Komplexität soll die eigentliche Funktionalität in einem ausgelagerten Service stattfinden (UpdateAddressAtVekaService), dessen Anforderungen gleich anschliessend beschrieben sind. In der Delegate-Klasse soll lediglich die Personen-Liste und die Zuzugsadress-Angaben aus den Prozessvariablen gelesen werden und diese an den UpdateAddressAtVekaService übergeben werden.
+
+Im UpdateAddressAtVekaService soll es eine Methode geben, welche folgende Anforderungen erfüllt:
+- Sie nimmt ein PersonList-Objekt sowie Zuzugsadress-Angaben entgegen (streetMoveOut, houseNumber...).
+- Sie weist die Adressangaben einem Objekt vom Typ einer neu zu erstellenden Klasse zu, welches so serialisiert wird, wie dies von der VeKa-API erwartet wird.
+- Für jede grundversicherte (!) Person ruft sie eine Methode updateAddressForPerson in einem ausgelagerten VeKaClientService auf und übergibt dieser die erstellte Adresse zu und die Id der Person, wie diese im VeKa-Service vergeben wird (Achtung: Dies entspricht nicht der localPersonId =&gt; in processData.Person muss ein id-Attribut ergänzt werden, damit beim Aufruf von getVeKaCard die VeKa-Personen-Id deserialisiert wird.
+- Die  Methode updateAddressForPerson wiederum sendet über eine PUT-Anfrage an  /vekaapi/v1/persons/{id}/address die neue Adresse als RequestBody für eine bestimmte Personen-Id (id). Dabei wird keine Antwort der API-Methode ausgelesen. Tipp: Für PUT-Anfragen gibt es zig Varianten, aber da wir kein ResponseBody vom Server erwarten, ist die einfachste RestTemplate.put(url, RequestBody-Objekt, url Parameter).
+- Allgemein ist (im Unterschied zur Grundversicherungsprüfung) als prototypische Vereinfachung kein Fehlerhandling eingebaut, also in keiner der genannten Klassen/Methoden.
+</documentation>
+      <incoming>SequenceFlow_1x0qckx</incoming>
+      <outgoing>SequenceFlow_0m2es8o</outgoing>
+    </serviceTask>
+    <sequenceFlow id="SequenceFlow_0m2es8o" sourceRef="NeueAdresseVeKaCenterMitteilen" targetRef="ErfolgreichenAbschlussPersistieren" />
   </process>
   <error id="Error_12sd8hn" name="ErrorUmzugsmeldungErfassenUndBezahlen" />
   <error id="Error_04jbe5p" name="ErrorEksAblehnung" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_TwitterDemoProcess">
     <bpmndi:BPMNPlane id="BPMNPlane_TwitterDemoProcess" bpmnElement="Collaboration_05jmpr5">
       <bpmndi:BPMNShape id="Participant_1mdci1z_di" bpmnElement="UmzugMeldenParticipant">
-        <omgdc:Bounds x="-1" y="-1" width="1127" height="1011" />
+        <omgdc:Bounds x="-1" y="-1" width="1278" height="1011" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1bppnkr_di" bpmnElement="Lane_1bppnkr">
-        <omgdc:Bounds x="29" y="-1" width="1097" height="526" />
+        <omgdc:Bounds x="29" y="-1" width="1248" height="526" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1474uhv_di" bpmnElement="EksMeldedienst">
-        <omgdc:Bounds x="29" y="525" width="1097" height="152" />
+        <omgdc:Bounds x="29" y="525" width="1248" height="152" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_0ppjtrr_di" bpmnElement="UmzugsplattformMeldepflichtiger">
-        <omgdc:Bounds x="59" y="-1" width="1067" height="165" />
+        <omgdc:Bounds x="59" y="-1" width="1218" height="165" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_0eghv6k_di" bpmnElement="UmzugsplattformAutomatisch">
-        <omgdc:Bounds x="59" y="164" width="1067" height="361" />
+        <omgdc:Bounds x="59" y="164" width="1218" height="361" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_09fif4i_di" bpmnElement="KantonalerBenachrichtigungsdienst">
-        <omgdc:Bounds x="29" y="677" width="1097" height="333" />
+        <omgdc:Bounds x="29" y="677" width="1248" height="333" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0fypb5d_di" bpmnElement="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
         <omgdc:Bounds x="300" y="206" width="36" height="36" />
@@ -272,21 +290,21 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_15z9qe3_di" bpmnElement="UmzugsmeldungErfolgreichAbgeschlossen">
-        <omgdc:Bounds x="1044" y="206" width="36" height="36" />
+        <omgdc:Bounds x="1195" y="206" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="1021" y="249" width="83" height="40" />
+          <omgdc:Bounds x="1172" y="249" width="83" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_13cetj5_di" bpmnElement="UmzugsmeldungWegenAblehnungFehlgeschlagen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdc:Bounds x="1044" y="312" width="36" height="36" />
+        <omgdc:Bounds x="1195" y="312" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="1018" y="355" width="88" height="40" />
+          <omgdc:Bounds x="1169" y="355" width="88" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1egx8l8_di" bpmnElement="UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdc:Bounds x="1044" y="420" width="36" height="36" />
+        <omgdc:Bounds x="1195" y="420" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="1021" y="463" width="83" height="53" />
+          <omgdc:Bounds x="1172" y="463" width="83" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BoundaryEvent_1n6yipp_di" bpmnElement="DefinierteZeitVerstrichen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
@@ -308,12 +326,12 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1hdylfx_di" bpmnElement="SequenceFlow_1hdylfx">
-        <omgdi:waypoint x="961" y="224" />
-        <omgdi:waypoint x="1044" y="224" />
+        <omgdi:waypoint x="1112" y="224" />
+        <omgdi:waypoint x="1195" y="224" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1czfkrs_di" bpmnElement="SequenceFlow_1czfkrs">
-        <omgdi:waypoint x="961" y="330" />
-        <omgdi:waypoint x="1044" y="330" />
+        <omgdi:waypoint x="1112" y="330" />
+        <omgdi:waypoint x="1195" y="330" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0qpbkoo_di" bpmnElement="SequenceFlow_0qpbkoo">
         <omgdi:waypoint x="476" y="657" />
@@ -321,8 +339,8 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
         <omgdi:waypoint x="663" y="953" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_13o5ois_di" bpmnElement="SequenceFlow_13o5ois">
-        <omgdi:waypoint x="961" y="438" />
-        <omgdi:waypoint x="1044" y="438" />
+        <omgdi:waypoint x="1112" y="438" />
+        <omgdi:waypoint x="1195" y="438" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="StartEvent_0ernray_di" bpmnElement="UmzugsmeldungGestartet">
         <omgdc:Bounds x="123" y="46" width="36" height="36" />
@@ -358,13 +376,13 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
         <omgdc:Bounds x="230" y="24" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0hhrqwf_di" bpmnElement="ErfolgreichenAbschlussPersistieren" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <omgdc:Bounds x="861" y="184" width="100" height="80" />
+        <omgdc:Bounds x="1012" y="184" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0hxz067_di" bpmnElement="UeberschreitenDerAntwortfristPersistieren" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdc:Bounds x="861" y="398" width="100" height="80" />
+        <omgdc:Bounds x="1012" y="398" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1fxn2rg_di" bpmnElement="AblehnungPersistieren" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdc:Bounds x="861" y="290" width="100" height="80" />
+        <omgdc:Bounds x="1012" y="290" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0aqrb40_di" bpmnElement="ErfolgreichenAbschlussMitteilen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
         <omgdc:Bounds x="663" y="706" width="100" height="80" />
@@ -373,19 +391,19 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
         <omgdi:waypoint x="763" y="849" />
         <omgdi:waypoint x="816" y="849" />
         <omgdi:waypoint x="816" y="330" />
-        <omgdi:waypoint x="861" y="330" />
+        <omgdi:waypoint x="1012" y="330" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0ygmvzp_di" bpmnElement="SequenceFlow_0ygmvzp">
         <omgdi:waypoint x="763" y="953" />
         <omgdi:waypoint x="835" y="953" />
         <omgdi:waypoint x="835" y="438" />
-        <omgdi:waypoint x="861" y="438" />
+        <omgdi:waypoint x="1012" y="438" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1x0qckx_di" bpmnElement="SequenceFlow_1x0qckx">
         <omgdi:waypoint x="763" y="746" />
         <omgdi:waypoint x="797" y="746" />
         <omgdi:waypoint x="797" y="224" />
-        <omgdi:waypoint x="861" y="224" />
+        <omgdi:waypoint x="854" y="224" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0mxcs2j_di" bpmnElement="UeberschreitenDerAntwortfristMitteilen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
         <omgdc:Bounds x="663" y="913" width="100" height="80" />
@@ -406,6 +424,13 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
         <bpmndi:BPMNLabel>
           <omgdc:Bounds x="652" y="575" width="8" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0rkoc7f_di" bpmnElement="NeueAdresseVeKaCenterMitteilen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
+        <omgdc:Bounds x="854" y="184" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0m2es8o_di" bpmnElement="SequenceFlow_0m2es8o">
+        <omgdi:waypoint x="954" y="224" />
+        <omgdi:waypoint x="1012" y="224" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -28,6 +28,9 @@ public class Person implements Serializable {
     private Long baseInsuranceNumber;
     private String checkBaseInsuranceResult;
     private String checkBaseInsuranceResultDetails;
+    
+    // Variable für Veka-Addressänderung
+    private Long id;
 
     public String getFirstName() {
         return firstName;
@@ -110,4 +113,13 @@ public class Person implements Serializable {
         this.checkBaseInsuranceResultDetails = checkBaseInsuranceResultDetails;
         return this;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Person setId(Long id) {
+        this.id = id;
+        return this;
+    }   
 }

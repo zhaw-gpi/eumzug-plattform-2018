@@ -20,7 +20,7 @@ public class CheckBaseInsuranceDelegate implements JavaDelegate {
     
     // Verdrahten des CheckBaseInsuranceService
     @Autowired
-    CheckBaseInsuranceService checkBaseInsuranceService;
+    private CheckBaseInsuranceService checkBaseInsuranceService;
 
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
