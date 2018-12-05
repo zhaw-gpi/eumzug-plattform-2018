@@ -1,120 +1,117 @@
 <!--
-Formular zum UserTask "Erfassen der Zahlungsdetails"
+Formular für den UserTask 'Erfassen der Zahlungsdetails'
 -->
-<form name="camundaForm">
-    <!-- Info-Meldung, welche initial angezeigt wird -->
-    <div id="infoBeforeCheckout" class="alert alert-info" ng-show="infoBeforeCheckout">      
-        <p>Bitte klicken Sie auf <strong>Zahlungsdetails erfassen</strong> und geben Sie dann Ihre Kreditkartenangaben im erscheinenden Formular ein und klicken Sie auf Bezahlen.</p>
+<form>   
+    <!-- INFO-MELDUNG, DIE VOR DEM BEZAHLEN ANGEZEIGT WIRD -->
+    <div class="alert alert-info" id="infoBeforeCheckout">
+        <p>Bitte klicken Sie auf Zahlungsdetails erfassen und geben Sie dann Ihre Kreditkartenangaben im erscheinenden Formular ein und klicken Sie auf Bezahlen.</p>
         <p>Diese Angaben gehen verschlüsselt direkt an den Online-Bezahldienst Stripe. Auf diese Weise sehen wir als Betreiber der Umzugsplattform nie Ihre Kreditkartendaten.</p>
         <p>Wenn alles klappt, schliesst das Formular und nach einigen Sekunden wird dieser Text durch einen grün hinterlegten Bestätigungstext ersetzt</p>
     </div>
     
-    <!-- Erfolgsmeldung, welche angezeigt wird, wenn ein Token erhalten wurde -->
-    <div class="alert alert-success" ng-show="infoAfterCheckout">
+    <!-- ERFOLGS-MELDUNG, FALLS ZAHLUNGSDETAILS ERFOLGREICH GEPRÜFT -->
+    <div class="alert alert-success" id="infoAfterCheckout" hidden>
         <p>Besten Dank für die Zahlungsdetails, welche formal erfolgreich geprüft werden konnten.</p>
-        <p>Klicken Sie nun auf <strong>Complete</strong>, um die Zahlung mit diesen Angaben zu veranlassen. Einige Sekunden danach sollten Sie entweder eine Zahlungsbestätigung sehen oder erneut zu diesem Formular geführt werden, falls die Zahlung nicht geklappt hat.</p>
+        <p>Klicken Sie nun auf Abschliessen, um die Zahlung mit diesen Angaben zu veranlassen. Einige Sekunden danach sollten Sie entweder eine Zahlungsbestätigung sehen oder erneut zu diesem Formular geführt werden, falls die Zahlung nicht geklappt hat.</p>
     </div>
     
-    <!-- Warnmeldung, die angezeigt wird, wenn das Formular angezeigt wird, nachdem ein Charge nicht erfolgreich durchgeführt werden konnte -->
-    <div class="alert alert-warning" ng-show="infoAfterChargingError">
+    <!-- WARN-MELDUNG, FALLS ZAHLUNG NICHT ERFOLGREICH -->
+    <div class="alert alert-warning" id="infoAfterChargingError">
         <p>Die Zahlung konnte leider nicht erfolgreich durchgeführt werden.</p>
         <p>Stripe hat folgenden Grund angegeben: {{chargingErrorMessage}}.</p>
         <p>Versuchen Sie es innerhalb der nächsten 24 Stunden erneut, beispielsweise mit einer anderen Kreditkarte. Andernfalls bricht der Zahlungsvorgang als fehlgeschlagen gekennzeichnet ab.</p>
     </div>
     
-    <!-- Grosse Schaltfläche, welche beim Klick darauf das Stripe Checkout-Formular lädt -->
-    <button type="button" class="btn btn-primary btn-lg" id="payButton" ng-hide="hidePayButton">Zahlungsdetails erfassen</button>
-
+    <!-- SCHALTFLÄCHE ZUM ÖFFNEN DES ZAHLUNGSFORMULARS -->
+    <button type="button" class="btn btn-primary" id="payButton">Zahlungsdetails erfassen</button>
+    
+    <!-- CUSTOM JAVASCRIPT -->
     <script cam-script type="text/form-script">
-        // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
-        // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
-        // folgenden Funktionen
+        // AngularJS-Scope-Variable camForm.variableManager wird lokalen Variable zugewiesen
         var variableManager = camForm.variableManager;
-
-        // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
-        // die Prozessvariablen feeMap von der Process Engine (Server) 
-        // in das variableManager-Objekt (Client)
+        
+        // Camunda Form Lifecycle: Nach dem Laden des Formulars werden Prozessvariablen von der Process Engine (Server) in den variableManager geladen
         camForm.on('form-loaded', function() {
-            // Variable für den Gebührentext
             variableManager.fetchVariable('feeMap');
-            // Variable für den total zu bezahlenden Betrag
             variableManager.fetchVariable('feesTotal');
-            // Variable, damit Benutzer seine E-Mail-Adresse nicht erneut eingeben muss
             variableManager.fetchVariable('emailAddress');
-            // Variable, die bei einem fehlgeschlagenen Charge den Fehlergrund enthält
             variableManager.fetchVariable('chargingErrorMessage');
         });
-
-        // Sobald alle Variablen client-seitig zur Verfügung stehen, wird zum einen
-        // die feeMap einer Variable im AngularJS-Scope-Objekt übergeben
-        // Zudem wird das Total aller Gebühren berechnet
+        
+        // Camunda Form Lifecycle: Nach dem Laden der Variablen werden diese direkt an den AngularJS-Scope gehängt für das Model-View-Binding und weitere Aktivitäten ausgeführt
         camForm.on('variables-fetched', function() {
-            $scope.feeMap = variableManager.variableValue('feeMap');
-            $scope.total = variableManager.variableValue('feesTotal');
-            $scope.emailAddress = variableManager.variableValue('emailAddress');
-            $scope.chargingErrorMessage = variableManager.variableValue('chargingErrorMessage');
+            $scope.feeMapModel = camForm.variableManager.variableValue('feeMap');
+            $scope.feesTotalModel = camForm.variableManager.variableValue('feesTotal');
+            $scope.emailAddressModel = camForm.variableManager.variableValue('emailAddress');
+            $scope.chargingErrorMessageModel = camForm.variableManager.variableValue('chargingErrorMessage');
             
             // Gebührenbeschreibung initial auf eine leere Zeichenkette setzen
             $scope.feeDescription = '';
             
-            // Für jedes Element in FeeMap die Gebührenbezeichnung zur Gebührenbeschreibung hinzufügen
-            Object.keys($scope.feeMap).forEach(function (feeText) {
+            // Für jeden Schlüssel in der Gebührenliste eine Funktion mit dem Schlüssel als Parameter ausführen
+            Object.keys($scope.feeMapModel).forEach(function (feeText) {
+                // Wenn die Gebührenbeschreibung leer ist (vor dem ersten Durchlauf) ...
                 if($scope.feeDescription == ''){
+                    // ... den Schlüssel aus der Gebührenliste (= Gebührbeschreibung für diese eine Gebühr) der Gebührenbeschreibung zuweisen ...
                     $scope.feeDescription = feeText;
                 } else {
+                    // ... sonst diese Beschreibung der bestehenden Beschreibung anhängen, getrennt durch ein &
                     $scope.feeDescription += ' & ' + feeText;
                 } 
             });
             
-            // Sicherstellen, dass entweder die initiale Info-Meldung oder die Stripe-Fehlermeldung angezeigt wird
+            // Sicherstellen, dass wenn eine Stripe-Fehlermeldung vorhanden ist, ...
             if($scope.chargingErrorMessage){
-                $scope.infoAfterChargingError = true;
+                // ... die Info-Meldung ausgeblendet wird, ...
+                document.getElementById('infoBeforeCheckout').style.display = "none";
             } else {
-                $scope.infoBeforeCheckout = true;
+                // ... ansonsten die Warnmeldung ausgeblendet wird
+                document.getElementById('infoAfterChargingError').style.display = "none";
             }
         });
         
-        // Konfiguration von Stripe Checkout gemäss https://stripe.com/docs/checkout#integration
-        // Erfordert, dass in der Customized Camunda Webapp (BEservices Plattform) in
-        // app/tasklist/config.js Stripe Checkout als custom script eingetragen ist
-        var stripeCheckoutHandler = StripeCheckout.configure({
-            // Publishable Key als Identifikation des Stripe-Kontos: müsste streng genommen dynamisch ausgelesen werden, aber das würde nur recht schwierig gehen, weil man es ja am einfachsten aus einer Prozessvariable lesen würde, aber die StripeCheckout.configure-Funktion wird aufgerufen, bevor der Camunda Form Lifecycle beginnt.
+        // Konfiguration von Stripe Checkout gemäss https://stripe.com/docs/checkout#integration. Erfordert, dass in der Customized Camunda Webapp (BEservices Plattform) in app/tasklist/config.js Stripe Checkout als custom script eingetragen i
+    var stripeCheckoutHandler = StripeCheckout.configure({
+            // Publishable Key als Identifikation des Stripe-Kontos: müsste streng genommen dynamisch ausgelesen werden
             key: 'pk_test_YM8GGxfywicmmBgtFcOjEm00',
             // Kanton Bern-Bild ("geklaut" von Fahnenfabrik
             image: 'https://www.fahnenfabrik.ch/userfiles/upload/shop/U_KT_BE.jpg',
             // Die Einstellung des Browsers bezüglich Sprache wird verwendet
             locale: 'auto',
+            // Titel des Formulars
             name: 'eUmzug Kanton Bern',
+            // Währung
             currency: 'chf',
-            // {{amount}} ist nicht von AngularJS, sondern wird von Stripe Checkout.js gesetzt mit dem Wert, welcher weiter unten gesetzt wird
+            // Bezeichnung der Schaltfläche. {{amount}} ist nicht von AngularJS, sondern wird von Stripe Checkout.js gesetzt mit dem Wert, welcher weiter unten gesetzt wird
             panelLabel: '{{amount}} bezahlen',
             // Callback-Funktion, die ausgeführt wird, wenn der Checkout abgeschlossen ist und ein Token (token) generiert wurde
             token: function(token) {
                 // Das erhaltene Token einer Scope-Variable zuweisen
                 $scope.token = token;
                 
-                // Workaround, weil AngularJS aus mir nicht bekannten Gründen etwas Zeit braucht, bis die untenstehenden Variablen-Anpassungen auch im GUI reflektiert werden
-                document.getElementById(($scope.chargingErrorMessage ? 'infoAfterChargingError' : 'infoBeforeCheckout')).innerHTML = "<p><strong>Bitte warten</strong> bis dieser Text verschwindet.</p>";
-                
-                // Info- oder Warnmeldung ausblenden
-                $scope.infoBeforeCheckout = false;
-                $scope.infoAfterChargingError = false;
-                // Dafür Erfolgsmeldung einblenden
-                $scope.infoAfterCheckout = true;
-                // Und die Zahlungsschaltfläche ausblenden
-                $scope.hidePayButton = true;
+                // Info- und Warnmeldung ausblenden
+                document.getElementById('infoBeforeCheckout').style.display = "none";
+                document.getElementById('infoAfterChargingError').style.display = "none";
+                // Erfolgsmeldung einblenden
+                document.getElementById('infoAfterCheckout').style.display = "block";
+                // "Zahlungsdetails erfassen"-Schaltfläche ausblenden                
+                document.getElementById('payButton').style.display = "none";
             }
         });
-
-        // Event-Listener registrieren für die Zahlungsschaltläche, welche ausgeführt wird, wenn auf diese geklickt wird
+        
+        // Event-Listener registrieren für die Schaltfläche "Zahlungsdetails erfassen", welche ausgeführt wird, wenn auf diese geklickt wird
         document.getElementById('payButton').addEventListener('click', function(e) {
             // Das Checkout-Formular mit weiteren Parametern öffnen
             stripeCheckoutHandler.open({
                 // Gebührentotal * 100, da Stripe die Angabe in Rappen möchte
-                amount: $scope.total * 100,
-                email: $scope.emailAddress,
+                amount: $scope.feesTotalModel * 100,
+                // E-Mail-Adresse des Meldepflichtigen
+                email: $scope.emailAddressModel,
+                // Untertitel des Zahlungsformulars auf Gebührenbeschreibung setzen
                 description: $scope.feeDescription,
             });
+            
+            // Die Standardfunktion von einem Klick auf eine Schaltfläche (Submit) deaktivieren
             e.preventDefault();
         });
 
@@ -123,14 +120,13 @@ Formular zum UserTask "Erfassen der Zahlungsdetails"
             stripeCheckoutHandler.close();
         });
         
-        // Speichert den von Stripe erhaltenen Token, respektive dessen Id in einer neuen Prozessvariable stripeToken
-        camForm.on('submit', function() {
-            variableManager.createVariable({
+        // Camunda Form Lifecycle: Vor dem Senden der Formulardaten an den Server ausgeführt
+        camForm.on('submit', function(){
+           variableManager.createVariable({
                 name: 'stripeToken',
                 type: 'String',
-                value: $scope.token.id,
-                isDirty: true
-            });
+                value: $scope.token.id
+            }); 
         });
     </script>
 </form>
