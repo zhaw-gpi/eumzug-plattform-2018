@@ -18,15 +18,21 @@ Formular für den UserTask 'Erfassen der Zahlungsdetails'
     <!-- WARN-MELDUNG, FALLS ZAHLUNG NICHT ERFOLGREICH -->
     <div class="alert alert-warning" id="infoAfterChargingError">
         <p>Die Zahlung konnte leider nicht erfolgreich durchgeführt werden.</p>
-        <p>Stripe hat folgenden Grund angegeben: {{chargingErrorMessage}}.</p>
+        <p>Stripe hat folgenden Grund angegeben: {{chargingErrorMessageModel}}.</p>
         <p>Versuchen Sie es innerhalb der nächsten 24 Stunden erneut, beispielsweise mit einer anderen Kreditkarte. Andernfalls bricht der Zahlungsvorgang als fehlgeschlagen gekennzeichnet ab.</p>
+    </div>
+    
+    <!-- FEHLER-MELDUNG, FALLS BENUTZER FORMULAR ABSCHLIESST OHNE TOKEN -->
+    <div class="alert alert-warning" id="infoAfterInvalidSubmitTrial" hidden>
+        <p>Sie können das Formular nicht abschliessen, bevor Sie die Zahlungsdetails erfolgreich erfasst haben.</p>
+        <p>Klicken Sie hierzu auf die Schaltfläche 'Zahlungsdetails erfassen'.</p>
     </div>
     
     <!-- SCHALTFLÄCHE ZUM ÖFFNEN DES ZAHLUNGSFORMULARS -->
     <button type="button" class="btn btn-primary" id="payButton">Zahlungsdetails erfassen</button>
     
     <!-- CUSTOM JAVASCRIPT -->
-    <script cam-script type="text/form-script">
+    <script cam-script type="text/form-script">        
         // AngularJS-Scope-Variable camForm.variableManager wird lokalen Variable zugewiesen
         var variableManager = camForm.variableManager;
         
@@ -40,6 +46,7 @@ Formular für den UserTask 'Erfassen der Zahlungsdetails'
         
         // Camunda Form Lifecycle: Nach dem Laden der Variablen werden diese direkt an den AngularJS-Scope gehängt für das Model-View-Binding und weitere Aktivitäten ausgeführt
         camForm.on('variables-fetched', function() {
+            // Variablen AngularJS-Scope-Variablen zuweisen
             $scope.feeMapModel = camForm.variableManager.variableValue('feeMap');
             $scope.feesTotalModel = camForm.variableManager.variableValue('feesTotal');
             $scope.emailAddressModel = camForm.variableManager.variableValue('emailAddress');
@@ -61,7 +68,7 @@ Formular für den UserTask 'Erfassen der Zahlungsdetails'
             });
             
             // Sicherstellen, dass wenn eine Stripe-Fehlermeldung vorhanden ist, ...
-            if($scope.chargingErrorMessage){
+            if($scope.chargingErrorMessageModel){
                 // ... die Info-Meldung ausgeblendet wird, ...
                 document.getElementById('infoBeforeCheckout').style.display = "none";
             } else {
@@ -73,7 +80,7 @@ Formular für den UserTask 'Erfassen der Zahlungsdetails'
         // Konfiguration von Stripe Checkout gemäss https://stripe.com/docs/checkout#integration. Erfordert, dass in der Customized Camunda Webapp (BEservices Plattform) in app/tasklist/config.js Stripe Checkout als custom script eingetragen i
     var stripeCheckoutHandler = StripeCheckout.configure({
             // Publishable Key als Identifikation des Stripe-Kontos: müsste streng genommen dynamisch ausgelesen werden
-            key: 'pk_test_YM8GGxfywicmmBgtFcOjEm00',
+            key: 'pk_test_ZwJtIBFeoPbgFknPvEx3jKF2',
             // Kanton Bern-Bild ("geklaut" von Fahnenfabrik
             image: 'https://www.fahnenfabrik.ch/userfiles/upload/shop/U_KT_BE.jpg',
             // Die Einstellung des Browsers bezüglich Sprache wird verwendet
@@ -88,10 +95,11 @@ Formular für den UserTask 'Erfassen der Zahlungsdetails'
             token: function(token) {
                 // Das erhaltene Token einer Scope-Variable zuweisen
                 $scope.token = token;
-                
-                // Info- und Warnmeldung ausblenden
+                                
+                // Info- und Warnmeldungen ausblenden
                 document.getElementById('infoBeforeCheckout').style.display = "none";
                 document.getElementById('infoAfterChargingError').style.display = "none";
+                document.getElementById('infoAfterInvalidSubmitTrial').style.display = "none";
                 // Erfolgsmeldung einblenden
                 document.getElementById('infoAfterCheckout').style.display = "block";
                 // "Zahlungsdetails erfassen"-Schaltfläche ausblenden                
@@ -121,12 +129,23 @@ Formular für den UserTask 'Erfassen der Zahlungsdetails'
         });
         
         // Camunda Form Lifecycle: Vor dem Senden der Formulardaten an den Server ausgeführt
-        camForm.on('submit', function(){
-           variableManager.createVariable({
-                name: 'stripeToken',
-                type: 'String',
-                value: $scope.token.id
-            }); 
+        camForm.on('submit', function(e){
+            // Wenn ein Token von Stripe zurück gekommen ist ...
+            if($scope.token){
+                // ... sicherstellen, dass der Formularinhalt an den Server übermittelt werden darf (falls zuvor in der else-Anweisung auf true gesetzt)
+                e.submitPrevented = false;
+                // ... Eine neue Variable erstellen mit dem eigentlichen Token (Id-Eigenschaft des Tokens)
+                variableManager.createVariable({
+                    name: 'stripeToken',
+                    type: 'String',
+                    value: $scope.token.id
+                }); 
+            } else {
+                // ... ansonsten verhindern, dass das Formular ohne Token abgesendet wird
+                e.submitPrevented = true;
+                // ... und die Warnmeldung anzeigen für den Benutzer
+                document.getElementById('infoAfterInvalidSubmitTrial').style.display = "block";
+            }
         });
     </script>
 </form>

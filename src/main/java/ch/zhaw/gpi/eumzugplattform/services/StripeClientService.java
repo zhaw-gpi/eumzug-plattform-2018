@@ -49,17 +49,18 @@ public class StripeClientService {
             Map<String, Object> chargeParams = new HashMap<>();
             // Betrag * 100, da Stripe Rappen-Beträge erwartet
             chargeParams.put("amount", (int) (amount * 100));
+            // Währung Schweizer Franken
             chargeParams.put("currency", "CHF");
-            // source = welches Zahlungsmittel belastet werden soll
+            // source = welches Zahlungsmittel belastet werden soll, indirekt referenziert über das beschränkte Zeit gültige Token
             chargeParams.put("source", stripeToken);
             
-            // Eine Belastungsanfrage erstellen
+            // Eine Belastungsanfrage erstellen und die Antwort zurücknehmen in ein Charge-Objekt
             Charge charge = Charge.create(chargeParams);
             
             // Falls es geklappt hat, dann das erhaltene Charge-Objekt zurückgeben
             return charge;
         } catch (StripeException e) {
-            // Falls es nicht geklappt hat, dann das generische StripeException-Objekt gemäss // https://stripe.com/docs/api/java#error_handling auslesen und zurückgeben            
+            // Falls es nicht geklappt hat, dann das generische StripeException-Objekt gemäss // https://stripe.com/docs/api/java#error_handling zurückgeben            
             return e;
         }
     }

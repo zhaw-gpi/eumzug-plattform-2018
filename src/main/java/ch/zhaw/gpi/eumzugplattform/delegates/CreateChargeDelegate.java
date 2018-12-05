@@ -42,9 +42,8 @@ public class CreateChargeDelegate implements JavaDelegate {
         if(chargeReturn instanceof StripeException){
             // .. ist die Fehlermeldung auszulesen ...
             String errorMessage = ((StripeException) chargeReturn).getMessage();
-            // ... und ein neuer BPMN-Fehler an die ProcessEngine zu werfen mit dieser Fehlermeldung und einem Code
+            // ... und ein neuer BPMN-Fehler mit dem Namen ErrorKartenbelastungFehlgeschlagen und der Fehlermeldung als Nachricht  an die ProcessEngine zu werfen
             throw new BpmnError("ErrorKartenbelastungFehlgeschlagen", errorMessage);
         }
     }
-    
 }

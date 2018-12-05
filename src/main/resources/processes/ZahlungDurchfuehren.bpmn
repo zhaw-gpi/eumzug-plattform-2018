@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_09aeiya" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_09aeiya" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
   <bpmn:collaboration id="Collaboration_1dwe8bx">
     <bpmn:participant id="ZahlungDurchfuehrenParticipant" name="Zahlung durchführen" processRef="ZahlungDurchfuehren" />
     <bpmn:participant id="StripeOnlineBezahldienstParticipant" name="Stripe Online-Bezahldienst" />
@@ -25,38 +25,45 @@
     <bpmn:userTask id="ErfassenDerZahlungsdetails" name="Erfassen der Zahlungsdetails" camunda:formKey="embedded:app:forms/ErfassenDerZahlungsdetailsForm.html" camunda:assignee="${meldePflichtiger}">
       <bpmn:documentation>ÜBERBLICK
 ==========
-Im aufgerufenen Prozess erfasst der Meldepflichtige die Zahlungsdetails (z.B. Kreditkartennummer) in einem mit Stripe Checkout-Formular. Die Zahlungsdetails werden direkt an den Stripe-Server gesendet, also so, dass nur Stripe diese Zahlungsdetails erhält und somit die Umzugsplattform automatisch PCI compliant ist. Im Normalfall erhält Stripe Checkout ein Token zurück und übergibt dieses dem Umzugsplattform-Client. Dieser sendet das Token für die weitere Verarbeitung als Prozessvariable an die Process Engine. 
+Im aufgerufenen Prozess erfasst der Meldepflichtige die Zahlungsdetails (z.B. Kreditkartennummer) in einem Stripe Checkout-Formular. Die Zahlungsdetails werden direkt an den Stripe-Server gesendet, also so, dass nur Stripe diese Zahlungsdetails erhält und somit die Umzugsplattform automatisch PCI compliant ist. Im Normalfall erhält Stripe Checkout ein Token zurück und übergibt dieses dem Umzugsplattform-Client. Dieser sendet das Token für die weitere Verarbeitung als Prozessvariable an die Process Engine. 
 
 MELDUNGEN
 ===========
-Info-Meldung, welche initial angezeigt wird: "Bitte klicken Sie auf Zahlungsdetails erfassen und geben Sie dann Ihre Kreditkartenangaben im erscheinenden Formular ein und klicken Sie auf Bezahlen.
+INFO-MELDUNG, welche angezeigt wird, bevor die Zahlungsdetails erfasst werden (also beim Laden des Formulars):
+"Bitte klicken Sie auf Zahlungsdetails erfassen und geben Sie dann Ihre Kreditkartenangaben im erscheinenden Formular ein und klicken Sie auf Bezahlen.
+
 Diese Angaben gehen verschlüsselt direkt an den Online-Bezahldienst Stripe. Auf diese Weise sehen wir als Betreiber der Umzugsplattform nie Ihre Kreditkartendaten.       
 
 Wenn alles klappt, schliesst das Formular und nach einigen Sekunden wird dieser Text durch einen grün hinterlegten Bestätigungstext ersetzt"
 
-Erfolgsmeldung, welche angezeigt wird, wenn ein Token erhalten wurde: "Besten Dank für die Zahlungsdetails, welche formal erfolgreich geprüft werden konnten.    
-Klicken Sie nun auf Complete, um die Zahlung mit diesen Angaben zu veranlassen. Einige Sekunden danach sollten Sie entweder eine Zahlungsbestätigung sehen oder erneut zu diesem Formular geführt werden, falls die Zahlung nicht geklappt hat."
+ERFOLGSMELDUNG, welche angezeigt wird, wenn ein Token erhalten wurde:
+"Besten Dank für die Zahlungsdetails, welche formal erfolgreich geprüft werden konnten.    
 
-Warnmeldung, die angezeigt wird, wenn das Formular angezeigt wird, nachdem ein Charge nicht erfolgreich durchgeführt werden konnte: "Die Zahlung konnte leider nicht erfolgreich durchgeführt werden.       
-Stripe hat folgenden Grund angegeben: {{chargingErrorMessage}}.
+Klicken Sie nun auf Abschliessen, um die Zahlung mit diesen Angaben zu veranlassen. Einige Sekunden danach sollten Sie entweder eine Zahlungsbestätigung sehen oder erneut zu diesem Formular geführt werden, falls die Zahlung nicht geklappt hat."
+
+WARNMELDUNG, die angezeigt wird, wenn das Formular erneut angezeigt wird, nachdem ein Charge im Service Task "Kartenbelastung veranlassen" nicht erfolgreich durchgeführt werden konnte:
+"Die Zahlung konnte leider nicht erfolgreich durchgeführt werden.      
+ 
+Stripe hat folgenden Grund angegeben: {{chargingErrorMessage}} [ist halt auf englisch, aber ok so].
 
 Versuchen Sie es innerhalb der nächsten 24 Stunden erneut, beispielsweise mit einer anderen Kreditkarte. Andernfalls bricht der Zahlungsvorgang als fehlgeschlagen gekennzeichnet ab."
+
+WARNMELDUNG, die angezeigt wird, wenn der Benutzer versucht, das Formular zu übermitteln (Schaltfläche Abschliessen), ohne das ein Token vorhanden ist:
+"Sie können das Formular nicht abschliessen, bevor Sie die Zahlungsdetails erfolgreich erfasst haben.
+
+Klicken Sie hierzu auf die Schaltfläche 'Zahlungsdetails erfassen'."
 
 
 STEUERELEMENTE
 ================
-Grosse Schaltfläche, welche beim Klick darauf das Stripe Checkout-Formular lädt
+Schaltfläche (Bootstrap primary button) mit der Bezeichnung "Zahlungsdetails erfassen"
 
 
 JAVASCRIPT
 ===========
-- Einbinden der Javascript-Bibliothek von Stripe, welche die ganze client-seitige Checkout-Funktionalität enthält
-- Prozessvariablen laden und AngularJS-Scope-Variablen zuweisen: feeMap, feesTotal, emailAddress und chargingErrorMessage
-- Für Checkout-Formular einen String zusammensetzen, welcher die Gebührenbeschreibungen aus feeMap enthält
-- Stripe-Checkout-Formular konfigurieren (Publishable Key, Bild, Sprache, usw.
-- Callback-Funktion bei erfolgreichem Erhalten eines Tokens, welche die Erfolgreich-Meldung anzeigt, die Zahlungsschaltfläche ausblendet und das Token in einer Scope-Variable speichert
-- EventListener-Funktion, welche auf das Klicken auf die Zahlungsschaltfläche reagiert und dabei das Stripe Checkout-Formular öffnet
-- Funkton, welche vor dem Submit des Formulars den von Stripe erhaltenen Token, respektive dessen Id in einer neuen Prozessvariable stripeToken speichert und damit an die Process Engine übergibt</bpmn:documentation>
+Siehe Aufgabenstellung zu Aufgabe 10.
+
+</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_158uvnj</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ygtjw5</bpmn:outgoing>
     </bpmn:userTask>
@@ -92,11 +99,25 @@ Bei den letzten zwei Gründen sollte der Prozess (Umzugsmeldung) eigentlich nich
     <bpmn:sequenceFlow id="SequenceFlow_158uvnj" sourceRef="ExclusiveGateway_01fnu1t" targetRef="ErfassenDerZahlungsdetails" />
     <bpmn:sequenceFlow id="SequenceFlow_0z6f99f" sourceRef="KartenbelastungFehlgeschlagen" targetRef="ExclusiveGateway_01fnu1t" />
     <bpmn:serviceTask id="KartenbelastungVeranlassen" name="Kartenbelastung veranlassen" camunda:delegateExpression="#{createChargeAdapter}">
-      <bpmn:documentation>Zahlungsanfrage an den StripeClientService senden und synchrone Antwort auswerten
+      <bpmn:documentation>DELEGATE
+=========
+Zahlungsanfrage an den StripeClientService senden und synchrone Antwort auswerten
 
 Es wird eine Kartenbelastungsanfrage an den StripeClientService mit dem Token und dem zu bezahlenden Betrag aus den Prozessvariablen übergeben.
 
-Synchron kommt von diesem Service eine Antwort zurück, entweder eine erfolgreiche Belastung der Kreditkarte (Charge) oder ein Error (StripeException). Im ersten Fall passiert in dieser Delegate-Klasse nichts mehr, im anderen Fall wird ein BPMN-Fehler geworfen.</bpmn:documentation>
+Synchron kommt von diesem Service eine Antwort zurück, entweder eine erfolgreiche Belastung der Kreditkarte (Charge) oder ein Error (StripeException). Im ersten Fall passiert in dieser Delegate-Klasse nichts mehr, im anderen Fall wird ein BPMN-Fehler geworfen analog dazu, wie dies in Kapitel 9 des Twitter-Review-Prozesses in der GetUserInformationDelegate-Klasse geschehen ist.
+
+SERVICE
+========
+Der StripeClientService existiert nicht bereits, sondern ist in einem Package services anzulegen.
+
+Er übernimmt die Kommunikation zwischen der Umzugsplattform und der Stripe REST API über die Nutzung der Stripe Java API-Library (als weitere Dependency hinzuzufügen -&gt; https://stripe.com/docs/libraries).
+
+Für die Kommunikation wird der Secret API Key benötigt.  Dieser darf nicht auf Github gepushed werden, sondern er ist analog zu Kapitel 8.3.3 im Twitter-Review-Prozess als lokale Umgebungsvariable zu setzen und zu nutzen.
+
+Der Service hat eine einzige Methode, welche als Input Parameter das Token und den Betrag erhält und als Rückgabe ein generisches Object zurück gibt, welches entweder einem Charge-Objekt oder einem StripeException-Objekt entspricht.
+
+Es ist also ein Error-Handling erforderlich, wie in https://stripe.com/docs/api/errors/handling?lang=java beschrieben erforderlich, da verschiedenste fachliche und technische Fehler auftreten können, wie z.B. hier aufgeführt: https://stripe.com/docs/declines. Es genügt hingegen die generische StripeException abzufangen und nicht alle Untertypen wie z.B. CardException. </bpmn:documentation>
       <bpmn:incoming>SequenceFlow_1ygtjw5</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ucel9t</bpmn:outgoing>
     </bpmn:serviceTask>
