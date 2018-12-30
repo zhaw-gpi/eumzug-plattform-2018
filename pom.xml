@@ -8,7 +8,7 @@
     <groupId>ch.zhaw.gpi</groupId>
     <artifactId>eumzug-plattform-2018</artifactId>
     <name>eUmzug Plattform 2018</name>
-    <version>3.0.4</version>
+    <version>3.2.1</version>
     
     <!-- Konfiguration des Maven-Projekts -->
     <properties>
@@ -17,7 +17,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         
         <!-- Setzt die Spring Boot-Starter-Version auf 3.0.0, was Camunda 7.9 enthält -->
-        <camunda-bpm-spring-boot-starter.version>3.0.0</camunda-bpm-spring-boot-starter.version>
+        <camunda-bpm-spring-boot-starter.version>3.2.0</camunda-bpm-spring-boot-starter.version>
         
         <!-- Setzt die Camunda-Version
              Vorsicht, dass diese bezüglich der ersten zwei Ziffern passend ist 
@@ -36,7 +36,7 @@
              Für Google Chrome ist das Vorgehen beschrieben hier:
              https://forum.camunda.org/t/spring-boot-webapp-login-screen-showing-placeholders/8402/3?u=scepbjoern
              -->
-        <camunda.version>7.9.2</camunda.version>
+        <camunda.version>7.10.1</camunda.version>
         
         <!-- Steuert, ob die Enterprise-Version von Camunda benutzt wird ("-ee" schreiben
              oder die Community-Version (leer lassen). Weitere Bedingungen:
@@ -59,7 +59,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.0.2.RELEASE</version>
+                <version>2.1.1.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -139,7 +139,7 @@
             <artifactId>spring-boot-starter-web-services</artifactId>
         </dependency>
         
-        <!-- Komponenten, um PDFs generieren zu können -->
+        <!-- Komponenten, um PDFs generieren zu können
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
@@ -148,7 +148,7 @@
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
-        </dependency>
+        </dependency>-->
         
         <!-- Camunda Spin-Abhängigkeiten für Serialisierung und Deserialisierung -->
         <dependency>
@@ -168,14 +168,14 @@
         <dependency>
             <groupId>com.stripe</groupId>
             <artifactId>stripe-java</artifactId>
-            <version>6.4.0</version>
+            <version>7.10.0</version>
         </dependency>
     </dependencies>
     
     <build>
         <plugins>
             <!-- The Spring Boot Maven Plugin provides Spring Boot support in Maven, 
-            allowing you to package executable jar or war archives and run an application “in-place”.
+            allowing you to package executable jar or war archives and run an application â€œin-placeâ€�.
             https://docs.spring.io/spring-boot/docs/2.0.4.RELEASE/maven-plugin/usage.html -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -203,7 +203,7 @@
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
                 <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.13.3</version>
+                <version>0.14.0</version>
                 <executions>
                     <execution>
                         <goals>
