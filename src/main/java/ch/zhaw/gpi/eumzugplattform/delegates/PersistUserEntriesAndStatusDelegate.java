@@ -63,11 +63,12 @@ public class PersistUserEntriesAndStatusDelegate implements JavaDelegate {
             PersonEntity personNeu = new PersonEntity();
 
             // Die Eigenschaften dieses Objekts auf die passenden lokalen Variablen setzen
-            personNeu.setLocalPersonId(localPersonId);
-            personNeu.setDateOfBirth(dateOfBirth);
-            personNeu.setFirstName(firstName);
-            personNeu.setOfficialName(officialName);
-            personNeu.setSex(sex);
+            personNeu
+                    .setLocalPersonId(localPersonId)
+                    .setDateOfBirth(dateOfBirth)
+                    .setFirstName(firstName)
+                    .setOfficialName(officialName)
+                    .setSex(sex);
             // AHV-Nummer ist optional und soll daher nur dann gesetzt werden, wenn vorhanden
             if (vn != null) {
                 personNeu.setVn(vn);
@@ -85,9 +86,10 @@ public class PersistUserEntriesAndStatusDelegate implements JavaDelegate {
         
         // Ein neues TransaktionsLog-Objekt mit den relevanten Angaben inkl. aktuellem Datum/Uhrzeit erstellen
         TransactionLogEntity transactionLog = new TransactionLogEntity();
-        transactionLog.setLogTimeStamp(new Date());
-        transactionLog.setPerson(personEntity);
-        transactionLog.setState(stateEntity);
+        transactionLog
+                .setLogTimeStamp(new Date())
+                .setPerson(personEntity)
+                .setState(stateEntity);
 
         // Das neue TransaktionsLog-Objekt persistieren
         transactionLogRepository.save(transactionLog);

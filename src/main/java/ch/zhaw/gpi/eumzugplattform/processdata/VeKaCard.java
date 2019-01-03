@@ -22,23 +22,26 @@ public class VeKaCard {
         return baseInsured;
     }
 
-    public void setBaseInsured(boolean baseInsured) {
+    public VeKaCard setBaseInsured(boolean baseInsured) {
         this.baseInsured = baseInsured;
+        return this;
     }
 
     public Date getExpiryDate() {
         return expiryDate;
     }
 
-    public void setExpiryDate(Date expiryDate) {
+    public VeKaCard setExpiryDate(Date expiryDate) {
         this.expiryDate = expiryDate;
+        return this;
     }
 
     public Person getInsuredPerson() {
         return insuredPerson;
     }
 
-    public void setInsuredPerson(Person insuredPerson) {
+    public VeKaCard setInsuredPerson(Person insuredPerson) {
         this.insuredPerson = insuredPerson;
+        return this;
     }
 }

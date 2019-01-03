@@ -55,48 +55,54 @@ public class PersonEntity implements Serializable{
         return localPersonId;
     }
 
-    public void setLocalPersonId(String localPersonId) {
+    public PersonEntity setLocalPersonId(String localPersonId) {
         this.localPersonId = localPersonId;
+        return this;
     }
 
     public Long getVn() {
         return vn;
     }
 
-    public void setVn(Long vn) {
+    public PersonEntity setVn(Long vn) {
         this.vn = vn;
+        return this;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public PersonEntity setFirstName(String firstName) {
         this.firstName = firstName;
+        return this;
     }
 
     public String getOfficialName() {
         return officialName;
     }
 
-    public void setOfficialName(String officialName) {
+    public PersonEntity setOfficialName(String officialName) {
         this.officialName = officialName;
+        return this;
     }
 
     public int getSex() {
         return sex;
     }
 
-    public void setSex(int sex) {
+    public PersonEntity setSex(int sex) {
         this.sex = sex;
+        return this;
     }
 
     public Date getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public PersonEntity setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+        return this;
     }
     
     

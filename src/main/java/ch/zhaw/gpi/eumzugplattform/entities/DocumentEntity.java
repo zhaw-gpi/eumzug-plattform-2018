@@ -28,16 +28,18 @@ public class DocumentEntity implements Serializable {
         return documentId;
     }
 
-    public void setDocumentId(int documentId) {
+    public DocumentEntity setDocumentId(int documentId) {
         this.documentId = documentId;
+        return this;
     }
     
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public DocumentEntity setName(String name) {
         this.name = name;
+        return this;
     }
 
 }

@@ -37,32 +37,36 @@ public class StateEntity implements Serializable{
         return stateId;
     }
 
-    public void setStateId(Long stateId) {
+    public StateEntity setStateId(Long stateId) {
         this.stateId = stateId;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public StateEntity setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getGermanText() {
         return germanText;
     }
 
-    public void setGermanText(String germanText) {
+    public StateEntity setGermanText(String germanText) {
         this.germanText = germanText;
+        return this;
     }
 
     public String getEnglishText() {
         return englishText;
     }
 
-    public void setEnglishText(String englishText) {
+    public StateEntity setEnglishText(String englishText) {
         this.englishText = englishText;
+        return this;
     }
     
 }

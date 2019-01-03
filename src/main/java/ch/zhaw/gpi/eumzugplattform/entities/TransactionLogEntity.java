@@ -42,32 +42,36 @@ public class TransactionLogEntity implements Serializable {
         return logId;
     }
 
-    public void setLogId(Long logId) {
+    public TransactionLogEntity setLogId(Long logId) {
         this.logId = logId;
+        return this;
     }
 
     public Date getLogTimeStamp() {
         return logTimeStamp;
     }
 
-    public void setLogTimeStamp(Date logTimeStamp) {
+    public TransactionLogEntity setLogTimeStamp(Date logTimeStamp) {
         this.logTimeStamp = logTimeStamp;
+        return this;
     }
 
     public StateEntity getState() {
         return state;
     }
 
-    public void setState(StateEntity state) {
+    public TransactionLogEntity setState(StateEntity state) {
         this.state = state;
+        return this;
     }
 
     public PersonEntity getPerson() {
         return person;
     }
 
-    public void setPerson(PersonEntity person) {
+    public TransactionLogEntity setPerson(PersonEntity person) {
         this.person = person;
+        return this;
     }
     
 }

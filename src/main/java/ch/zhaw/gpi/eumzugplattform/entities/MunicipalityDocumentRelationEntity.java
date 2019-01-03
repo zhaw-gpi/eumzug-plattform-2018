@@ -46,40 +46,45 @@ public class MunicipalityDocumentRelationEntity implements Serializable {
         return documentEntity;
     }
 
-    public void setDocumentEntity(DocumentEntity documentEntity) {
+    public MunicipalityDocumentRelationEntity setDocumentEntity(DocumentEntity documentEntity) {
         this.documentEntity = documentEntity;
+        return this;
     }
 
     public Boolean isStrangerCondition() {
         return strangerCondition;
     }
 
-    public void setStrangerCondition(Boolean strangerCondition) {
+    public MunicipalityDocumentRelationEntity setStrangerCondition(Boolean strangerCondition) {
         this.strangerCondition = strangerCondition;
+        return this;
     }
 
     public Boolean isChildrenCondition() {
         return childrenCondition;
     }
 
-    public void setChildrenCondition(Boolean childrenCondition) {
+    public MunicipalityDocumentRelationEntity setChildrenCondition(Boolean childrenCondition) {
         this.childrenCondition = childrenCondition;
+        return this;
     }
 
     public Boolean isMarriageCondition() {
         return marriageCondition;
     }
 
-    public void setMarriageCondition(Boolean marriageCondition) {
+    public MunicipalityDocumentRelationEntity setMarriageCondition(Boolean marriageCondition) {
         this.marriageCondition = marriageCondition;
+        return this;
     }
 
     public Long getMunicipalityDocumentId() {
         return municipalityDocumentId;
     }
 
-    public void setMunicipalityDocumentId(Long municipalityDocumentId) {
+    public MunicipalityDocumentRelationEntity setMunicipalityDocumentId(Long municipalityDocumentId) {
         this.municipalityDocumentId = municipalityDocumentId;
+        return this;
     }
 
 }

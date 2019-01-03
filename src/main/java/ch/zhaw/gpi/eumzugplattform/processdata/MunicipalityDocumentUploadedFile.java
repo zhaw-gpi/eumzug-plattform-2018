@@ -23,23 +23,26 @@ public class MunicipalityDocumentUploadedFile implements Serializable {
         return municipalityDocumentRelationEntity;
     }
 
-    public void setMunicipalityDocumentRelationEntity(MunicipalityDocumentRelationEntity municipalityDocumentRelationEntity) {
+    public MunicipalityDocumentUploadedFile setMunicipalityDocumentRelationEntity(MunicipalityDocumentRelationEntity municipalityDocumentRelationEntity) {
         this.municipalityDocumentRelationEntity = municipalityDocumentRelationEntity;
+        return this;
     }
 
     public String getFileDataUrl() {
         return fileDataUrl;
     }
 
-    public void setFileDataUrl(String fileDataUrl) {
+    public MunicipalityDocumentUploadedFile setFileDataUrl(String fileDataUrl) {
         this.fileDataUrl = fileDataUrl;
+        return this;
     }
 
     public String getFileName() {
         return fileName;
     }
 
-    public void setFileName(String fileName) {
+    public MunicipalityDocumentUploadedFile setFileName(String fileName) {
         this.fileName = fileName;
+        return this;
     }
 }

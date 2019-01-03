@@ -56,58 +56,66 @@ public class MunicipalityEntity implements Serializable {
         return municipalityId;
     }
 
-    public void setMunicipalityId(int municipalityId) {
+    public MunicipalityEntity setMunicipalityId(int municipalityId) {
         this.municipalityId = municipalityId;
+        return this;
     }
     
     public String getMunicipalityName() {
         return municipalityName;
     }
 
-    public void setMunicipalityName(String municipalityName) {
+    public MunicipalityEntity setMunicipalityName(String municipalityName) {
         this.municipalityName = municipalityName;
+        return this;
     }    
 
     public int getFeeMove() {
         return feeMove;
     }
 
-    public void setFeeMove(int feeMove) {
+    public MunicipalityEntity setFeeMove(int feeMove) {
         this.feeMove = feeMove;
+        return this;
     }    
 
     public int getFeeMoveOut() {
         return this.feeMoveOut;
     }
 
-    public void setFeeMoveOut(int feeMoveOut) {
+    public MunicipalityEntity setFeeMoveOut(int feeMoveOut) {
         this.feeMoveOut = feeMoveOut;
+        return this;
     }
 
     public int getFeeMoveIn() {
         return this.feeMoveIn;
     }
 
-    public void setFeeMoveIn(int feeMoveIn) {
+    public MunicipalityEntity setFeeMoveIn(int feeMoveIn) {
         this.feeMoveIn = feeMoveIn;
+        return this;
     }
     
     public List<MunicipalityDocumentRelationEntity> getMunicipalityDocumentRelationEntities() {
         return municipalityDocumentRelationEntities;
     }
 
-    public void setMunicipalityDocumentRelationEntities(List<MunicipalityDocumentRelationEntity> municipalityDocumentRelationEntities) {
+    public MunicipalityEntity setMunicipalityDocumentRelationEntities(List<MunicipalityDocumentRelationEntity> municipalityDocumentRelationEntities) {
         this.municipalityDocumentRelationEntities = municipalityDocumentRelationEntities;
+        return this;
     }
     
     // Hinzufügen von einer neuen MunicipalityDocumentRelationEntity
-    public void addMunicipalityDocumentRelationEntity(MunicipalityDocumentRelationEntity municipalityDocumentRelationEntity) {
+    public MunicipalityEntity addMunicipalityDocumentRelationEntity(MunicipalityDocumentRelationEntity municipalityDocumentRelationEntity) {
         this.municipalityDocumentRelationEntities.add(municipalityDocumentRelationEntity);
+        return this;
     }
     
     // Entfernen einer MunicipalityDocumentRelationEntity
-    public void removeMunicipalityDocumentRelationEntity(MunicipalityDocumentRelationEntity municipalityDocumentRelationEntity) {
+    public MunicipalityEntity removeMunicipalityDocumentRelationEntity(MunicipalityDocumentRelationEntity municipalityDocumentRelationEntity) {
         this.municipalityDocumentRelationEntities.remove(municipalityDocumentRelationEntity);
+        return this;
     }
     
 }
