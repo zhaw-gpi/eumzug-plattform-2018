@@ -1,12 +1,8 @@
 package ch.zhaw.gpi.eumzugplattform.entities;
 
 import java.io.Serializable;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -45,11 +41,6 @@ public class MunicipalityEntity implements Serializable {
     @Min(value = 0)
     @Max(value = 50)
     private int feeMoveIn;
-    
-    // Liste benötigter Dokumente inkl. Hochlad-Bedingungen
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "MUNICIPALITY_ID")
-    private List<MunicipalityDocumentRelationEntity> municipalityDocumentRelationEntities;
     
     // GETTER UND SETTER
     public int getMunicipalityId() {
@@ -96,26 +87,4 @@ public class MunicipalityEntity implements Serializable {
         this.feeMoveIn = feeMoveIn;
         return this;
     }
-    
-    public List<MunicipalityDocumentRelationEntity> getMunicipalityDocumentRelationEntities() {
-        return municipalityDocumentRelationEntities;
-    }
-
-    public MunicipalityEntity setMunicipalityDocumentRelationEntities(List<MunicipalityDocumentRelationEntity> municipalityDocumentRelationEntities) {
-        this.municipalityDocumentRelationEntities = municipalityDocumentRelationEntities;
-        return this;
-    }
-    
-    // Hinzufügen von einer neuen MunicipalityDocumentRelationEntity
-    public MunicipalityEntity addMunicipalityDocumentRelationEntity(MunicipalityDocumentRelationEntity municipalityDocumentRelationEntity) {
-        this.municipalityDocumentRelationEntities.add(municipalityDocumentRelationEntity);
-        return this;
-    }
-    
-    // Entfernen einer MunicipalityDocumentRelationEntity
-    public MunicipalityEntity removeMunicipalityDocumentRelationEntity(MunicipalityDocumentRelationEntity municipalityDocumentRelationEntity) {
-        this.municipalityDocumentRelationEntities.remove(municipalityDocumentRelationEntity);
-        return this;
-    }
-    
 }

@@ -82,14 +82,14 @@ public class PersistUserEntriesAndStatusDelegate implements JavaDelegate {
         String status = (String) execution.getVariable("status");
         
         // Zugehörigen Status finden
-        StateEntity stateEntity = stateRepository.findByName(status);
+        Optional<StateEntity> stateEntity = stateRepository.findByName(status);
         
         // Ein neues TransaktionsLog-Objekt mit den relevanten Angaben inkl. aktuellem Datum/Uhrzeit erstellen
         TransactionLogEntity transactionLog = new TransactionLogEntity();
         transactionLog
                 .setLogTimeStamp(new Date())
                 .setPerson(personEntity)
-                .setState(stateEntity);
+                .setState(stateEntity.get());
 
         // Das neue TransaktionsLog-Objekt persistieren
         transactionLogRepository.save(transactionLog);

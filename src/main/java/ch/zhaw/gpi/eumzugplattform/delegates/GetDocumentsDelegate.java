@@ -4,6 +4,7 @@ import ch.zhaw.gpi.eumzugplattform.processdata.DocumentList;
 import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityDocumentRelationEntity;
 import ch.zhaw.gpi.eumzugplattform.processdata.MunicipalityDocumentUploadedFile;
 import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityEntity;
+import ch.zhaw.gpi.eumzugplattform.repositories.MunicipalityDocumentRelationRepository;
 import ch.zhaw.gpi.eumzugplattform.repositories.MunicipalityRepository;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,9 @@ public class GetDocumentsDelegate implements JavaDelegate {
     // Das für die Datenbankabfragen zuständige Data Access Object wird als Dependency injiziert
     @Autowired
     private MunicipalityRepository municipalityRepository;
+    
+    @Autowired
+    private MunicipalityDocumentRelationRepository municipalityDocumentRelationRepository;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -58,8 +62,8 @@ public class GetDocumentsDelegate implements JavaDelegate {
 
         // Prüfen, ob auch wirklich ein Result zurückgegeben wurde
         if (moveInMunicipalityResult.isPresent()) {
-            // Falls ja, alle MunicipalityDocumentRelationEntity-Objekte aus dem MunicipalityEntity Objekt als Liste erhalten
-            municipalityDocuments = moveInMunicipalityResult.get().getMunicipalityDocumentRelationEntities();
+            // Falls ja, alle MunicipalityDocumentRelationEntity-Objekte in Beziehung zum MunicipalityEntity Objekt erhalten
+            municipalityDocuments = municipalityDocumentRelationRepository.findByMunicipalityEntity(moveInMunicipalityResult.get());
 
             // Prüfen ob die municipalityDocuments Liste nicht null und nicht leer ist. 
             // Nur falls mind. 1 Dokument in der Liste vorhanden ist, wird die Variable documentsExist 

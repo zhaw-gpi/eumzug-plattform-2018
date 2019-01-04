@@ -41,6 +41,11 @@ public class MunicipalityDocumentRelationEntity implements Serializable {
     @JoinColumn(name = "DOCUMENT_ID")
     private DocumentEntity documentEntity;
     
+    // Referenz auf eine Gemeinde (wird in Datenbank über Foreign Key implementiert)
+    @ManyToOne
+    @JoinColumn(name = "MUNICIPALITY_ID")
+    private MunicipalityEntity municipalityEntity;
+    
     // GETTER UND SETTER
     public DocumentEntity getDocumentEntity() {
         return documentEntity;
@@ -50,6 +55,17 @@ public class MunicipalityDocumentRelationEntity implements Serializable {
         this.documentEntity = documentEntity;
         return this;
     }
+
+    public MunicipalityEntity getMunicipalityEntity() {
+        return municipalityEntity;
+    }
+
+    public MunicipalityDocumentRelationEntity setMunicipalityEntity(MunicipalityEntity municipalityEntity) {
+        this.municipalityEntity = municipalityEntity;
+        return this;
+    }
+    
+    
 
     public Boolean isStrangerCondition() {
         return strangerCondition;
