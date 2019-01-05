@@ -10,19 +10,19 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 /**
- * Enitity-Klasse für Kombination aus Gemeinde und einem Dokument
+ * Enitity-Klasse für Kombination aus Gemeinde und einem Dokumententyp
  * 
  * Da weitere Attribute vorhanden sind, kann nicht @ManyToMany genutzt werden
  *
  * @author scep
  */
-@Entity(name = "MunicipalityDocumentRelation")
-public class MunicipalityDocumentRelationEntity implements Serializable {
+@Entity
+public class MunicipalityDocumentType implements Serializable {
 
     // Automatisch gesetzte Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long municipalityDocumentId;
+    private Long id;
 
     // Hochladen-Bedingung Zivilstand (nur wenn verheiratet)
     @NotNull
@@ -38,30 +38,30 @@ public class MunicipalityDocumentRelationEntity implements Serializable {
     
     // Referenz auf ein Dokument (wird in Datenbank über Foreign Key implementiert)
     @ManyToOne
-    @JoinColumn(name = "DOCUMENT_ID")
-    private DocumentEntity documentEntity;
+    @JoinColumn(name = "DOCUMENT_TYPE_ID")
+    private DocumentType documentType;
     
     // Referenz auf eine Gemeinde (wird in Datenbank über Foreign Key implementiert)
     @ManyToOne
     @JoinColumn(name = "MUNICIPALITY_ID")
-    private MunicipalityEntity municipalityEntity;
+    private Municipality municipality;
     
     // GETTER UND SETTER
-    public DocumentEntity getDocumentEntity() {
-        return documentEntity;
+    public DocumentType getDocumentType() {
+        return documentType;
     }
 
-    public MunicipalityDocumentRelationEntity setDocumentEntity(DocumentEntity documentEntity) {
-        this.documentEntity = documentEntity;
+    public MunicipalityDocumentType setDocumentType(DocumentType documentType) {
+        this.documentType = documentType;
         return this;
     }
 
-    public MunicipalityEntity getMunicipalityEntity() {
-        return municipalityEntity;
+    public Municipality getMunicipality() {
+        return municipality;
     }
 
-    public MunicipalityDocumentRelationEntity setMunicipalityEntity(MunicipalityEntity municipalityEntity) {
-        this.municipalityEntity = municipalityEntity;
+    public MunicipalityDocumentType setMunicipality(Municipality municipality) {
+        this.municipality = municipality;
         return this;
     }
     
@@ -71,7 +71,7 @@ public class MunicipalityDocumentRelationEntity implements Serializable {
         return strangerCondition;
     }
 
-    public MunicipalityDocumentRelationEntity setStrangerCondition(Boolean strangerCondition) {
+    public MunicipalityDocumentType setStrangerCondition(Boolean strangerCondition) {
         this.strangerCondition = strangerCondition;
         return this;
     }
@@ -80,7 +80,7 @@ public class MunicipalityDocumentRelationEntity implements Serializable {
         return childrenCondition;
     }
 
-    public MunicipalityDocumentRelationEntity setChildrenCondition(Boolean childrenCondition) {
+    public MunicipalityDocumentType setChildrenCondition(Boolean childrenCondition) {
         this.childrenCondition = childrenCondition;
         return this;
     }
@@ -89,17 +89,17 @@ public class MunicipalityDocumentRelationEntity implements Serializable {
         return marriageCondition;
     }
 
-    public MunicipalityDocumentRelationEntity setMarriageCondition(Boolean marriageCondition) {
+    public MunicipalityDocumentType setMarriageCondition(Boolean marriageCondition) {
         this.marriageCondition = marriageCondition;
         return this;
     }
 
-    public Long getMunicipalityDocumentId() {
-        return municipalityDocumentId;
+    public Long getId() {
+        return id;
     }
 
-    public MunicipalityDocumentRelationEntity setMunicipalityDocumentId(Long municipalityDocumentId) {
-        this.municipalityDocumentId = municipalityDocumentId;
+    public MunicipalityDocumentType setId(Long id) {
+        this.id = id;
         return this;
     }
 

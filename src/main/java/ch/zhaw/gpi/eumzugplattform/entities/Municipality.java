@@ -13,8 +13,8 @@ import javax.validation.constraints.Size;
  * 
  * @author scep
  */
-@Entity(name = "Municipality")
-public class MunicipalityEntity implements Serializable {
+@Entity
+public class Municipality implements Serializable {
 
     // Manuell gesetzte Id (BFS-Nummer)
     @Id
@@ -47,7 +47,7 @@ public class MunicipalityEntity implements Serializable {
         return municipalityId;
     }
 
-    public MunicipalityEntity setMunicipalityId(int municipalityId) {
+    public Municipality setMunicipalityId(int municipalityId) {
         this.municipalityId = municipalityId;
         return this;
     }
@@ -56,7 +56,7 @@ public class MunicipalityEntity implements Serializable {
         return municipalityName;
     }
 
-    public MunicipalityEntity setMunicipalityName(String municipalityName) {
+    public Municipality setMunicipalityName(String municipalityName) {
         this.municipalityName = municipalityName;
         return this;
     }    
@@ -65,7 +65,7 @@ public class MunicipalityEntity implements Serializable {
         return feeMove;
     }
 
-    public MunicipalityEntity setFeeMove(int feeMove) {
+    public Municipality setFeeMove(int feeMove) {
         this.feeMove = feeMove;
         return this;
     }    
@@ -74,7 +74,7 @@ public class MunicipalityEntity implements Serializable {
         return this.feeMoveOut;
     }
 
-    public MunicipalityEntity setFeeMoveOut(int feeMoveOut) {
+    public Municipality setFeeMoveOut(int feeMoveOut) {
         this.feeMoveOut = feeMoveOut;
         return this;
     }
@@ -83,7 +83,7 @@ public class MunicipalityEntity implements Serializable {
         return this.feeMoveIn;
     }
 
-    public MunicipalityEntity setFeeMoveIn(int feeMoveIn) {
+    public Municipality setFeeMoveIn(int feeMoveIn) {
         this.feeMoveIn = feeMoveIn;
         return this;
     }

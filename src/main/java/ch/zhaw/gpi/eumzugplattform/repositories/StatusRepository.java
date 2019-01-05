@@ -1,6 +1,6 @@
 package ch.zhaw.gpi.eumzugplattform.repositories;
 
-import ch.zhaw.gpi.eumzugplattform.entities.StateEntity;
+import ch.zhaw.gpi.eumzugplattform.entities.Status;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * 
  * @author Stefan Fischer und scep
  */
-public interface StateRepository extends JpaRepository<StateEntity, Long>{
+public interface StatusRepository extends JpaRepository<Status, Long>{
     
 // Methodendeklaration, um einen Status basierend auf Namen zu erhalten
-    Optional<StateEntity> findByName(String name);
+    Optional<Status> findByName(String name);
 }

@@ -1,54 +1,54 @@
 package ch.zhaw.gpi.eumzugplattform.delegates;
 
-import ch.zhaw.gpi.eumzugplattform.entities.PersonEntity;
-import ch.zhaw.gpi.eumzugplattform.entities.StateEntity;
-import ch.zhaw.gpi.eumzugplattform.entities.TransactionLogEntity;
+import ch.zhaw.gpi.eumzugplattform.entities.Person;
+import ch.zhaw.gpi.eumzugplattform.entities.Status;
+import ch.zhaw.gpi.eumzugplattform.entities.TransactionLogEntry;
 import ch.zhaw.gpi.eumzugplattform.repositories.PersonRepository;
-import ch.zhaw.gpi.eumzugplattform.repositories.StateRepository;
-import ch.zhaw.gpi.eumzugplattform.repositories.TransactionLogRepository;
 import java.util.Date;
 import java.util.Optional;
 import javax.inject.Named;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
+import ch.zhaw.gpi.eumzugplattform.repositories.StatusRepository;
+import ch.zhaw.gpi.eumzugplattform.repositories.TransactionLogEntryRepository;
 
 /**
- * TransactionLogEntity-Eintrag in Umzugsplattform-DB einfügen
- *
- * Über ein JPA-Repository wird basierend auf der Prozessvariable localPersonId
- * ein PersonEntity-Objekt aus der Datenbank gesucht. Wurde keines gefunden,
- * wird eine neue PersonEntity angelegt mit den verschiedenen
- * Prozessvariablen-Inhalten zur Personenidentifikation.
- *
- * Nun wird ein TransactionLogEntity-Objekt angelegt mit dem Verweis auf das
- * PersonEntity-Objekt, mit der aktuellen Uhrzeit und dem status.
+ * TransactionLogEntry-Eintrag in Umzugsplattform-DB einfügen
+
+ Über ein JPA-Repository wird basierend auf der Prozessvariable localPersonId
+ ein Person-Objekt aus der Datenbank gesucht. Wurde keines gefunden,
+ wird eine neue Person angelegt mit den verschiedenen
+ Prozessvariablen-Inhalten zur Personenidentifikation.
+
+ Nun wird ein TransactionLogEntry-Objekt angelegt mit dem Verweis auf das
+ Person-Objekt, mit der aktuellen Uhrzeit und dem status.
  */
 @Named("persistUserEntriesAndStatusAdapter")
 public class PersistUserEntriesAndStatusDelegate implements JavaDelegate {
 
-    // Die Referenzen auf die PersonEntity-, TransactionLog- und StateRepository-Instanzen erhalten
+    // Die Referenzen auf die Person-, TransactionLog- und StatusRepository-Instanzen erhalten
     @Autowired
     private PersonRepository personRepository;
     @Autowired
-    private TransactionLogRepository transactionLogRepository;
+    private TransactionLogEntryRepository transactionLogEntryRepository;
     @Autowired
-    private StateRepository stateRepository;
+    private StatusRepository statusRepository;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         // Person-Objekt initialisiern
-        PersonEntity personEntity;
+        Person personEntity;
 
-        // Für die Suche nach der PersonEntity erforderliche Prozessvariablen localPersonId auslesen
+        // Für die Suche nach der Person erforderliche Prozessvariablen localPersonId auslesen
         String localPersonId = (String) execution.getVariable("localPersonId");
 
-        // Die PersonEntity mit der Id localPersonId finden
-        Optional<PersonEntity> personResult = personRepository.findById(localPersonId);
+        // Die Person mit der Id localPersonId finden
+        Optional<Person> personResult = personRepository.findById(localPersonId);
 
         // Prüfen, ob ein Result zurückgegeben wurde
         if (personResult.isPresent()) {
-            // Falls ja, dann das Resultat der PersonEntity-Variablen zuordnen
+            // Falls ja, dann das Resultat der Person-Variablen zuordnen
             personEntity = personResult.get();
         } else {
             // Falls nein, eine neue Person anlegen mit den entsprechenden Daten:
@@ -59,8 +59,8 @@ public class PersistUserEntriesAndStatusDelegate implements JavaDelegate {
             Date dateOfBirth = (Date) execution.getVariable("dateOfBirth");
             Integer sex = (Integer) execution.getVariable("sex");
 
-            // Ein neues PersonEntity-Objekt erstellen
-            PersonEntity personNeu = new PersonEntity();
+            // Ein neues Person-Objekt erstellen
+            Person personNeu = new Person();
 
             // Die Eigenschaften dieses Objekts auf die passenden lokalen Variablen setzen
             personNeu
@@ -74,24 +74,24 @@ public class PersistUserEntriesAndStatusDelegate implements JavaDelegate {
                 personNeu.setVn(vn);
             }
 
-            // Das neue PersonEntity-Objekt persistieren und zurückgeben
+            // Das neue Person-Objekt persistieren und zurückgeben
             personEntity = personRepository.save(personNeu);
         }
 
         // Status-Variable auslesen
-        String status = (String) execution.getVariable("status");
+        String statusName = (String) execution.getVariable("status");
         
         // Zugehörigen Status finden
-        Optional<StateEntity> stateEntity = stateRepository.findByName(status);
+        Optional<Status> status = statusRepository.findByName(statusName);
         
         // Ein neues TransaktionsLog-Objekt mit den relevanten Angaben inkl. aktuellem Datum/Uhrzeit erstellen
-        TransactionLogEntity transactionLog = new TransactionLogEntity();
-        transactionLog
+        TransactionLogEntry transactionLogEntry = new TransactionLogEntry();
+        transactionLogEntry
                 .setLogTimeStamp(new Date())
                 .setPerson(personEntity)
-                .setState(stateEntity.get());
+                .setStatus(status.get());
 
         // Das neue TransaktionsLog-Objekt persistieren
-        transactionLogRepository.save(transactionLog);
+        transactionLogEntryRepository.save(transactionLogEntry);
     }
 }

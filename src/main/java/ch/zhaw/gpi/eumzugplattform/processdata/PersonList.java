@@ -18,21 +18,21 @@ import java.util.List;
  * @author scep
  */
 public final class PersonList implements Serializable {
-    private List<Person> persons;
+    private List<PersonPD> persons;
     
     public PersonList(){
         this.persons = new ArrayList<>();
     }
 
-    public List<Person> getPersons() {
+    public List<PersonPD> getPersons() {
         return persons;
     }
 
-    public void setPersons(List<Person> persons) {
+    public void setPersons(List<PersonPD> persons) {
         this.persons = persons;
     }
     
-    public void addPerson(Person person){
+    public void addPerson(PersonPD person){
         this.persons.add(person);
     }
     

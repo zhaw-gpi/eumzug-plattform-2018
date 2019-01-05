@@ -119,7 +119,7 @@
             <jpa:query>Select p from PersonEntity p where p.vn_Long_7560000000001-=:vn_Long_7560000000001-</jpa:query>
         </jpa:nq>
     </jpa:entity>
-    <jpa:entity compositePrimaryKeyClass="MunicipalityEntityPK" abs="false" class="MunicipalityEntity" v="true" jbn="false" xre="false" m="false" rootElement="_150939164300876" id="_150939218792097">
+    <jpa:entity compositePrimaryKeyClass="MunicipalityPK" abs="false" class="Municipality" v="true" jbn="false" xre="false" m="false" rootElement="_150939164300876" id="_150939218792097">
         <jpa:inf e="true" n="java.io.Serializable"/>
         <jpa:ath>scep</jpa:ath>
         <jpa:attributes>
@@ -172,17 +172,17 @@
                 <jpa:generated-value/>
             </jpa:id>
         </jpa:attributes>
-        <jpa:nq e="false" name="MunicipalityEntity.findAll">
-            <jpa:query>Select e from MunicipalityEntity e</jpa:query>
+        <jpa:nq e="false" name="Municipality.findAll">
+            <jpa:query>Select e from Municipality e</jpa:query>
         </jpa:nq>
         <jpa:nq e="false" name="Municipality.findByMunicipalityName_String_1-40_NotNull">
-            <jpa:query>Select m from MunicipalityEntity m where m.municipalityName_String_1-40_NotNull=:municipalityName_String_1-40_NotNull</jpa:query>
+            <jpa:query>Select m from Municipality m where m.municipalityName_String_1-40_NotNull=:municipalityName_String_1-40_NotNull</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="MunicipalityEntity.findByFeeMoveOut_int_0-50">
-            <jpa:query>Select m from MunicipalityEntity m where m.feeMoveOut_int_0-50=:feeMoveOut_int_0-50</jpa:query>
+        <jpa:nq e="false" name="Municipality.findByFeeMoveOut_int_0-50">
+            <jpa:query>Select m from Municipality m where m.feeMoveOut_int_0-50=:feeMoveOut_int_0-50</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="MunicipalityEntity.findByWebServiceURL">
-            <jpa:query>Select m from MunicipalityEntity m where m.webServiceURL=:webServiceURL</jpa:query>
+        <jpa:nq e="false" name="Municipality.findByWebServiceURL">
+            <jpa:query>Select m from Municipality m where m.webServiceURL=:webServiceURL</jpa:query>
         </jpa:nq>
     </jpa:entity>
     <jpa:entity compositePrimaryKeyClass="MunicipalityDocumentRelationEntityPK" abs="false" class="MunicipalityDocumentRelationEntity" v="true" jbn="false" xre="false" m="false" rootElement="_150939164300876" id="_151422195308514">

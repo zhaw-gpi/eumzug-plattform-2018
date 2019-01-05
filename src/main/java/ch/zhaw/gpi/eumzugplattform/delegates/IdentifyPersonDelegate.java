@@ -7,9 +7,9 @@ import ch.ech.xmlns.ech_0044._4.PersonIdentificationType;
 import ch.ech.xmlns.ech_0194._1.InfoType;
 import ch.ech.xmlns.ech_0194._1.PersonMoveRequest;
 import ch.ech.xmlns.ech_0194._1.PersonMoveResponse;
-import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityEntity;
+import ch.zhaw.gpi.eumzugplattform.entities.Municipality;
 import static ch.zhaw.gpi.eumzugplattform.helpers.DateConversionHelper.DateToXMLGregorianCalendar;
-import ch.zhaw.gpi.eumzugplattform.processdata.Person;
+import ch.zhaw.gpi.eumzugplattform.processdata.PersonPD;
 import ch.zhaw.gpi.eumzugplattform.processdata.PersonList;
 import ch.zhaw.gpi.eumzugplattform.services.LocalPersonIdGeneratorService;
 import ch.zhaw.gpi.eumzugplattform.webserviceclients.ResidentRegisterWebServiceClient;
@@ -51,7 +51,7 @@ public class IdentifyPersonDelegate implements JavaDelegate {
     public void execute(DelegateExecution execution) throws Exception {
         String businessCaseId = (String) execution.getVariable("businessCaseId");
 
-        MunicipalityEntity municipalityEntity = (MunicipalityEntity) execution.getVariable("municipalityMoveOut");
+        Municipality municipalityEntity = (Municipality) execution.getVariable("municipalityMoveOut");
 
         String firstName = (String) execution.getVariable("firstName");
         String officialName = (String) execution.getVariable("officialName");
@@ -101,7 +101,7 @@ public class IdentifyPersonDelegate implements JavaDelegate {
         if(personKnown){
             BigInteger moveAllowedBigInteger = personMoveResponse.getMoveAllowed();
             if(moveAllowedBigInteger != null){
-                // Wenn Person umzugsberechtigt ist, dann muss moveAllowed von
+                // Wenn PersonPD umzugsberechtigt ist, dann muss moveAllowed von
                 // personMoveResponse den Wert 1 haben
                 Boolean moveAllowed = moveAllowedBigInteger.equals(BigInteger.valueOf(1L));
                 execution.setVariable("moveAllowed", moveAllowed);     
@@ -109,8 +109,8 @@ public class IdentifyPersonDelegate implements JavaDelegate {
                 // Es wird eine Liste initialisiert, um den Meldepflichtigen (und allenfalls mitumziehende Personen) aufzunehmen
                 PersonList personList = new PersonList();
                 
-                // Der Meldepflichtige wird als neue Person erfasst und der Liste hinzugefügt
-                Person meldePflichtiger = new Person();
+                // Der Meldepflichtige wird als neue PersonPD erfasst und der Liste hinzugefügt
+                PersonPD meldePflichtiger = new PersonPD();
                 meldePflichtiger
                         .setDateOfBirth(dateOfBirth)
                         .setFirstName(firstName)
@@ -130,10 +130,10 @@ public class IdentifyPersonDelegate implements JavaDelegate {
                     
                     // Iterieren über jeden Eintrag in dieser Liste
                     for(PersonMoveResponse.RelatedPerson relatedPerson : relatedPersons){
-                        // Ein neues Person-Objekt anlegen
-                        Person relative = new Person();
+                        // Ein neues PersonPD-Objekt anlegen
+                        PersonPD relative = new PersonPD();
                         
-                        // Die Eigenschaften dieser Person setzen
+                        // Die Eigenschaften dieser PersonPD setzen
                         PersonIdentificationType personIdentificationType = relatedPerson.getPersonIdentification();
                         
                         relative
@@ -151,7 +151,7 @@ public class IdentifyPersonDelegate implements JavaDelegate {
                                     vnTemp, relative.getFirstName(), relative.getOfficialName(), relative.getDateOfBirth(), relative.getSex()
                                 ));
                         
-                        // Person der PersonenListe hinzufügen
+                        // PersonPD der PersonenListe hinzufügen
                         personList.addPerson(relative);
                     }                    
 

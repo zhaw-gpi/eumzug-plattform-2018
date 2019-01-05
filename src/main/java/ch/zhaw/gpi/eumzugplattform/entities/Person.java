@@ -16,8 +16,8 @@ import javax.validation.constraints.Size;
  * 
  * @author scep
  */
-@Entity(name="Person")
-public class PersonEntity implements Serializable{
+@Entity
+public class Person implements Serializable{
 
     // Manuell gesetzte Personenidentifikation
     @Id
@@ -55,7 +55,7 @@ public class PersonEntity implements Serializable{
         return localPersonId;
     }
 
-    public PersonEntity setLocalPersonId(String localPersonId) {
+    public Person setLocalPersonId(String localPersonId) {
         this.localPersonId = localPersonId;
         return this;
     }
@@ -64,7 +64,7 @@ public class PersonEntity implements Serializable{
         return vn;
     }
 
-    public PersonEntity setVn(Long vn) {
+    public Person setVn(Long vn) {
         this.vn = vn;
         return this;
     }
@@ -73,7 +73,7 @@ public class PersonEntity implements Serializable{
         return firstName;
     }
 
-    public PersonEntity setFirstName(String firstName) {
+    public Person setFirstName(String firstName) {
         this.firstName = firstName;
         return this;
     }
@@ -82,7 +82,7 @@ public class PersonEntity implements Serializable{
         return officialName;
     }
 
-    public PersonEntity setOfficialName(String officialName) {
+    public Person setOfficialName(String officialName) {
         this.officialName = officialName;
         return this;
     }
@@ -91,7 +91,7 @@ public class PersonEntity implements Serializable{
         return sex;
     }
 
-    public PersonEntity setSex(int sex) {
+    public Person setSex(int sex) {
         this.sex = sex;
         return this;
     }
@@ -100,7 +100,7 @@ public class PersonEntity implements Serializable{
         return dateOfBirth;
     }
 
-    public PersonEntity setDateOfBirth(Date dateOfBirth) {
+    public Person setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
         return this;
     }

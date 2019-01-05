@@ -12,12 +12,12 @@ import javax.validation.constraints.NotNull;
  * 
  * @author Stefan Fischer, adaptiert von scep
  */
-@Entity(name = "State")
-public class StateEntity implements Serializable{
+@Entity
+public class Status implements Serializable{
     // Automatisch gesetzte Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long stateId;
+    private Long id;
     
     // Name von Status z.B. FINISHED_SUCCESSFUL
     @NotNull
@@ -33,12 +33,12 @@ public class StateEntity implements Serializable{
     
     // GETTER und SETTER
 
-    public Long getStateId() {
-        return stateId;
+    public Long getId() {
+        return id;
     }
 
-    public StateEntity setStateId(Long stateId) {
-        this.stateId = stateId;
+    public Status setId(Long id) {
+        this.id = id;
         return this;
     }
 
@@ -46,7 +46,7 @@ public class StateEntity implements Serializable{
         return name;
     }
 
-    public StateEntity setName(String name) {
+    public Status setName(String name) {
         this.name = name;
         return this;
     }
@@ -55,7 +55,7 @@ public class StateEntity implements Serializable{
         return germanText;
     }
 
-    public StateEntity setGermanText(String germanText) {
+    public Status setGermanText(String germanText) {
         this.germanText = germanText;
         return this;
     }
@@ -64,7 +64,7 @@ public class StateEntity implements Serializable{
         return englishText;
     }
 
-    public StateEntity setEnglishText(String englishText) {
+    public Status setEnglishText(String englishText) {
         this.englishText = englishText;
         return this;
     }

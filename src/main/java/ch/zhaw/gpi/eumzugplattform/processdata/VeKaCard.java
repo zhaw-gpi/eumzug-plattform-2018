@@ -14,8 +14,8 @@ public class VeKaCard {
     // Ablaufdatum
     private Date expiryDate;
     
-    // Versicherte Person (siehe separate Klasse)
-    private Person insuredPerson;
+    // Versicherte PersonPD (siehe separate Klasse)
+    private PersonPD insuredPerson;
 
     // GETTER und SETTER
     public boolean isBaseInsured() {
@@ -36,11 +36,11 @@ public class VeKaCard {
         return this;
     }
 
-    public Person getInsuredPerson() {
+    public PersonPD getInsuredPerson() {
         return insuredPerson;
     }
 
-    public VeKaCard setInsuredPerson(Person insuredPerson) {
+    public VeKaCard setInsuredPerson(PersonPD insuredPerson) {
         this.insuredPerson = insuredPerson;
         return this;
     }

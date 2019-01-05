@@ -1,6 +1,6 @@
 package ch.zhaw.gpi.eumzugplattform.delegates;
 
-import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityEntity;
+import ch.zhaw.gpi.eumzugplattform.entities.Municipality;
 import ch.zhaw.gpi.eumzugplattform.repositories.MunicipalityRepository;
 import java.util.List;
 import javax.inject.Named;
@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Serialisierte Prozessvariable mit allen Gemeinden in der
- * Umzugsplattform-Datenbank erstellen
- *
- * Über ein JPA-Repository sollen alle MunicipalityEntity-Objekte aus der
- * Datenbank in ein List-Objekt eingelesen werden. Diese Objekte werden mittels
+ Umzugsplattform-Datenbank erstellen
+
+ Über ein JPA-Repository sollen alle Municipality-Objekte aus der
+ Datenbank in ein List-Objekt eingelesen werden. Diese Objekte werden mittels
  * Camunda Spin in ein JSON-Objekt serialisiert und der Prozessvariable
  * municipalityList zugewiesen.
  */
@@ -27,7 +27,7 @@ public class GetMunicipalityListDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) throws Exception {
             // Alle Gemeinde-Objekte aus der Datenbank als Liste erhalten
-            List<MunicipalityEntity> municipalityList = municipalityRepository.findAll();
+            List<Municipality> municipalityList = municipalityRepository.findAll();
 
             // Die Gemeindeliste einer Prozessvariable zuweisen
             // PS: Diese Variable wird in Formularen 

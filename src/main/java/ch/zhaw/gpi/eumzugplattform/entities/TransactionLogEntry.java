@@ -16,8 +16,8 @@ import javax.validation.constraints.NotNull;
  * 
  * @author scep
  */
-@Entity(name="TransactionLog")
-public class TransactionLogEntity implements Serializable {
+@Entity
+public class TransactionLogEntry implements Serializable {
 
     // Automatisch generierte Id
     @Id
@@ -31,18 +31,18 @@ public class TransactionLogEntity implements Serializable {
     
     // Referenz auf Status
     @ManyToOne
-    private StateEntity state;
+    private Status status;
     
     // Beziehung zu einer Person
     @ManyToOne
-    private PersonEntity person;    
+    private Person person;    
     
     // GETTER und SETTER
     public Long getLogId() {
         return logId;
     }
 
-    public TransactionLogEntity setLogId(Long logId) {
+    public TransactionLogEntry setLogId(Long logId) {
         this.logId = logId;
         return this;
     }
@@ -51,25 +51,25 @@ public class TransactionLogEntity implements Serializable {
         return logTimeStamp;
     }
 
-    public TransactionLogEntity setLogTimeStamp(Date logTimeStamp) {
+    public TransactionLogEntry setLogTimeStamp(Date logTimeStamp) {
         this.logTimeStamp = logTimeStamp;
         return this;
     }
 
-    public StateEntity getState() {
-        return state;
+    public Status getStatus() {
+        return status;
     }
 
-    public TransactionLogEntity setState(StateEntity state) {
-        this.state = state;
+    public TransactionLogEntry setStatus(Status status) {
+        this.status = status;
         return this;
     }
 
-    public PersonEntity getPerson() {
+    public Person getPerson() {
         return person;
     }
 
-    public TransactionLogEntity setPerson(PersonEntity person) {
+    public TransactionLogEntry setPerson(Person person) {
         this.person = person;
         return this;
     }

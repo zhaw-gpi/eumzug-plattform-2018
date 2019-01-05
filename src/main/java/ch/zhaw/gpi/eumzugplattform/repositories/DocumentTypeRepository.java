@@ -1,6 +1,6 @@
 package ch.zhaw.gpi.eumzugplattform.repositories;
 
-import ch.zhaw.gpi.eumzugplattform.entities.DocumentEntity;
+import ch.zhaw.gpi.eumzugplattform.entities.DocumentType;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * 
  * @author scep
  */
-public interface DocumentRepository extends JpaRepository<DocumentEntity, Integer>{
+public interface DocumentTypeRepository extends JpaRepository<DocumentType, Integer>{
     // Methodendeklaration, um ein Dokument basierend auf Namen zu erhalten
-    Optional<DocumentEntity> findByName(String name);
+    Optional<DocumentType> findByName(String name);
 }

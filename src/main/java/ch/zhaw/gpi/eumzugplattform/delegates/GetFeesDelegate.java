@@ -1,6 +1,6 @@
 package ch.zhaw.gpi.eumzugplattform.delegates;
 
-import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityEntity;
+import ch.zhaw.gpi.eumzugplattform.entities.Municipality;
 import ch.zhaw.gpi.eumzugplattform.repositories.MunicipalityRepository;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,7 +82,7 @@ public class GetFeesDelegate implements JavaDelegate {
 
     private void processMove(HashMap<String, Integer> feeMap, Integer municipalityIdMoveIn) {
         // Umzugsgemeinde aus der Datenbank laden und die Gebühr in eine Variable speichern
-        MunicipalityEntity municipalityMove = this.municipalityRepository.getOne(municipalityIdMoveIn);
+        Municipality municipalityMove = this.municipalityRepository.getOne(municipalityIdMoveIn);
         Integer feeMove = municipalityMove.getFeeMove();
         
         // Wenn Gebühr grösser als 0 (wenn nicht Kostenlos)
@@ -94,8 +94,8 @@ public class GetFeesDelegate implements JavaDelegate {
 
     private void processAdmittingOrLeave(HashMap<String, Integer> feeMap, Integer municipalityIdMoveOut, Integer municipalityIdMoveIn) {
         // list Gemeindedaten für den Wegzug/Zuzug aus und speichert die Kosten in Variablen
-        MunicipalityEntity municipalityMoveOut = this.municipalityRepository.getOne(municipalityIdMoveOut);
-        MunicipalityEntity municipalityMoveIn = this.municipalityRepository.getOne(municipalityIdMoveIn);
+        Municipality municipalityMoveOut = this.municipalityRepository.getOne(municipalityIdMoveOut);
+        Municipality municipalityMoveIn = this.municipalityRepository.getOne(municipalityIdMoveIn);
         Integer feeMoveIn = municipalityMoveIn.getFeeMoveIn();
         Integer feeMoveOut = municipalityMoveOut.getFeeMoveOut();
 

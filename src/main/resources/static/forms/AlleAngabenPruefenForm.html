@@ -86,20 +86,21 @@
         </div>
     </div>
 
-    <!-- DOKUMENTE-Panel (nur anzeigen, wenn grundsätzlich überhaupt Dokumente hätten hochgeladen werden können -->
+    <!-- DOKUMENTE-Panel -->
     <div class="panel panel-default" ng-show="documentsExist">
         <div class="panel-heading"><b>Dokumente</b></div>
         <div class="panel-body">
-            <p>Folgende Dokumente haben Sie hochgeladen:</p>
-
-            <table class="table" style="margin-bottom: 0">
-                <!-- Die Dokumente werden als Tabelle ausgegeben. Die erste Spalte enthält den
-                Dokumentenname (z.B. Heiratsurkunde), die zweite Spalte entweder einen Link
-                zum hochgeladenen Dokument mit dem entsprechenden Dateinamen oder den
-                Hinweis 'Kein Dokument hochgeladen' -->
+            <table class="table" ng-repeat="filesOfPerson in documentsPerPersonModel.filesOfPersonList track by filesOfPerson.person.firstName">
+                <thead>
+                    <tr>
+                        <th class="col-xs-6">{{filesOfPerson.person.firstName}} {{filesOfPerson.person.officialName}}</th>
+                        <th class="col-xs-3"></th>
+                        <th class="col-xs-3"></th>
+                    </tr>
+                </thead>
                 <tbody>
-                    <tr ng-repeat="document in documents.municipalityDocumentUploadedFiles track by document.municipalityDocumentRelationEntity.documentEntity.name">
-                        <th class="col-md-6" scope="row">{{document.municipalityDocumentRelationEntity.documentEntity.name}}</th>
+                    <tr ng-repeat="municipalityDocTypeFile in filesOfPerson.municipalityDocTypeFiles track by municipalityDocTypeFile.municipalityDocumentType.documentType.name">
+                        <th class="col-md-6" scope="row" style="font-weight: normal">{{municipalityDocTypeFile.municipalityDocumentType.documentType.name}}</th>
                         <!-- Eigentlich wäre die naheligende Lösung, mit ng-href="{{document.fileDataUrl}}" 
                         direkt die DataUrl als Link anzugeben, aber diese Variante geht leider nicht, da 
                         Links als unsafe gekennzeichnet werden (https://stackoverflow.com/questions/15606751/angularjs-changes-urls-to-unsafe-in-extension-page )
@@ -109,12 +110,12 @@
                         auf eine im Angular-Scope definierte Funktion zugreifen zu können, muss der
                         Scope über angular.element(this).scope() ermittelt werden. -->
                         <td class="col-md-6">
-                            <span ng-show="document.fileDataUrl !== null">
-                                <a onclick="angular.element(this).scope().downloadFile(this)" id="{{document.municipalityDocumentRelationEntity.documentEntity.name}}" target="_blank">
-                                    {{document.fileName}}
+                            <span ng-show="municipalityDocTypeFile.fileDataUrl !== null">
+                                <a onclick="angular.element(this).scope().downloadFile(this)" id="{{municipalityDocTypeFile.municipalityDocumentType.documentType.name}}"  name="downloadFileOf{{filesOfPerson.person.firstName}}{{filesOfPerson.person.officialName}}" target="_blank">
+                                    {{municipalityDocTypeFile.fileName}}
                                 </a>
                             </span>
-                            <span ng-show="document.fileDataUrl === null">
+                            <span ng-show="municipalityDocTypeFile.fileDataUrl === null">
                                 Kein Dokument hochgeladen
                             </span>
                         </td>
@@ -354,7 +355,7 @@
             variableManager.fetchVariable('municipalityNameMoveIn');
             variableManager.fetchVariable('arrivalDate');
             
-            variableManager.fetchVariable('documents');
+            variableManager.fetchVariable("documentsPerPerson");
             variableManager.fetchVariable('documentsExist');
             
             variableManager.fetchVariable('housingSituationType');
@@ -370,7 +371,7 @@
         // Zudem wird das Total aller Gebühren berechnet
         camForm.on('variables-fetched', function() {
             $scope.feeMap = variableManager.variableValue('feeMap');
-            $scope.documents = variableManager.variableValue('documents');
+            $scope.documentsPerPersonModel = variableManager.variableValue("documentsPerPerson");
             $scope.documentsExist = variableManager.variableValue('documentsExist');
                         
             $scope.vn = variableManager.variableValue('vn');
@@ -488,38 +489,66 @@
          * welchem der Link zur Datei hinzugefügt wird und diesen Link dann 
          * automatisch "anzuklicken".
          */
-        $scope.downloadFile = function(element){ 
-            // Um den folgenden Code kürzer zu halten, die Referenz auf die Liste der Dokumente in einer Variable setzen
-            var docListDirect = $scope.documents.municipalityDocumentUploadedFiles;
+        $scope.downloadFile = function(element){
+            // Zunächst muss die Person ermittelt werden, für welche die Datei heruntergeladen werden soll
+            // Zuerst wird die Variable ngRepeatKey initialisiert, um den Schlüssel des wiederholenden Downloadfelds und damit die betroffene Person auszulesen
+            var ngRepeatKey;
+            
+            // Für einen einfacheren Zugriff auf filesOfPersonList einen Verweis setzen
+            var filesOfPersonList = $scope.documentsPerPersonModel.filesOfPersonList;
 
-            // Anzahl der Dokumente auslesen
-            var docListSize = docListDirect.length;
-
-            // Über die Liste der Dokumente iterieren
-            for (var i = 0; i < docListSize; i++) {
-                // Den Namen (z.B. Heiratsurkunde) des Dokuments auslesen
-                var documentName = docListDirect[i].municipalityDocumentRelationEntity.documentEntity.name;
+            // Dabei wird in einer For-Schleife für jeden Listeneintrag in filesOfPersonList (=Anzahl Personen) die lokale Variable key gesetzt
+            for (var [key] of Object.entries(filesOfPersonList)) {
+                // ...und sobald der Name des Inputfelds mit "downloadFileOf"+Vorname+Nachname der Person übereinstimmt, handelt es sich um diese Person
                 
-                // ... und diesen vergleichen mit dem Namen, welcher als Id des Input-Elements gesetzt wurde. Nur wenn er gleich ist ...
-                if(documentName == element.id){
-                    // ... soll das temporäre anchor (a)-Element im DOM (document -> hat nichts zu tun mit unseren Dokumenten) erstellt werden -> https://developer.mozilla.org/de/docs/Web/API/Document/createElement erstellt werden ...
-                    var a = document.createElement('a');
-                    // ... der Link auf die DataUrl der Datei gesetzt werden
-                    a.href = $scope.documents.municipalityDocumentUploadedFiles[i].fileDataUrl;
-                    // ... als Ziel ein neues Fenster festgelegt werden
-                    a.target = '_blank';
-                    // ... angegeben werden, dass die verlinkte Ressource heruntergeladen werden soll und zwar mit dem hochgeladenen Dateinamen als Vorschlag -> https://developer.mozilla.org/de/docs/Web/HTML/Element/a
-                    a.download = $scope.documents.municipalityDocumentUploadedFiles[i].fileName;
-                    // ... das erstellte a-Element soll zuunterst im Body-Teil des DOMS als Kind-Knoten hinzugefügt werden -> https://www.w3schools.com/jsref/met_node_appendchild.asp
-                    document.body.appendChild(a);
-                    // ... es soll simuliert werden, dass der Benutzer auf das Link (a)-Element geklickt hat, um den eigentlichen Download anzustossen
-                    a.click();
-                    // ... Aufräumarbeiten (löschen des a-Elements)
-                    a.remove();
-                    // ... For-Schleife verlassen
+                if (element.name === ("downloadFileOf"+filesOfPersonList[key].person.firstName + filesOfPersonList[key].person.officialName)) {
+                    // ...und der entsprechende Schlüssel des übereinstimmenden Werts wird der Variable ngRepeatKey übergeben
+                    ngRepeatKey=key;
+                    
+                    // und die Schleife wird beendet, da kein anderer Wert für den HTML-Elementnamen stimmen darf.
                     break;
                 }
-            }  
+            }
+
+            // Nun geht es darum für die ermittelte Person die hochgeladene Datei zu ermitteln
+            // Für einen einfacheren Zugriff auf die Dokumenttypen einen Verweis setzen
+            var municipalityDocTypeFiles = $scope.documentsPerPersonModel.filesOfPersonList[ngRepeatKey].municipalityDocTypeFiles;
+
+            // Anzahl der Dokumente auslesen
+            var municipalityDocTypeFilesSize = municipalityDocTypeFiles.length;
+
+            // Für jeden Eintrag in der Liste
+            for (var i = 0; i < municipalityDocTypeFilesSize; i++) {
+                // Den Namen (z.B. Heiratsurkunde) des aktuellen Dokument-Objekts auslesen
+                var documentName = municipalityDocTypeFiles[i].municipalityDocumentType.documentType.name;
+
+                // ...und falls der Dokumenten-Name mit der Id des InputFelds übereinstimmt 
+                if(documentName == element.id){
+                    // Neues HTML-Element a (Hyperlink) erstellen
+                    var a = document.createElement('a');
+                    
+                    // Referenz auf Hyperlink vom entsprechenden Dokument
+                    a.href = municipalityDocTypeFiles[i].fileDataUrl;
+                    
+                    // Link in neuem Fenster oder Tab öffnen
+                    a.target = '_blank';
+                    
+                    // Bei Verwendung des Link fragen, wo und unter welchen Namen die Datei gespeichert werden soll -> https://developer.mozilla.org/de/docs/Web/HTML/Element/a
+                    a.download = municipalityDocTypeFiles[i].fileName;
+                    
+                    // In der Body-Eigenschaft der Seite einen Knoten als letztes Kind des Knotens a hinzufügen-> https://www.w3schools.com/jsref/met_node_appendchild.asp
+                    document.body.appendChild(a);
+                    
+                    // HTML-Element beziehungsweise Knoten a klicken
+                    a.click();
+                    
+                    // HTML-Element beziehungsweise Knoten a entfernen
+                    a.remove();
+                    
+                    // und die Schleife wird beendet, da kein anderer Wert für den Dokumentennamen stimmen darf.
+                    break;
+                }
+            }
         };
         
         function fMap1() {

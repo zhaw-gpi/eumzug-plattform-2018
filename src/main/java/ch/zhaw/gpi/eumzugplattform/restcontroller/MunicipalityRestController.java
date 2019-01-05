@@ -1,8 +1,7 @@
 package ch.zhaw.gpi.eumzugplattform.restcontroller;
 
-import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityEntity;
-import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityDocumentRelationEntity;
-import ch.zhaw.gpi.eumzugplattform.repositories.MunicipalityDocumentRelationRepository;
+import ch.zhaw.gpi.eumzugplattform.entities.Municipality;
+import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityDocumentType;
 import ch.zhaw.gpi.eumzugplattform.repositories.MunicipalityRepository;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import ch.zhaw.gpi.eumzugplattform.repositories.MunicipalityDocumentTypeRepository;
 
 /**
  * Kontroller Klasse, welche die Funktionalitäten implementiert um
@@ -33,7 +33,7 @@ public class MunicipalityRestController {
     
     // Verdrahten des MunicipalityDocumentRelation Repository
     @Autowired
-    private MunicipalityDocumentRelationRepository municipalityDocumentRelationRepository;
+    private MunicipalityDocumentTypeRepository municipalityDocumentRelationRepository;
     
     // Konstante für die Ressourcen-URL
     private static final String ENDPOINT = "/umzugapi/v1/municipalities";
@@ -44,7 +44,7 @@ public class MunicipalityRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT)
-    public List<MunicipalityEntity> getMunicipalityList(){
+    public List<Municipality> getMunicipalityList(){
         // Liste von Gemeinden suchen und zurückgeben
         return municipalityRepository.findAll();
     }
@@ -56,9 +56,9 @@ public class MunicipalityRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT + "/{name}")
-    public ResponseEntity<MunicipalityEntity> getMunicipalityByName(@PathVariable String name){
+    public ResponseEntity<Municipality> getMunicipalityByName(@PathVariable String name){
         // Gemeinde nach Name suchen
-        Optional<MunicipalityEntity> municipality = municipalityRepository.findByMunicipalityName(name);
+        Optional<Municipality> municipality = municipalityRepository.findByMunicipalityName(name);
         
         // Wenn Gemeinde existiert
         if(municipality.isPresent()){
@@ -77,9 +77,9 @@ public class MunicipalityRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT, method = RequestMethod.POST)
-    public ResponseEntity<MunicipalityEntity> addMunicipality(@Valid @RequestBody MunicipalityEntity municipality){
+    public ResponseEntity<Municipality> addMunicipality(@Valid @RequestBody Municipality municipality){
         // Gemeinde suchen in Datenbank
-        Optional<MunicipalityEntity> searchedMunicipality = municipalityRepository.findById(municipality.getMunicipalityId());
+        Optional<Municipality> searchedMunicipality = municipalityRepository.findById(municipality.getMunicipalityId());
         
         // Wenn Gemeinde existiert
         if(searchedMunicipality.isPresent()){
@@ -88,7 +88,7 @@ public class MunicipalityRestController {
         } else {
             try{
                 // ... die neue Gemeinde in der Datenbank hinzuzufügen
-                MunicipalityEntity savedMunicipality = municipalityRepository.save(municipality);
+                Municipality savedMunicipality = municipalityRepository.save(municipality);
                 
                 // und zurück geben
                 return new ResponseEntity(savedMunicipality,HttpStatus.OK);
@@ -106,14 +106,14 @@ public class MunicipalityRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT, method = RequestMethod.PUT)
-    public ResponseEntity<MunicipalityEntity> updateMunicipality(@RequestBody @Valid MunicipalityEntity municipality){
+    public ResponseEntity<Municipality> updateMunicipality(@RequestBody @Valid Municipality municipality){
         // Gemeinde in der Datenbank suchen
-        Optional<MunicipalityEntity> searchedMunicipality = municipalityRepository.findById(municipality.getMunicipalityId());
+        Optional<Municipality> searchedMunicipality = municipalityRepository.findById(municipality.getMunicipalityId());
         
         // Wenn Gemeinde gefunden wurde ...
         if(searchedMunicipality.isPresent()){
             // Erhaltene Gemeinde persistieren
-            MunicipalityEntity savedMunicipality = municipalityRepository.save(municipality);
+            Municipality savedMunicipality = municipalityRepository.save(municipality);
             
             // Die gespeicherte Gemeinde zurückgeben
             return new ResponseEntity(savedMunicipality, HttpStatus.OK);
@@ -132,7 +132,7 @@ public class MunicipalityRestController {
     @RequestMapping(path = ENDPOINT + "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity deleteMunicipality(@PathVariable Integer id){
         // Gemeinde suchen in Datenbank
-        Optional<MunicipalityEntity> municipalityToDelete = municipalityRepository.findById(id);
+        Optional<Municipality> municipalityToDelete = municipalityRepository.findById(id);
         
         // Falls Gemeinde nicht vorhanden ist ...
         if (!municipalityToDelete.isPresent()){
@@ -141,10 +141,10 @@ public class MunicipalityRestController {
         }
         
         // Kurzreferenz auf zu löschende Gemeinde setzen
-        MunicipalityEntity municipality = municipalityToDelete.get();
+        Municipality municipality = municipalityToDelete.get();
         
         // Abhängigkeiten laden
-        List<MunicipalityDocumentRelationEntity> references = municipalityDocumentRelationRepository.findByMunicipalityEntity(municipality);
+        List<MunicipalityDocumentType> references = municipalityDocumentRelationRepository.findByMunicipality(municipality);
         
         // Falls Abhängigkeiten bestehen
         if (!references.isEmpty()){

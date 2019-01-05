@@ -1,6 +1,6 @@
 package ch.zhaw.gpi.eumzugplattform.repositories;
 
-import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityEntity;
+import ch.zhaw.gpi.eumzugplattform.entities.Municipality;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * 
  * @author scep
  */
-public interface MunicipalityRepository extends JpaRepository<MunicipalityEntity, Integer> {
+public interface MunicipalityRepository extends JpaRepository<Municipality, Integer> {
     
     // Methodendeklaration, um ein Dokument basierend auf Namen zu erhalten
-    Optional<MunicipalityEntity> findByMunicipalityName(String name);
+    Optional<Municipality> findByMunicipalityName(String name);
 }

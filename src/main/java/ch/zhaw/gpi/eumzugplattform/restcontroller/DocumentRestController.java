@@ -1,9 +1,7 @@
 package ch.zhaw.gpi.eumzugplattform.restcontroller;
 
-import ch.zhaw.gpi.eumzugplattform.entities.DocumentEntity;
-import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityDocumentRelationEntity;
-import ch.zhaw.gpi.eumzugplattform.repositories.DocumentRepository;
-import ch.zhaw.gpi.eumzugplattform.repositories.MunicipalityDocumentRelationRepository;
+import ch.zhaw.gpi.eumzugplattform.entities.DocumentType;
+import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityDocumentType;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
@@ -16,52 +14,53 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import ch.zhaw.gpi.eumzugplattform.repositories.DocumentTypeRepository;
+import ch.zhaw.gpi.eumzugplattform.repositories.MunicipalityDocumentTypeRepository;
 
 /**
  * Kontroller Klasse, welche die Funktionalitäten implementiert um
- * Dokumente über REST zu verwalten
+ * Dokumenttypen über REST zu verwalten
  * 
  * @author Stefan Fischer und scep
  */
 @RestController
 public class DocumentRestController {
-    // Verdrahten des Document Repository
+    // Verdrahten der benötigten Repositories
     @Autowired
-    private DocumentRepository documentRepository;
+    private DocumentTypeRepository documentTypeRepository;
     
-    // Verdrahten des MunicipalityDocumentRelation Repository
     @Autowired
-    private MunicipalityDocumentRelationRepository municipalityDocumentRelationRepository;
+    private MunicipalityDocumentTypeRepository municipalityDocumentTypeRepository;
     
     // Konstante für die Ressourcen-URL
     private static final String ENDPOINT = "/umzugapi/v1/documents";
     
     /**
-     * GET: Liste aller Dokumente
+     * GET: Liste aller Dokumenttypen
      * 
      * @return
      */
     @RequestMapping(path = ENDPOINT)
-    public ResponseEntity<List<DocumentEntity>> getDocumentList(){
+    public ResponseEntity<List<DocumentType>> getDocumentTypeList(){
         // Liste von Dokumente suchen und zurückgeben
-        return new ResponseEntity(documentRepository.findAll(), HttpStatus.OK);
+        return new ResponseEntity(documentTypeRepository.findAll(), HttpStatus.OK);
     }
     
     /**
-     * GET: Erhalten eines Dokuments über seinen Namen
+     * GET: Erhalten eines Dokumenttypen über seinen Namen
      * 
      * @param name
      * @return 
      */
     @RequestMapping(path = ENDPOINT + "/{name}")
-    public ResponseEntity<DocumentEntity> getDocumentByName(@PathVariable String name){
+    public ResponseEntity<DocumentType> getDocumentTypeByName(@PathVariable String name){
         // Dokument suchen in Datenbank
-        Optional<DocumentEntity> document = documentRepository.findByName(name);
+        Optional<DocumentType> documentType = documentTypeRepository.findByName(name);
         
-        // Wenn Dokument existiert
-        if(document.isPresent()){
+        // Wenn Dokumenttyp existiert
+        if(documentType.isPresent()){
             // ... dieses zurückgeben mit Status OK
-            return new ResponseEntity(document.get(),HttpStatus.OK);
+            return new ResponseEntity(documentType.get(),HttpStatus.OK);
         } else {
             // ... ansonsten NOT-FOUND zurück geben
             return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -69,27 +68,27 @@ public class DocumentRestController {
     }
     
     /**
-     * POST: Hinzufügen eines Dokumentes
+     * POST: Hinzufügen eines Dokumententyp
      * 
-     * @param document
+     * @param documentType
      * @return 
      */
     @RequestMapping(path = ENDPOINT, method = RequestMethod.POST)
-    public ResponseEntity<DocumentEntity> addDocument(@Valid @RequestBody DocumentEntity document){
-        // Dokument suchen in Datenbank
-        Optional<DocumentEntity> searchedDocument = documentRepository.findById(document.getDocumentId());
+    public ResponseEntity<DocumentType> addDocumentType(@Valid @RequestBody DocumentType documentType){
+        // Dokumenttyp suchen in Datenbank
+        Optional<DocumentType> searchedDocumentType = documentTypeRepository.findById(documentType.getId());
         
-        // Wenn Dokument existiert
-        if(searchedDocument.isPresent()){
+        // Wenn Dokumenttyp existiert
+        if(searchedDocumentType.isPresent()){
             // ... CONFLICT-Status zurück geben
             return new ResponseEntity(HttpStatus.CONFLICT);
         } else {
             try{
-                // ... das neue Dokument in der Datenbank hinzuzufügen
-                DocumentEntity savedDocument = documentRepository.save(document);
+                // ... den neuen Dokumenttyp in der Datenbank hinzuzufügen
+                DocumentType savedDocumentType = documentTypeRepository.save(documentType);
                 
                 // und zurück geben
-                return new ResponseEntity(savedDocument,HttpStatus.OK);
+                return new ResponseEntity(savedDocumentType,HttpStatus.OK);
             } catch (DataIntegrityViolationException e){
                 // Falls es zu einer Verletzung einer Bedingung kommt (nur Name ist möglich, entweder leer oder bereits bestehend), dann CONFLICT-Status zurückgeben
                 return new ResponseEntity(HttpStatus.CONFLICT);
@@ -98,24 +97,24 @@ public class DocumentRestController {
     }
     
     /**
-     * PUT: Umbenennen eines Dokumentes
+     * PUT: Umbenennen eines Dokumententyp
      * 
-     * @param id    Id des Dokuments
-     * @param name          Neuer Name des Dokuments (Bezeichnung)
+     * @param id            Id des Dokumententyp
+     * @param name          Neuer Name des Dokumententyp
      * @return 
      */
     @RequestMapping(path = ENDPOINT + "/{id}/{name}", method = RequestMethod.PUT)
-    public ResponseEntity<DocumentEntity> renameDocument(@PathVariable Integer id, @PathVariable String name){
-        // Dokument in der Datenbank suchen
-        Optional<DocumentEntity> searchedDocument = documentRepository.findById(id);
+    public ResponseEntity<DocumentType> renameDocumentType(@PathVariable Integer id, @PathVariable String name){
+        // Dokumenttyp in der Datenbank suchen
+        Optional<DocumentType> searchedDocumentType = documentTypeRepository.findById(id);
         
-        // Wenn Dokument gefunden wurde ...
-        if(searchedDocument.isPresent()){
+        // Wenn Dokumenttyp gefunden wurde ...
+        if(searchedDocumentType.isPresent()){
             // Den Namen aktualisieren
-            searchedDocument.get().setName(name);
+            searchedDocumentType.get().setName(name);
             
-            // Das gespeicherte Dokument zurückgeben
-            return new ResponseEntity(documentRepository.save(searchedDocument.get()), HttpStatus.OK);
+            // Den gespeicherten Dokumenttyp zurückgeben
+            return new ResponseEntity(documentTypeRepository.save(searchedDocumentType.get()), HttpStatus.OK);
         } else {
             // ... ansonsten NOT-FOUND zurück geben
             return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -123,27 +122,27 @@ public class DocumentRestController {
     }
     
     /**
-     * DELETE: Löschen eines Dokuments sofern in keiner Beziehung mehr genutzt
+     * DELETE: Löschen eines Dokumententyps sofern in keiner Beziehung mehr genutzt
      * 
-     * @param id    Id des zu löschenden Dokuments
+     * @param id    Id des zu löschenden Dokumententyps
      * @return 
      */
     @RequestMapping(path = ENDPOINT + "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteDocument(@PathVariable Integer id){
-        // Dokument suchen in Datenbank
-        Optional<DocumentEntity> documentToDelete = documentRepository.findById(id);
+    public ResponseEntity deleteDocumentType(@PathVariable Integer id){
+        // Dokumenttyp suchen in Datenbank
+        Optional<DocumentType> documentTypeToDelete = documentTypeRepository.findById(id);
         
-        // Falls Dokument nicht vorhanden ist ...
-        if (!documentToDelete.isPresent()){
+        // Falls Dokumenttyp nicht vorhanden ist ...
+        if (!documentTypeToDelete.isPresent()){
             // ... NOT-FOUND zurück geben
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
         
-        // Kurzreferenz auf zu löschendes Dokument setzen
-        DocumentEntity document = documentToDelete.get();
+        // Kurzreferenz auf zu löschenden Dokumenttyp setzen
+        DocumentType documentType = documentTypeToDelete.get();
         
         // Abhängigkeiten laden
-        List<MunicipalityDocumentRelationEntity> references = municipalityDocumentRelationRepository.findByDocumentEntity(document);
+        List<MunicipalityDocumentType> references = municipalityDocumentTypeRepository.findByDocumentType(documentType);
         
         // Falls Abhängigkeiten bestehen
         if (!references.isEmpty()){
@@ -151,8 +150,8 @@ public class DocumentRestController {
             return new ResponseEntity(HttpStatus.CONFLICT);
         }
         
-        // Dokument löschen
-        documentRepository.delete(document);
+        // Dokumenttyp löschen
+        documentTypeRepository.delete(documentType);
         
         // Erfolgsmeldung zurück geben
         return new ResponseEntity(HttpStatus.OK);

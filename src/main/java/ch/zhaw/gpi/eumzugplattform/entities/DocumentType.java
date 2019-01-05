@@ -7,16 +7,16 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 /**
- * Enitity-Klasse für Stammdaten zu einem Dokument
+ * Enitity-Klasse für Stammdaten zu einem Dokumententyp (z.B. Heiratsurkunde)
  *
  * @author scep
  */
-@Entity(name = "Document")
-public class DocumentEntity implements Serializable {
+@Entity
+public class DocumentType implements Serializable {
 
     // Manuell gesetzte Id
     @Id
-    private int documentId;
+    private int id;
 
     // Bezeichnung des Dokuments
     @NotNull
@@ -24,12 +24,12 @@ public class DocumentEntity implements Serializable {
     private String name;
     
     // GETTER UND SETTER
-    public int getDocumentId() {
-        return documentId;
+    public int getId() {
+        return id;
     }
 
-    public DocumentEntity setDocumentId(int documentId) {
-        this.documentId = documentId;
+    public DocumentType setId(int id) {
+        this.id = id;
         return this;
     }
     
@@ -37,7 +37,7 @@ public class DocumentEntity implements Serializable {
         return name;
     }
 
-    public DocumentEntity setName(String name) {
+    public DocumentType setName(String name) {
         this.name = name;
         return this;
     }

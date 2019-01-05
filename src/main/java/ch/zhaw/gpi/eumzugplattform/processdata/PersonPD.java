@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Klasse, um die Angaben zu einer (mit)umziehenden Person zu verwalten
- * 
- * Diese Klasse enthält alle Daten im Zusammenhang mit dem eUmzug für eine Person
+ * Klasse, um die Angaben zu einer (mit)umziehenden PersonPD zu verwalten
+ 
+ Diese Klasse enthält alle Daten im Zusammenhang mit dem eUmzug für eine PersonPD
  * 
  * @author scep
  */
-public class Person implements Serializable {
+public class PersonPD implements Serializable {
     // Variablen passend zu eCH-044:PersonIdentificationType. Es könnte theoretisch
     // daher diese Klasse einbezogen werden statt all die einzelnen Attribute
     // aber diese generierte Klasse implementiert nicht Serializable, was für
@@ -36,7 +36,7 @@ public class Person implements Serializable {
         return firstName;
     }
 
-    public Person setFirstName(String firstName) {
+    public PersonPD setFirstName(String firstName) {
         this.firstName = firstName;
         return this;
     }
@@ -45,7 +45,7 @@ public class Person implements Serializable {
         return officialName;
     }
 
-    public Person setOfficialName(String officialName) {
+    public PersonPD setOfficialName(String officialName) {
         this.officialName = officialName;
         return this;
     }
@@ -54,7 +54,7 @@ public class Person implements Serializable {
         return sex;
     }
 
-    public Person setSex(String sex) {
+    public PersonPD setSex(String sex) {
         this.sex = sex;
         return this;
     }
@@ -63,7 +63,7 @@ public class Person implements Serializable {
         return localPersonId;
     }
 
-    public Person setLocalPersonId(String localPersonId) {
+    public PersonPD setLocalPersonId(String localPersonId) {
         this.localPersonId = localPersonId;
         return this;
     }
@@ -72,7 +72,7 @@ public class Person implements Serializable {
         return dateOfBirth;
     }
 
-    public Person setDateOfBirth(Date dateOfBirth) {
+    public PersonPD setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
         return this;
     }
@@ -81,7 +81,7 @@ public class Person implements Serializable {
         return isMainPerson;
     }
 
-    public Person setIsMainPerson(Boolean isMainPerson) {
+    public PersonPD setIsMainPerson(Boolean isMainPerson) {
         this.isMainPerson = isMainPerson;
         return this;
     }
@@ -91,7 +91,7 @@ public class Person implements Serializable {
         return baseInsuranceNumber;
     }
 
-    public Person setBaseInsuranceNumber(Long baseInsuranceNumber) {
+    public PersonPD setBaseInsuranceNumber(Long baseInsuranceNumber) {
         this.baseInsuranceNumber = baseInsuranceNumber;
         return this;
     }
@@ -100,7 +100,7 @@ public class Person implements Serializable {
         return checkBaseInsuranceResult;
     }
 
-    public Person setCheckBaseInsuranceResult(String checkBaseInsuranceResult) {
+    public PersonPD setCheckBaseInsuranceResult(String checkBaseInsuranceResult) {
         this.checkBaseInsuranceResult = checkBaseInsuranceResult;
         return this;
     }
@@ -109,7 +109,7 @@ public class Person implements Serializable {
         return checkBaseInsuranceResultDetails;
     }
 
-    public Person setCheckBaseInsuranceResultDetails(String checkBaseInsuranceResultDetails) {
+    public PersonPD setCheckBaseInsuranceResultDetails(String checkBaseInsuranceResultDetails) {
         this.checkBaseInsuranceResultDetails = checkBaseInsuranceResultDetails;
         return this;
     }
@@ -118,7 +118,7 @@ public class Person implements Serializable {
         return id;
     }
 
-    public Person setId(Long id) {
+    public PersonPD setId(Long id) {
         this.id = id;
         return this;
     }   

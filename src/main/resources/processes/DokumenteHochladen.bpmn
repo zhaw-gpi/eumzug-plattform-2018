@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_0zo10zu" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_0zo10zu" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
   <bpmn:collaboration id="Collaboration_1tnimfb">
     <bpmn:participant id="DokumenteHochladenParticipant" name="Dokumente hochladen" processRef="DokumenteHochladen" />
-    <bpmn:textAnnotation id="TextAnnotation_1wouo73">
-      <bpmn:text>Dieser Teil muss noch analog zur Grundversicherungsprüfung in ein Multi-Instance-Subprocess</bpmn:text>
-    </bpmn:textAnnotation>
   </bpmn:collaboration>
   <bpmn:process id="DokumenteHochladen" name="DokumenteHochladen" isExecutable="true">
     <bpmn:startEvent id="WeitereAngabenErfolgreichErfasst" name="Weitere Angaben erfolgreich erfasst">
@@ -24,7 +21,7 @@
     <bpmn:serviceTask id="HochzuladendeDokumenteErmitteln" name="Hochzuladende Dokumente ermitteln" camunda:delegateExpression="#{getDocumentsAdapter}">
       <bpmn:documentation>Prozessvariable mit relevanten Dokumenten basierend auf Angaben in der Umzugsplattform-Datenbank erstellen
 
-Über ein Data Access Object sollen die Dokumente der relevanten MunicipalityEntity-Objekte aus der Datenbank in ein List Objekt eingelesen werden.
+Über ein Data Access Object sollen die Dokumente der relevanten Municipality-Objekte aus der Datenbank in ein List Objekt eingelesen werden.
 
 Von dieser Liste wird für jeden Eintrag ein Objekt der Klasse MunicipalityDocumentUploadedFile erzeugt, welches einerseits den Eintrag erhält, aber auch zwei Eigenschaften fileDataUrl und fileName, welche dann im "Dokumente hochladen"-User Task mit Inhalt gefüllt wird.
 
@@ -70,7 +67,6 @@ Der eigentliche Upload geschieht in einer eigenen Funktion, wo der Dateiname als
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_09gv400" sourceRef="WeitereAngabenErfolgreichErfasst" targetRef="ExclusiveGateway_09tednt" />
     <bpmn:sequenceFlow id="SequenceFlow_0xhr4qr" sourceRef="ExclusiveGateway_1k1s0lb" targetRef="EndEvent_1mtarjy" />
-    <bpmn:association id="Association_1trh2fl" sourceRef="DokumenteHochladenForm" targetRef="TextAnnotation_1wouo73" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1tnimfb">
@@ -154,13 +150,6 @@ Der eigentliche Upload geschieht in einer eigenen Funktion, wo der Dateiname als
           <dc:Bounds x="702" y="218" width="57" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1wouo73_di" bpmnElement="TextAnnotation_1wouo73">
-        <dc:Bounds x="604" y="-106" width="237" height="51" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1trh2fl_di" bpmnElement="Association_1trh2fl">
-        <di:waypoint x="642" y="44" />
-        <di:waypoint x="707" y="-55" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ExclusiveGateway_1k1s0lb_di" bpmnElement="ExclusiveGateway_1k1s0lb" isMarkerVisible="true">
         <dc:Bounds x="449" y="168" width="50" height="50" />
       </bpmndi:BPMNShape>

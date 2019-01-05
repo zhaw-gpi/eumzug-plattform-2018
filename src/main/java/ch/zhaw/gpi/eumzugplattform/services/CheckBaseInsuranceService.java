@@ -1,7 +1,7 @@
 package ch.zhaw.gpi.eumzugplattform.services;
 
 import ch.zhaw.gpi.eumzugplattform.helpers.DateConversionHelper;
-import ch.zhaw.gpi.eumzugplattform.processdata.Person;
+import ch.zhaw.gpi.eumzugplattform.processdata.PersonPD;
 import ch.zhaw.gpi.eumzugplattform.processdata.VeKaCard;
 import java.time.LocalDate;
 import java.util.Date;
@@ -24,7 +24,7 @@ public class CheckBaseInsuranceService {
     @Autowired
     private DateConversionHelper dateConversionHelper;
 
-    public void checkBaseInsuranceValidity(Person person) {
+    public void checkBaseInsuranceValidity(PersonPD person) {
         // Zur Kartennummer passende Karte suchen
         VeKaCard veKaCard = veKaClientService.getVeKaCard(person.getBaseInsuranceNumber());
 
@@ -48,8 +48,8 @@ public class CheckBaseInsuranceService {
          * Falls Personendaten zur Karte nicht mit übergebenen Personendaten
          * übereinstimmen, entsprechende Antwort setzen
          */
-        // Person aus der Karte auslesen
-        Person insuredPerson = veKaCard.getInsuredPerson();
+        // PersonPD aus der Karte auslesen
+        PersonPD insuredPerson = veKaCard.getInsuredPerson();
 
         // Hilfsvariable, um die allenfalls abweichenden Typen von Personalien aufzunehmen
         String abweichendePersonalien = "";

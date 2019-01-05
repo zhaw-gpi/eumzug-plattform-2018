@@ -1,6 +1,6 @@
 package ch.zhaw.gpi.eumzugplattform.repositories;
 
-import ch.zhaw.gpi.eumzugplattform.entities.PersonEntity;
+import ch.zhaw.gpi.eumzugplattform.entities.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * 
  * @author scep
  */
-public interface PersonRepository extends JpaRepository<PersonEntity, String>{
+public interface PersonRepository extends JpaRepository<Person, String>{
     
 }
