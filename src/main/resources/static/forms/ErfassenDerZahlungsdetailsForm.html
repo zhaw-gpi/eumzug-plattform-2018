@@ -1,5 +1,6 @@
 <!--
 Formular für den UserTask 'Erfassen der Zahlungsdetails'
+Autor: scep und Gruppe TZc 05
 -->
 <form>   
     <!-- INFO-MELDUNG, DIE VOR DEM BEZAHLEN ANGEZEIGT WIRD -->
@@ -22,14 +23,45 @@ Formular für den UserTask 'Erfassen der Zahlungsdetails'
         <p>Versuchen Sie es innerhalb der nächsten 24 Stunden erneut, beispielsweise mit einer anderen Kreditkarte. Andernfalls bricht der Zahlungsvorgang als fehlgeschlagen gekennzeichnet ab.</p>
     </div>
     
+    <!-- GEBÜHREN-PANEL ZUR INFORMATION -->
+    <div id="feePanel" class="panel panel-info">
+        <div class="panel-heading"><b>Gebühren</b></div>
+        <div class="panel-body">
+            <div>
+                <table class="table" style="margin-bottom: 0">
+                    <thead>
+                        <tr>
+                            <th class="col-xs-6">Gebührentyp</th>
+                            <th class="col-xs-6">Gebühr</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="(key, value) in feeMapModel">
+                            <td>{{key}}</td>
+                            <td>Fr. {{value}}.-</td>
+                        </tr>
+                        <tr class="active">
+                            <td><b>Total</b></td>
+                            <td><b>Fr. {{feesTotalModel}}.-</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!--BUTTON FÜR ANBINDUNG DES STRIPE-CHECKOUT-FORMULARS-->
+            <div>
+                <button id="payButton" class="btn btn-primary" style="margin-top: 15px">Zahlungsdetails erfassen</button>
+            </div>
+            
+        </div>
+    </div>
+    
     <!-- FEHLER-MELDUNG, FALLS BENUTZER FORMULAR ABSCHLIESST OHNE TOKEN -->
     <div class="alert alert-warning" id="infoAfterInvalidSubmitTrial" hidden>
         <p>Sie können das Formular nicht abschliessen, bevor Sie die Zahlungsdetails erfolgreich erfasst haben.</p>
         <p>Klicken Sie hierzu auf die Schaltfläche 'Zahlungsdetails erfassen'.</p>
     </div>
-    
-    <!-- SCHALTFLÄCHE ZUM ÖFFNEN DES ZAHLUNGSFORMULARS -->
-    <button type="button" class="btn btn-primary" id="payButton">Zahlungsdetails erfassen</button>
+
     
     <!-- CUSTOM JAVASCRIPT -->
     <script cam-script type="text/form-script">        
@@ -71,6 +103,9 @@ Formular für den UserTask 'Erfassen der Zahlungsdetails'
             if($scope.chargingErrorMessageModel){
                 // ... die Info-Meldung ausgeblendet wird, ...
                 document.getElementById('infoBeforeCheckout').style.display = "none";
+                
+                // Gebührenpanel gelb anzeigen
+                document.getElementById('feePanel').className = "panel panel-warning";
             } else {
                 // ... ansonsten die Warnmeldung ausgeblendet wird
                 document.getElementById('infoAfterChargingError').style.display = "none";
@@ -104,6 +139,8 @@ Formular für den UserTask 'Erfassen der Zahlungsdetails'
                 document.getElementById('infoAfterCheckout').style.display = "block";
                 // "Zahlungsdetails erfassen"-Schaltfläche ausblenden                
                 document.getElementById('payButton').style.display = "none";
+                // Gebührenpanel wird grün angezeigt
+                document.getElementById('feePanel').className = "panel panel-success";
             }
         });
         
