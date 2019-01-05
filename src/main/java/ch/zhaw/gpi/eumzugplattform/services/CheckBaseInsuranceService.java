@@ -25,6 +25,15 @@ public class CheckBaseInsuranceService {
     private DateConversionHelper dateConversionHelper;
 
     public void checkBaseInsuranceValidity(PersonPD person) {
+        // Prüfen, ob Kartennummer vorhanden
+        if(person.getBaseInsuranceNumber() == null){
+            // Falls keine Karte gefunden wurde, dann entsprechende Antwort setzen und die weitere Ausführung abbrechen
+            person
+                    .setCheckBaseInsuranceResult("Unknown")
+                    .setCheckBaseInsuranceResultDetails("Keine Kartennummer angegeben.");
+            return;
+        }
+        
         // Zur Kartennummer passende Karte suchen
         VeKaCard veKaCard = veKaClientService.getVeKaCard(person.getBaseInsuranceNumber());
 

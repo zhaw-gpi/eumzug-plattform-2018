@@ -1,65 +1,66 @@
 <!--
 Formular zum UserTask "Versicherungs-Kartennummern erfassen"
+Autor: Gruppe TZb 05 und scep
 -->
-<form role="form" name="camundaForm">
-    <!-- Warnmeldung, falls die Prüfung nicht erfolgreich war -->
-    <div class="alert alert-warning" ng-show="person.checkBaseInsuranceResult === 'No' || person.checkBaseInsuranceResult === 'Unknown'">      
-        <p>Die Grundversicherungspflicht für diese Person konnte nicht erfolgreich geprüft werden. Details:</p>
-        <p>{{person.checkBaseInsuranceResultDetails}}</p>
-        <p>Prüfen Sie bitte nochmals, ob Sie die Nummer richtig erfasst haben.</p>
-        <p>Falls Sie korrekt ist, können Sie dieses Formular ohne Änderung erneut absenden. Der Prozess kann dennoch fortgesetzt werden, aber vermutlich müssen Sie auf der Zuzugsgemeinde persönlich vorbei gehen mit Ihrer Versichertenkarte</p>
-        <p>Falls Sie die Nummer falsch erfasst haben, geben Sie nun die korrekte Nummer ein und die Prüfung erfolgt dann erneut.</p>
+<form>
+    <div class="alert alert-info">      
+        Geben Sie die Nummern auf den Versichertenkarten ein. Ein paar Sekunden später erscheint die Bestätigung (grüner Haken) oder eine Fehlermeldung. Sie können es dann erneut mit einer anderen Kartennummer versuchen oder das Formular trotzdem absenden, werden dann aber von der Zuzugsgemeinde aufgefordert, am Schalter zu erscheinen.
     </div>
     
-    <!-- Formularfeld zum Erfassen der Versichertenkartennummer -->
-    <!-- PS: Eigentlich wäre type=number sinnvoll, aber Javascript hat Mühe mit so grossen Zahlen. Dadurch wird z.B. aus einer Eingabe von 36026946698526862 im Hintergrund 36026946698526864 -->
-    <div class="form-group">
-        <label>Versichertenkartennummer für {{person.firstName}} {{person.officialName}}*</label>
-        <input type="text" 
-               name="baseInsuranceNumber" 
-               class="form-control"
-               ng-model="baseInsuranceNumber"
-               required>
+    <div class="panel panel-default" ng-repeat="personModel in personList track by personModel.localPersonId">
+        <div class="panel-heading"><b>{{personModel.firstName}} {{personModel.officialName}}</b></div>
+        <div class="panel-body">
+            <label>Versichertenkartennummer</label>
+            <input id="baseInsuranceNumber_{{personModel.localPersonId}}" class="form-control" type="number" ng-blur="checkBaseInsuranceNumberOfPerson(personModel)" ng-model="personModel.baseInsuranceNumber">
+            <div ng-show="personModel.checkBaseInsuranceResult === 'Yes'" style="margin-top: 10px">
+                <span class="glyphicon glyphicon-ok-sign" style="color:green"></span>
+            </div>
+            <div ng-show="personModel.checkBaseInsuranceResultDetails !== null" style="margin-top: 10px">
+                <span class="glyphicon glyphicon-exclamation-sign" style="color:orange"></span> {{personModel.checkBaseInsuranceResultDetails}}
+            </div>
+        </div>
     </div>
-    
     <script cam-script type="text/form-script">
-        // Die AngularJS-Scope-Variable camForm.variableManager wird einer lokalen
-        // Variable zugewiesen, damit diese mehrfach verwendet werden kann in den
-        // folgenden Funktionen
-        var variableManager = camForm.variableManager;
+        // AngularJS-Scope-Variable camForm.variableManager wird lokalen Variable zugewiesen
+        var variableManager = camForm.variableManager; 
 
-        // Lädt beim Ereignis, dass das Formular geladen aber noch nicht angezeigt ist,
-        // benötigte Prozessvariablen von der Process Engine (Server) in Variablen im 
-        // variableManager-Objekt (Client)
-        camForm.on('form-loaded', function() {
-            variableManager.fetchVariable('checkBaseInsurance');       
+        // Camunda Form Lifecycle: Nach dem Laden des Formulars werden Prozessvariablen von der Process Engine (Server) in den variableManager geladen
+        // Liste der Personen
+        camForm.on('form-loaded', function() {     
             variableManager.fetchVariable('personList');
-            variableManager.fetchVariable('loopCounter');
         });
 
-        // Sobald alle Variablen client-seitig zur Verfügung stehen, werden diese 
-        // dem AngularJS-Scope-Objekt übergeben, damit diese z.B. über ng-bind
-        // angezeigt werden können
+        // Camunda Form Lifecycle: Nach dem Laden der Variablen ...
         camForm.on('variables-fetched', function() {
-            // Personenliste
-            $scope.persons = variableManager.variableValue('personList').persons;
-            // Person = Element aus Personenliste gemäss Index (loopCounter)
-            $scope.person = $scope.persons[variableManager.variableValue('loopCounter')];
-            // Um feststellen zu können, ob der Benutzer die Kartennummer geändert hat, diese zwischenspeichern
-            $scope.baseInsuranceNumberOriginal = $scope.person.baseInsuranceNumber;
-            // Für die Formularfeld-Bindung die Versichertenkartennummer zuordnen
-            $scope.baseInsuranceNumber = $scope.person.baseInsuranceNumber;
-        });        
-
-        // Vor dem Absenden des Formulars ist zu prüfen, ob der Benutzer die 
-        // baseInsuranceNumber geändert hat. Falls checkBaseInsurance falsch ist 
-        // und der Benutzer etwas geändert hat, ist checkBaseInsurance auf Wahr zu setzen.
-        camForm.on('submit', function() {
-            $scope.person.baseInsuranceNumber = $scope.baseInsuranceNumber;
-            
-            if(!variableManager.variableValue('checkBaseInsurance') && $scope.person.baseInsuranceNumber !== $scope.baseInsuranceNumberOriginal){
-                variableManager.variableValue('checkBaseInsurance', true);
-            }
+            // ... Personenliste in Model-Variable speichern
+            $scope.personList = variableManager.variableValue('personList').persons;
         });
+
+        $scope.checkBaseInsuranceNumberOfPerson = function(personToCheck) {
+            if (personToCheck.baseInsuranceNumber != null){
+                // URL für CheckBaseInsuranceService definieren
+                var url = '/umzugapi/v1/checkbaseinsurance';
+                // Parameter für POST Request zusammenstellen
+                let parameter = { 
+                    method: 'PUT', 
+                    body: JSON.stringify(personToCheck),
+                    headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                          }
+                }
+                
+                // REST-Aufruf an URL mit den Parametern, um die Grundversicherungsprüfung durchzuführen
+                fetch(url, parameter).then(function(response) {
+                    return response.json();
+                  }).then(function(data) {
+                    // Response checkBaseInsuranceResult setzten
+                    personToCheck.checkBaseInsuranceResult = data.checkBaseInsuranceResult;
+                    
+                    // Response checkBaseInsuranceResultDetails setzten
+                    personToCheck.checkBaseInsuranceResultDetails = data.checkBaseInsuranceResultDetails;
+                  });
+                }
+        }
     </script>
 </form>
