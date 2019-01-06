@@ -74,6 +74,7 @@ Autor: scep und Gruppe TZc 05
             variableManager.fetchVariable('feesTotal');
             variableManager.fetchVariable('emailAddress');
             variableManager.fetchVariable('chargingErrorMessage');
+            variableManager.fetchVariable('stripePublicKey');
         });
         
         // Camunda Form Lifecycle: Nach dem Laden der Variablen werden diese direkt an den AngularJS-Scope gehängt für das Model-View-Binding und weitere Aktivitäten ausgeführt
@@ -83,6 +84,7 @@ Autor: scep und Gruppe TZc 05
             $scope.feesTotalModel = camForm.variableManager.variableValue('feesTotal');
             $scope.emailAddressModel = camForm.variableManager.variableValue('emailAddress');
             $scope.chargingErrorMessageModel = camForm.variableManager.variableValue('chargingErrorMessage');
+            $scope.stripePublicKeyModel = camForm.variableManager.variableValue('stripePublicKey');
             
             // Gebührenbeschreibung initial auf eine leere Zeichenkette setzen
             $scope.feeDescription = '';
@@ -110,59 +112,59 @@ Autor: scep und Gruppe TZc 05
                 // ... ansonsten die Warnmeldung ausgeblendet wird
                 document.getElementById('infoAfterChargingError').style.display = "none";
             }
-        });
-        
-        // Konfiguration von Stripe Checkout gemäss https://stripe.com/docs/checkout#integration. Erfordert, dass in der Customized Camunda Webapp (BEservices Plattform) in app/tasklist/config.js Stripe Checkout als custom script eingetragen i
-    var stripeCheckoutHandler = StripeCheckout.configure({
-            // Publishable Key als Identifikation des Stripe-Kontos: müsste streng genommen dynamisch ausgelesen werden
-            key: 'pk_test_YM8GGxfywicmmBgtFcOjEm00',
-            // Kanton Bern-Bild ("geklaut" von Fahnenfabrik
-            image: 'https://www.fahnenfabrik.ch/userfiles/upload/shop/U_KT_BE.jpg',
-            // Die Einstellung des Browsers bezüglich Sprache wird verwendet
-            locale: 'auto',
-            // Titel des Formulars
-            name: 'eUmzug Kanton Bern',
-            // Währung
-            currency: 'chf',
-            // Bezeichnung der Schaltfläche. {{amount}} ist nicht von AngularJS, sondern wird von Stripe Checkout.js gesetzt mit dem Wert, welcher weiter unten gesetzt wird
-            panelLabel: '{{amount}} bezahlen',
-            // Callback-Funktion, die ausgeführt wird, wenn der Checkout abgeschlossen ist und ein Token (token) generiert wurde
-            token: function(token) {
-                // Das erhaltene Token einer Scope-Variable zuweisen
-                $scope.token = token;
-                                
-                // Info- und Warnmeldungen ausblenden
-                document.getElementById('infoBeforeCheckout').style.display = "none";
-                document.getElementById('infoAfterChargingError').style.display = "none";
-                document.getElementById('infoAfterInvalidSubmitTrial').style.display = "none";
-                // Erfolgsmeldung einblenden
-                document.getElementById('infoAfterCheckout').style.display = "block";
-                // "Zahlungsdetails erfassen"-Schaltfläche ausblenden                
-                document.getElementById('payButton').style.display = "none";
-                // Gebührenpanel wird grün angezeigt
-                document.getElementById('feePanel').className = "panel panel-success";
-            }
-        });
-        
-        // Event-Listener registrieren für die Schaltfläche "Zahlungsdetails erfassen", welche ausgeführt wird, wenn auf diese geklickt wird
-        document.getElementById('payButton').addEventListener('click', function(e) {
-            // Das Checkout-Formular mit weiteren Parametern öffnen
-            stripeCheckoutHandler.open({
-                // Gebührentotal * 100, da Stripe die Angabe in Rappen möchte
-                amount: $scope.feesTotalModel * 100,
-                // E-Mail-Adresse des Meldepflichtigen
-                email: $scope.emailAddressModel,
-                // Untertitel des Zahlungsformulars auf Gebührenbeschreibung setzen
-                description: $scope.feeDescription,
-            });
             
-            // Die Standardfunktion von einem Klick auf eine Schaltfläche (Submit) deaktivieren
-            e.preventDefault();
-        });
+            // Konfiguration von Stripe Checkout gemäss https://stripe.com/docs/checkout#integration. Erfordert, dass in der Customized Camunda Webapp (BEservices Plattform) in app/tasklist/config.js Stripe Checkout als custom script eingetragen i
+            var stripeCheckoutHandler = StripeCheckout.configure({
+                // Publishable Key als Identifikation des Stripe-Kontos: müsste streng genommen dynamisch ausgelesen werden
+                key: $scope.stripePublicKeyModel,
+                // Kanton Bern-Bild ("geklaut" von Fahnenfabrik
+                image: 'https://www.fahnenfabrik.ch/userfiles/upload/shop/U_KT_BE.jpg',
+                // Die Einstellung des Browsers bezüglich Sprache wird verwendet
+                locale: 'auto',
+                // Titel des Formulars
+                name: 'eUmzug Kanton Bern',
+                // Währung
+                currency: 'chf',
+                // Bezeichnung der Schaltfläche. {{amount}} ist nicht von AngularJS, sondern wird von Stripe Checkout.js gesetzt mit dem Wert, welcher weiter unten gesetzt wird
+                panelLabel: '{{amount}} bezahlen',
+                // Callback-Funktion, die ausgeführt wird, wenn der Checkout abgeschlossen ist und ein Token (token) generiert wurde
+                token: function(token) {
+                    // Das erhaltene Token einer Scope-Variable zuweisen
+                    $scope.token = token;
 
-        // Hilfsfunktion, damit ein allfällig offenes Checkout-Formular geschlossen wird, wenn der Benutzer von der Seite wegnavigiert
-        window.addEventListener('popstate', function() {
-            stripeCheckoutHandler.close();
+                    // Info- und Warnmeldungen ausblenden
+                    document.getElementById('infoBeforeCheckout').style.display = "none";
+                    document.getElementById('infoAfterChargingError').style.display = "none";
+                    document.getElementById('infoAfterInvalidSubmitTrial').style.display = "none";
+                    // Erfolgsmeldung einblenden
+                    document.getElementById('infoAfterCheckout').style.display = "block";
+                    // "Zahlungsdetails erfassen"-Schaltfläche ausblenden                
+                    document.getElementById('payButton').style.display = "none";
+                    // Gebührenpanel wird grün angezeigt
+                    document.getElementById('feePanel').className = "panel panel-success";
+                }
+            });
+
+            // Event-Listener registrieren für die Schaltfläche "Zahlungsdetails erfassen", welche ausgeführt wird, wenn auf diese geklickt wird
+            document.getElementById('payButton').addEventListener('click', function(e) {
+                // Das Checkout-Formular mit weiteren Parametern öffnen
+                stripeCheckoutHandler.open({
+                    // Gebührentotal * 100, da Stripe die Angabe in Rappen möchte
+                    amount: $scope.feesTotalModel * 100,
+                    // E-Mail-Adresse des Meldepflichtigen
+                    email: $scope.emailAddressModel,
+                    // Untertitel des Zahlungsformulars auf Gebührenbeschreibung setzen
+                    description: $scope.feeDescription,
+                });
+
+                // Die Standardfunktion von einem Klick auf eine Schaltfläche (Submit) deaktivieren
+                e.preventDefault();
+            });
+
+            // Hilfsfunktion, damit ein allfällig offenes Checkout-Formular geschlossen wird, wenn der Benutzer von der Seite wegnavigiert
+            window.addEventListener('popstate', function() {
+                stripeCheckoutHandler.close();
+            });
         });
         
         // Camunda Form Lifecycle: Vor dem Senden der Formulardaten an den Server ausgeführt

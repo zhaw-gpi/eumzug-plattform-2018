@@ -34,7 +34,7 @@ public class StripeClientService {
      * 
      * @param stripeApiKey 
      */
-    StripeClientService(@Value("${stripe.apiKey}") String stripeApiKey) {
+    StripeClientService(@Value("${stripe.apiSecretKey}") String stripeApiKey) {
         // https://stripe.com/docs/api/java#authentication
         Stripe.apiKey = stripeApiKey;
     }

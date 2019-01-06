@@ -19,7 +19,13 @@
   </bpmn:collaboration>
   <bpmn:process id="ZahlungDurchfuehren" name="ZahlungDurchfuehren" isExecutable="true">
     <bpmn:startEvent id="GebuehrenZuBezahlen" name="Betrag zu bezahlen">
-      <bpmn:documentation>Dieses Prozesstartereignis wird aufgerufen vom Prozess 'Umzugsmeldung erfassen und bezahlen' und ist nicht gedacht, um unabhängig davon (z.B. aus der Tasklist) aufgerufen zu werden.</bpmn:documentation>
+      <bpmn:documentation>Dieses Prozesstartereignis wird aufgerufen vom Prozess 'Umzugsmeldung erfassen und bezahlen' und ist nicht gedacht, um unabhängig davon (z.B. aus der Tasklist) aufgerufen zu werden.
+
+In einem Start-Listener wird eine Delegate-Klasse mit folgender Funktionalität aufgerufen: Wandelt die Umgebungsvariable mit dem öffentlichen Stripe API-Key in eine Prozessvariable stripePublicKey um, damit diese im ErfassenDerZahlungsdetails-Formular genutzt werden kann.
+</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="#{getStripePublicKeyAdapter}" event="start" />
+      </bpmn:extensionElements>
       <bpmn:outgoing>SequenceFlow_09zi3j6</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:userTask id="ErfassenDerZahlungsdetails" name="Erfassen der Zahlungsdetails" camunda:formKey="embedded:app:forms/ErfassenDerZahlungsdetailsForm.html" camunda:assignee="${meldePflichtiger}">
@@ -61,9 +67,7 @@ Schaltfläche (Bootstrap primary button) mit der Bezeichnung "Zahlungsdetails er
 
 JAVASCRIPT
 ===========
-Siehe Aufgabenstellung zu Aufgabe 10.
-
-</bpmn:documentation>
+Siehe Aufgabenstellung zu Aufgabe 10.</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_158uvnj</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ygtjw5</bpmn:outgoing>
     </bpmn:userTask>
@@ -117,7 +121,7 @@ Für die Kommunikation wird der Secret API Key benötigt.  Dieser darf nicht auf
 
 Der Service hat eine einzige Methode, welche als Input Parameter das Token und den Betrag erhält und als Rückgabe ein generisches Object zurück gibt, welches entweder einem Charge-Objekt oder einem StripeException-Objekt entspricht.
 
-Es ist also ein Error-Handling erforderlich, wie in https://stripe.com/docs/api/errors/handling?lang=java beschrieben erforderlich, da verschiedenste fachliche und technische Fehler auftreten können, wie z.B. hier aufgeführt: https://stripe.com/docs/declines. Es genügt hingegen die generische StripeException abzufangen und nicht alle Untertypen wie z.B. CardException. </bpmn:documentation>
+Es ist also ein Error-Handling erforderlich, wie in https://stripe.com/docs/api/errors/handling?lang=java beschrieben erforderlich, da verschiedenste fachliche und technische Fehler auftreten können, wie z.B. hier aufgeführt: https://stripe.com/docs/declines. Es genügt hingegen die generische StripeException abzufangen und nicht alle Untertypen wie z.B. CardException.</bpmn:documentation>
       <bpmn:incoming>SequenceFlow_1ygtjw5</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ucel9t</bpmn:outgoing>
     </bpmn:serviceTask>
