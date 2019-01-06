@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1ew1wuf" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
+  <bpmn:collaboration id="Collaboration_0f9wcne">
+    <bpmn:participant id="ZahlungsberichtAufbereitenUndVersendenParticipant" name="Zahlungsbericht aufbereiten und versenden" processRef="ZahlungsberichtAufbereitenUndVersenden">
+      <bpmn:documentation>Der Prozess startet immer am 01. jeden Monats um 07:30.</bpmn:documentation>
+    </bpmn:participant>
+    <bpmn:participant id="MonatlichAusloesenParticipant" name="Monatlich auslösen" processRef="MonatlichAusloesen" />
+  </bpmn:collaboration>
+  <bpmn:process id="ZahlungsberichtAufbereitenUndVersenden" name="Zahlungsbericht aufbereiten und versenden" isExecutable="true">
+    <bpmn:endEvent id="ZahlungsberichtVersendet" name="Zahlungsbericht versendet">
+      <bpmn:incoming>SequenceFlow_1kkl73q</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="ZahlungsberichtAufbereiten" name="Zahlungsbericht aufbereiten" camunda:delegateExpression="#{preparePaymentReportAdapter}">
+      <bpmn:documentation>Die DelegateKlasse ruft den StripeClientService mit einer Methode getPaymentList auf. 
+
+Die Liste wird auf erfolgreiche Meldungen geprüft und ein "Bericht" (einfache Text-Liste) erstellt.
+</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_0vezsxe</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1334ce6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ZahlungsberichtVersenden" name="Zahlungsbericht versenden" camunda:type="external" camunda:topic="SendPaymentReport">
+      <bpmn:documentation>Der aufbereitete Bericht wird per Mail über den EmailService verschickt an die in application.properties definierte Empfänger-Adresse (typischerweise Buchhaltungsabteilung).
+
+Die eigentliche Nachricht wird über den Kantonalen Benachrichtigungsdienst durchgeführt, welcher sich für das Topic 'SendPaymentReport' bei der Umzugsplattform registiert. Demnach ist die Implementation dieses Service Tasks ein External Task.
+
+Der kantonale Benachrichtigungsdienst erwartet eine HashMap mit dort spezifierten Key-Value-Paaren. Diese HashMap wird in einer JavaDelegate-Klasse (Named=generatePaymentReportSendTaskVariableAdapter) durchgeführt, welche in einem Start Listener dieses Service Tasks aufgerufen wird.
+
+Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Prozessvariablen zusammenstellen, zum andern benötigt sie folgende zwei Prozessvariablen, die als Input-Parameter in diesem Service Task erstellt werden:
+- notificationSubject=eUmzugsmeldung erfolgreich abgeschlossen
+- notificationMessageBody=Die Einwohnerkontrollen haben die Umzugsmeldung akzeptiert. Der eUmzug-Meldeprozess ist damit erfolgreich abgeschlossen.
+</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_1334ce6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1kkl73q</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:startEvent id="BerichterstellungManuellAusgeloest" name="Berichterstellungausgelöst">
+      <bpmn:documentation>Fürs Testen kann die Berichterstelelung auch manuell angestossen werden</bpmn:documentation>
+      <bpmn:outgoing>SequenceFlow_0vezsxe</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1334ce6" sourceRef="ZahlungsberichtAufbereiten" targetRef="ZahlungsberichtVersenden" />
+    <bpmn:sequenceFlow id="SequenceFlow_1kkl73q" sourceRef="ZahlungsberichtVersenden" targetRef="ZahlungsberichtVersendet" />
+    <bpmn:sequenceFlow id="SequenceFlow_0vezsxe" sourceRef="BerichterstellungManuellAusgeloest" targetRef="ZahlungsberichtAufbereiten" />
+  </bpmn:process>
+  <bpmn:process id="MonatlichAusloesen" name="Monatlich auslösen" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_0necvws" name="Jeden 1. des Monats um 6:30">
+      <bpmn:documentation>Timer Definition über CRON nach http://www.quartz-scheduler.org/documentation/quartz-2.1.x/tutorials/tutorial-lesson-06.html
+
+0 30 6 01 * ? = 0 (seconds) 30 (minutes) 6 (hours) 01 (day-of-month) * (every month) ? (no specific day of week)
+</bpmn:documentation>
+      <bpmn:outgoing>SequenceFlow_187sdfi</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0qvr3o5">
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">0 30 6 01 * ?</bpmn:timeCycle>
+      </bpmn:timerEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:callActivity id="ZahlungsberichtAufbereitenUndVersendenCall" name="Zahlungsbericht aufbereiten und versenden" calledElement="ZahlungsberichtAufbereitenUndVersenden">
+      <bpmn:documentation>Ruft die oberhalb dargestellte Prozessdefinition auf.</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_187sdfi</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_07iar9w</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:endEvent id="EndEvent_0t8fhmc" name="Zahlungsbericht versendet">
+      <bpmn:incoming>SequenceFlow_07iar9w</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_187sdfi" sourceRef="StartEvent_0necvws" targetRef="ZahlungsberichtAufbereitenUndVersendenCall" />
+    <bpmn:sequenceFlow id="SequenceFlow_07iar9w" sourceRef="ZahlungsberichtAufbereitenUndVersendenCall" targetRef="EndEvent_0t8fhmc" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0f9wcne">
+      <bpmndi:BPMNShape id="Participant_0ufqjec_di" bpmnElement="ZahlungsberichtAufbereitenUndVersendenParticipant">
+        <dc:Bounds x="5" y="3" width="554" height="245" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0jvm5y2_di" bpmnElement="ZahlungsberichtVersendet">
+        <dc:Bounds x="480" y="87" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="459" y="130" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1334ce6_di" bpmnElement="SequenceFlow_1334ce6">
+        <di:waypoint x="284" y="105" />
+        <di:waypoint x="331" y="105" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_09xyr2r_di" bpmnElement="ZahlungsberichtAufbereiten">
+        <dc:Bounds x="184" y="65" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kkl73q_di" bpmnElement="SequenceFlow_1kkl73q">
+        <di:waypoint x="431" y="105" />
+        <di:waypoint x="480" y="105" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0rf4ku7_di" bpmnElement="ZahlungsberichtVersenden">
+        <dc:Bounds x="331" y="65" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0k8wrvv_di" bpmnElement="BerichterstellungManuellAusgeloest">
+        <dc:Bounds x="91" y="87" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="68" y="130" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0vezsxe_di" bpmnElement="SequenceFlow_0vezsxe">
+        <di:waypoint x="127" y="105" />
+        <di:waypoint x="184" y="105" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_0ih2ntu_di" bpmnElement="MonatlichAusloesenParticipant">
+        <dc:Bounds x="5" y="282" width="366" height="140" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0necvws_di" bpmnElement="StartEvent_0necvws">
+        <dc:Bounds x="72" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="51" y="375" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_187sdfi_di" bpmnElement="SequenceFlow_187sdfi">
+        <di:waypoint x="108" y="350" />
+        <di:waypoint x="158" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_1e8kzzd_di" bpmnElement="ZahlungsberichtAufbereitenUndVersendenCall">
+        <dc:Bounds x="158" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0t8fhmc_di" bpmnElement="EndEvent_0t8fhmc">
+        <dc:Bounds x="308" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="287" y="375" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_07iar9w_di" bpmnElement="SequenceFlow_07iar9w">
+        <di:waypoint x="258" y="350" />
+        <di:waypoint x="308" y="350" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

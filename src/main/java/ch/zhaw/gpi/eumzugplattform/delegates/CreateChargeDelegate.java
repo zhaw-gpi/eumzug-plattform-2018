@@ -2,6 +2,7 @@ package ch.zhaw.gpi.eumzugplattform.delegates;
 
 import ch.zhaw.gpi.eumzugplattform.services.StripeClientService;
 import com.stripe.exception.StripeException;
+import java.util.HashMap;
 import javax.inject.Named;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -29,13 +30,14 @@ public class CreateChargeDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
-        // Aus den Prozessvariablen das Stripe-Token und den zu bezahlenden Betrag auslesen
+        // Aus den Prozessvariablen das Stripe-Token, den zu bezahlenden Betrag und die Gebührenbeschreibungen auslesen
         String stripeToken = (String) delegateExecution.getVariable("stripeToken");
         Integer feesTotal = (Integer) delegateExecution.getVariable("feesTotal");
+        HashMap<String, Integer> feeMap = (HashMap<String, Integer>) delegateExecution.getVariable("feeMap");
         
         // Die Kartenbelastungsanfrage an den Stripe Client Service stellen und das
         // Ergebnis in einem Object speichern
-        Object chargeReturn = stripeClientService.chargeCreditCard(stripeToken, feesTotal);
+        Object chargeReturn = stripeClientService.chargeCreditCard(stripeToken, feesTotal, feeMap);
         
         // Das Ergebnis ist entweder ein Charge-Objekt oder eine StripeException
         // Im ersten Fall ist nichts zu tun, im zweiten Fall ...
