@@ -1,6 +1,5 @@
 package ch.zhaw.gpi.eumzugplattform.delegates;
 
-import ch.zhaw.gpi.eumzugplattform.helpers.DateConversionHelper;
 import ch.zhaw.gpi.eumzugplattform.services.StripeClientService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
@@ -32,10 +31,6 @@ public class PreparePaymentReportDelegate implements JavaDelegate {
     // Verdrahten des StripeClientService für das Aufbereiten der Liste von Zahlungen
     @Autowired
     StripeClientService stripeClientService;
-    
-    // Verdrahten des DateConversionHelpers für UnixDate Start/Ende Monat
-    @Autowired
-    private DateConversionHelper dateConversionHelper;
     
     // Sender-Adresse aus entsprechender Property-Eigenschaft lesen
     @Value("${umzugsplattform.mailaddress}")

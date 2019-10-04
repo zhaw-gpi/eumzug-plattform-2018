@@ -1,6 +1,5 @@
 package ch.zhaw.gpi.eumzugplattform.entities;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,7 +16,7 @@ import javax.validation.constraints.NotNull;
  * @author scep
  */
 @Entity
-public class MunicipalityDocumentType implements Serializable {
+public class MunicipalityDocumentType {
 
     // Automatisch gesetzte Id
     @Id

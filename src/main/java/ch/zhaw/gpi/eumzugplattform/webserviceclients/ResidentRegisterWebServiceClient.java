@@ -57,9 +57,9 @@ public class ResidentRegisterWebServiceClient {
         handleDeliveryRequest.setDelivery(deliveryRequest);
 
         Object webServiceResponse = webServiceTemplate.marshalSendAndReceive(webserviceUrl,
-                new JAXBElement(HANDLE_DELIVERY_QNAME, HandleDelivery.class, handleDeliveryRequest));
+                new JAXBElement<HandleDelivery>(HANDLE_DELIVERY_QNAME, HandleDelivery.class, handleDeliveryRequest));
  
-        Object jAXBElement = ((JAXBElement) webServiceResponse).getValue();
+        Object jAXBElement = ((JAXBElement<?>) webServiceResponse).getValue();
         if (jAXBElement instanceof HandleDeliveryResponse) {
             HandleDeliveryResponse handleDeliveryResponse = (HandleDeliveryResponse) jAXBElement;
             DeliveryType deliveryResponse = handleDeliveryResponse.getDelivery();

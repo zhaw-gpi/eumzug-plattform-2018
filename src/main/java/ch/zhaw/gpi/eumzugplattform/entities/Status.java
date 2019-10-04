@@ -1,6 +1,5 @@
 package ch.zhaw.gpi.eumzugplattform.entities;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,7 +12,7 @@ import javax.validation.constraints.NotNull;
  * @author Stefan Fischer, adaptiert von scep
  */
 @Entity
-public class Status implements Serializable{
+public class Status {
     // Automatisch gesetzte Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

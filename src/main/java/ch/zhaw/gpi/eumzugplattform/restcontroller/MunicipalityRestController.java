@@ -56,17 +56,17 @@ public class MunicipalityRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT + "/{name}")
-    public ResponseEntity<Municipality> getMunicipalityByName(@PathVariable String name){
+    public ResponseEntity<?> getMunicipalityByName(@PathVariable String name){
         // Gemeinde nach Name suchen
         Optional<Municipality> municipality = municipalityRepository.findByMunicipalityName(name);
         
         // Wenn Gemeinde existiert
         if(municipality.isPresent()){
             // ... diese zurückgeben mit Status OK
-            return new ResponseEntity(municipality.get(),HttpStatus.OK);
+            return new ResponseEntity<Municipality>(municipality.get(),HttpStatus.OK);
         } else {
             // ... ansonsten NOT-FOUND zurück geben
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND);
         }
     }
     
@@ -77,24 +77,24 @@ public class MunicipalityRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT, method = RequestMethod.POST)
-    public ResponseEntity<Municipality> addMunicipality(@Valid @RequestBody Municipality municipality){
+    public ResponseEntity<?> addMunicipality(@Valid @RequestBody Municipality municipality){
         // Gemeinde suchen in Datenbank
         Optional<Municipality> searchedMunicipality = municipalityRepository.findById(municipality.getMunicipalityId());
         
         // Wenn Gemeinde existiert
         if(searchedMunicipality.isPresent()){
             // ... CONFLICT-Status zurück geben
-            return new ResponseEntity(HttpStatus.CONFLICT);
+            return new ResponseEntity<HttpStatus>(HttpStatus.CONFLICT);
         } else {
             try{
                 // ... die neue Gemeinde in der Datenbank hinzuzufügen
                 Municipality savedMunicipality = municipalityRepository.save(municipality);
                 
                 // und zurück geben
-                return new ResponseEntity(savedMunicipality,HttpStatus.OK);
+                return new ResponseEntity<Municipality>(savedMunicipality,HttpStatus.OK);
             } catch (DataIntegrityViolationException e){
                 // Falls es zu einer Verletzung einer Bedingung kommt
-                return new ResponseEntity(HttpStatus.CONFLICT);
+                return new ResponseEntity<HttpStatus>(HttpStatus.CONFLICT);
             }
         }
     }
@@ -106,7 +106,7 @@ public class MunicipalityRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT, method = RequestMethod.PUT)
-    public ResponseEntity<Municipality> updateMunicipality(@RequestBody @Valid Municipality municipality){
+    public ResponseEntity<?> updateMunicipality(@RequestBody @Valid Municipality municipality){
         // Gemeinde in der Datenbank suchen
         Optional<Municipality> searchedMunicipality = municipalityRepository.findById(municipality.getMunicipalityId());
         
@@ -116,10 +116,10 @@ public class MunicipalityRestController {
             Municipality savedMunicipality = municipalityRepository.save(municipality);
             
             // Die gespeicherte Gemeinde zurückgeben
-            return new ResponseEntity(savedMunicipality, HttpStatus.OK);
+            return new ResponseEntity<Municipality>(savedMunicipality, HttpStatus.OK);
         } else {
             // ... ansonsten NOT-FOUND zurück geben
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND);
         }
     }
     
@@ -130,14 +130,14 @@ public class MunicipalityRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT + "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteMunicipality(@PathVariable Integer id){
+    public ResponseEntity<HttpStatus> deleteMunicipality(@PathVariable Integer id){
         // Gemeinde suchen in Datenbank
         Optional<Municipality> municipalityToDelete = municipalityRepository.findById(id);
         
         // Falls Gemeinde nicht vorhanden ist ...
         if (!municipalityToDelete.isPresent()){
             // ... NOT-FOUND zurück geben
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND);
         }
         
         // Kurzreferenz auf zu löschende Gemeinde setzen
@@ -159,6 +159,6 @@ public class MunicipalityRestController {
         municipalityRepository.delete(municipality);
         
         // Erfolgsmeldung zurück geben
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<HttpStatus>(HttpStatus.OK);
     }
 }

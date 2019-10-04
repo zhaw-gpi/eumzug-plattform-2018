@@ -55,7 +55,7 @@ public class TransactionLogRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT + "/{personId}/latest")
-    public ResponseEntity<Optional<TransactionLogEntry>> findMostRecentTransactionLogByPerson(@PathVariable String personId){
+    public ResponseEntity<?> findMostRecentTransactionLogByPerson(@PathVariable String personId){
         // Person aus Datenbank auslesen
         Optional<Person> person = personRepository.findById(personId);
         
@@ -66,12 +66,12 @@ public class TransactionLogRestController {
             
             // Falls ein Eintrag gefunden wurde
             if(searchedTransactionLogEntry.isPresent()){
-                return new ResponseEntity(searchedTransactionLogEntry.get(), HttpStatus.OK);
+                return new ResponseEntity<TransactionLogEntry>(searchedTransactionLogEntry.get(), HttpStatus.OK);
             }
         }
         
         // Ansonsten NOT-FOUND zurück geben
-        return new ResponseEntity(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND);
     }
     
     /**
@@ -83,20 +83,20 @@ public class TransactionLogRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT + "/{statusName}")
-    public ResponseEntity<List<TransactionLogEntry>> getTransactionLogListByStatus(@PathVariable String statusName){
+    public ResponseEntity<?> getTransactionLogListByStatus(@PathVariable String statusName){
         // Status aus Datenbank auslesen
         Optional<Status> status = statusRepository.findByName(statusName);
         
         // Wenn kein Status gefunden wurde
         if(!status.isPresent()){
             // ... NOT-FOUND zurück geben
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND);
         }
         
         // Liste der Transaktionslog-Einträge auslesen
         List<TransactionLogEntry> searchedTransactionLogEntries = transactionLogEntryRepository.findByStatusOrderByLogTimeStampDesc(status.get());
         
         // Liste zurückgeben
-        return new ResponseEntity(searchedTransactionLogEntries, HttpStatus.OK);
+        return new ResponseEntity<List<TransactionLogEntry>>(searchedTransactionLogEntries, HttpStatus.OK);
     }
 }

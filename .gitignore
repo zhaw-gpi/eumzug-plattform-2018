@@ -1,31 +1,24 @@
 # Compiled class file
-*.class
+/target/
 
 # Log file
 *.log
 
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
 # Package Files #
 *.jar
 *.war
+*.nar
 *.ear
 *.zip
 *.tar.gz
 *.rar
 
-/target/
-/.classpath
-/.project
-/nbactions.xml
-/customs.json
-/umzugsplattform.mv.db
-/src/main/resources/camunda-license.txt
+# VS Code specific
+/.settings/
+/.vscode/
+/.sts4-cache/
+.classpath
+.project
 
-/logs/
-/relocationDb.mv.db
-/engineDb.mv.db
+# H2-Database
+*.mv.db

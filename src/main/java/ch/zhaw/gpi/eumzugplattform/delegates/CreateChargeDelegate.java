@@ -33,6 +33,8 @@ public class CreateChargeDelegate implements JavaDelegate {
         // Aus den Prozessvariablen das Stripe-Token, den zu bezahlenden Betrag und die Gebührenbeschreibungen auslesen
         String stripeToken = (String) delegateExecution.getVariable("stripeToken");
         Integer feesTotal = (Integer) delegateExecution.getVariable("feesTotal");
+        
+        @SuppressWarnings (value="unchecked")
         HashMap<String, Integer> feeMap = (HashMap<String, Integer>) delegateExecution.getVariable("feeMap");
         
         // Die Kartenbelastungsanfrage an den Stripe Client Service stellen und das

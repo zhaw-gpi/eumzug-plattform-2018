@@ -42,9 +42,6 @@ public class WebServiceDefaultHeaderHelper {
         // Dieses Objekt wird dem Antwort-Header zugewiesen
         headerRequest.setSendingApplication(sendingApplication);
         
-        // Ein neues Datumskonversation-Hilfsobjekt wird initialisiert
-        DateConversionHelper dateConversionHelper = new DateConversionHelper();
-        
         // Mithilfe dieses Hilfsobjekt wird das aktuelle Datum (inkl. Uhrzeit)
         // in ein XMLGregorianCalendar-Objekt umgewandelt und der Nachrichten-Datums-
         // Eigenschaft im Antwort-Header zugewiesen

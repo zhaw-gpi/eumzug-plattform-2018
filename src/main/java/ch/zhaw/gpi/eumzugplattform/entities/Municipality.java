@@ -1,6 +1,5 @@
 package ch.zhaw.gpi.eumzugplattform.entities;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.constraints.Max;
@@ -14,7 +13,7 @@ import javax.validation.constraints.Size;
  * @author scep
  */
 @Entity
-public class Municipality implements Serializable {
+public class Municipality {
 
     // Manuell gesetzte Id (BFS-Nummer)
     @Id

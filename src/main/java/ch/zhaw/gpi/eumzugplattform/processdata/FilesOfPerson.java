@@ -1,6 +1,5 @@
 package ch.zhaw.gpi.eumzugplattform.processdata;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +8,7 @@ import java.util.List;
  * 
  * @author scep und tzc05
  */
-public final class FilesOfPerson implements Serializable {
+public final class FilesOfPerson {
     // Liste von Gemeinde-Dokumenttypen-Dateien
     private List<MunicipalityDocTypeFile> municipalityDocTypeFiles;
     

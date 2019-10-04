@@ -1,6 +1,5 @@
 package ch.zhaw.gpi.eumzugplattform.processdata;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +13,7 @@ import java.util.List;
  * 
  * @author tcz05 und scep
  */
-public final class FilesOfPersonList implements Serializable {
+public final class FilesOfPersonList {
     private List<FilesOfPerson> filesOfPersonList;
     
     public FilesOfPersonList(){

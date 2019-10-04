@@ -1,7 +1,6 @@
 package ch.zhaw.gpi.eumzugplattform.processdata;
 
 import ch.zhaw.gpi.eumzugplattform.entities.MunicipalityDocumentType;
-import java.io.Serializable;
 
 /**
  * Klasse, um hochzuladende Dokumenttypen und die zugehörigen Dateien abzubilden
@@ -14,7 +13,7 @@ import java.io.Serializable;
  * 
  * @author scep
  */
-public class MunicipalityDocTypeFile implements Serializable {
+public class MunicipalityDocTypeFile {
     private MunicipalityDocumentType municipalityDocumentType;
     private String fileDataUrl;
     private String fileName;

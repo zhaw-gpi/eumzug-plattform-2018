@@ -1,13 +1,12 @@
 package ch.zhaw.gpi.eumzugplattform.processdata;
 
-import java.io.Serializable;
 
 /**
  * Klasse für eine Versicherten-Adresse (verwendet von VeKaClientService)
  * 
  * @author scep
  */
-public class VeKaAddress implements Serializable {    
+public class VeKaAddress {    
     // Strasse
     private String street;
     

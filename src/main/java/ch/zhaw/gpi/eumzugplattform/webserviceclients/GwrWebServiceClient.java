@@ -51,9 +51,9 @@ public class GwrWebServiceClient {
         adressPruefungOperationRequest.setAdresspruefungAnfrage(adresse);
 
         Object webServiceResponse = webServiceTemplate.marshalSendAndReceive(webserviceUrl,
-                new JAXBElement(ADRESS_PRUEFUNG_OPERATION_QNAME, AdressPruefungOperation.class, adressPruefungOperationRequest));
+                new JAXBElement<AdressPruefungOperation>(ADRESS_PRUEFUNG_OPERATION_QNAME, AdressPruefungOperation.class, adressPruefungOperationRequest));
  
-        Object jAXBElement = ((JAXBElement) webServiceResponse).getValue();
+        Object jAXBElement = ((JAXBElement<?>) webServiceResponse).getValue();
         if (jAXBElement instanceof AdressPruefungOperationResponse) {
             AdressPruefungOperationResponse adressPruefungOperationResponse = (AdressPruefungOperationResponse) jAXBElement;
             AddresseExistenzType addresseExistenz = adressPruefungOperationResponse.getAdresspruefungAntwort();
@@ -82,10 +82,10 @@ public class GwrWebServiceClient {
         // Webservice-Aufruf mit der Ziel-URL http://localhost:8090/soap/GebaeudeUndWohnungsRegisterService,
         // dem QName und dem Objekt wohnungenInGebaeudeOperation
         Object webServiceResponse = webServiceTemplate.marshalSendAndReceive(webserviceUrl,
-                new JAXBElement(WOHNUNGEN_IN_GEBAEUDE_OPERATION_QNAME, WohnungenInGebaeudeOperation.class, wohnungenInGebaeudeOperation));
+                new JAXBElement<WohnungenInGebaeudeOperation>(WOHNUNGEN_IN_GEBAEUDE_OPERATION_QNAME, WohnungenInGebaeudeOperation.class, wohnungenInGebaeudeOperation));
 
         // Antwort zu einem jAXBElement casten
-        Object jAXBElement = ((JAXBElement) webServiceResponse).getValue();
+        Object jAXBElement = ((JAXBElement<?>) webServiceResponse).getValue();
 
         // Überprüfen ob es vom korrekten Typ ist ...
         if (jAXBElement instanceof WohnungenInGebaeudeOperationResponse) {

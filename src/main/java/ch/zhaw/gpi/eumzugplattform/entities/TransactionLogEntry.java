@@ -1,6 +1,5 @@
 package ch.zhaw.gpi.eumzugplattform.entities;
 
-import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,7 +16,7 @@ import javax.validation.constraints.NotNull;
  * @author scep
  */
 @Entity
-public class TransactionLogEntry implements Serializable {
+public class TransactionLogEntry {
 
     // Automatisch generierte Id
     @Id

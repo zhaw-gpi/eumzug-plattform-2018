@@ -31,6 +31,6 @@ public class CheckBaseInsuranceRestController {
         checkBaseInsuranceService.checkBaseInsuranceValidity(personToCheck);
         
         // Grundversicherung überprüft und Resultat zurückmelden
-        return new ResponseEntity(personToCheck, HttpStatus.OK); 
+        return new ResponseEntity<PersonPD>(personToCheck, HttpStatus.OK); 
     }
 }

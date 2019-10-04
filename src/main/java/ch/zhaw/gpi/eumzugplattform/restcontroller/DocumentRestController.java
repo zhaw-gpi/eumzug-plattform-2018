@@ -43,7 +43,7 @@ public class DocumentRestController {
     @RequestMapping(path = ENDPOINT)
     public ResponseEntity<List<DocumentType>> getDocumentTypeList(){
         // Liste von Dokumente suchen und zurückgeben
-        return new ResponseEntity(documentTypeRepository.findAll(), HttpStatus.OK);
+        return new ResponseEntity<List<DocumentType>>(documentTypeRepository.findAll(), HttpStatus.OK);
     }
     
     /**
@@ -53,17 +53,17 @@ public class DocumentRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT + "/{name}")
-    public ResponseEntity<DocumentType> getDocumentTypeByName(@PathVariable String name){
+    public ResponseEntity<?> getDocumentTypeByName(@PathVariable String name){
         // Dokument suchen in Datenbank
         Optional<DocumentType> documentType = documentTypeRepository.findByName(name);
         
         // Wenn Dokumenttyp existiert
         if(documentType.isPresent()){
             // ... dieses zurückgeben mit Status OK
-            return new ResponseEntity(documentType.get(),HttpStatus.OK);
+            return new ResponseEntity<DocumentType>(documentType.get(),HttpStatus.OK);
         } else {
             // ... ansonsten NOT-FOUND zurück geben
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND);
         }
     }
     
@@ -74,24 +74,24 @@ public class DocumentRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT, method = RequestMethod.POST)
-    public ResponseEntity<DocumentType> addDocumentType(@Valid @RequestBody DocumentType documentType){
+    public ResponseEntity<?> addDocumentType(@Valid @RequestBody DocumentType documentType){
         // Dokumenttyp suchen in Datenbank
         Optional<DocumentType> searchedDocumentType = documentTypeRepository.findById(documentType.getId());
         
         // Wenn Dokumenttyp existiert
         if(searchedDocumentType.isPresent()){
             // ... CONFLICT-Status zurück geben
-            return new ResponseEntity(HttpStatus.CONFLICT);
+            return new ResponseEntity<HttpStatus>(HttpStatus.CONFLICT);
         } else {
             try{
                 // ... den neuen Dokumenttyp in der Datenbank hinzuzufügen
                 DocumentType savedDocumentType = documentTypeRepository.save(documentType);
                 
                 // und zurück geben
-                return new ResponseEntity(savedDocumentType,HttpStatus.OK);
+                return new ResponseEntity<DocumentType>(savedDocumentType,HttpStatus.OK);
             } catch (DataIntegrityViolationException e){
                 // Falls es zu einer Verletzung einer Bedingung kommt (nur Name ist möglich, entweder leer oder bereits bestehend), dann CONFLICT-Status zurückgeben
-                return new ResponseEntity(HttpStatus.CONFLICT);
+                return new ResponseEntity<HttpStatus>(HttpStatus.CONFLICT);
             }
         }
     }
@@ -104,7 +104,7 @@ public class DocumentRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT + "/{id}/{name}", method = RequestMethod.PUT)
-    public ResponseEntity<DocumentType> renameDocumentType(@PathVariable Integer id, @PathVariable String name){
+    public ResponseEntity<?> renameDocumentType(@PathVariable Integer id, @PathVariable String name){
         // Dokumenttyp in der Datenbank suchen
         Optional<DocumentType> searchedDocumentType = documentTypeRepository.findById(id);
         
@@ -114,10 +114,10 @@ public class DocumentRestController {
             searchedDocumentType.get().setName(name);
             
             // Den gespeicherten Dokumenttyp zurückgeben
-            return new ResponseEntity(documentTypeRepository.save(searchedDocumentType.get()), HttpStatus.OK);
+            return new ResponseEntity<DocumentType>(documentTypeRepository.save(searchedDocumentType.get()), HttpStatus.OK);
         } else {
             // ... ansonsten NOT-FOUND zurück geben
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND);
         }
     }
     
@@ -128,14 +128,14 @@ public class DocumentRestController {
      * @return 
      */
     @RequestMapping(path = ENDPOINT + "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteDocumentType(@PathVariable Integer id){
+    public ResponseEntity<?> deleteDocumentType(@PathVariable Integer id){
         // Dokumenttyp suchen in Datenbank
         Optional<DocumentType> documentTypeToDelete = documentTypeRepository.findById(id);
         
         // Falls Dokumenttyp nicht vorhanden ist ...
         if (!documentTypeToDelete.isPresent()){
             // ... NOT-FOUND zurück geben
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<HttpStatus>(HttpStatus.NOT_FOUND);
         }
         
         // Kurzreferenz auf zu löschenden Dokumenttyp setzen
@@ -147,13 +147,13 @@ public class DocumentRestController {
         // Falls Abhängigkeiten bestehen
         if (!references.isEmpty()){
             // ... CONFLICT-Status zurück geben
-            return new ResponseEntity(HttpStatus.CONFLICT);
+            return new ResponseEntity<HttpStatus>(HttpStatus.CONFLICT);
         }
         
         // Dokumenttyp löschen
         documentTypeRepository.delete(documentType);
         
         // Erfolgsmeldung zurück geben
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<HttpStatus>(HttpStatus.OK);
     }
 }

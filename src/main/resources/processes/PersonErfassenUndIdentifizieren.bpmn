@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_15djiii" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_15djiii" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.1.0">
   <bpmn:collaboration id="Collaboration_06rojpi">
     <bpmn:participant id="PersonErfassenUndIdentifizierenParticipant" name="Person erfassen und identifizieren" processRef="PersonErfassenUndIdentifizieren" />
     <bpmn:participant id="KantonalesPersonenregisterParticipant" name="Kantonales Personenregister">
@@ -24,7 +24,7 @@ Ein End-Listener ruft die JavaDelegate-Klasse 'GetMunicipalityListDelegate' auf 
       </bpmn:extensionElements>
       <bpmn:outgoing>SequenceFlow_0endv5n</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="IdentifikationsmerkmaleErfassen" name="Identifikationsmerkmale erfassen" camunda:formKey="embedded:app:forms/IdentifikationsmerkmaleErfassenForm.html" camunda:assignee="${meldePflichtiger}">
+    <bpmn:userTask id="IdentifikationsmerkmaleErfassen" name="Identifikationsmerkmale erfassen" camunda:asyncAfter="true" camunda:formKey="embedded:app:forms/IdentifikationsmerkmaleErfassenForm.html" camunda:assignee="${meldePflichtiger}">
       <bpmn:documentation>Für dieses und alle weiteren Formulare gilt: Es wird eine client-seitige Validierung erwartet, welche den Benutzer informiert, was er falsch gemacht hat (Ausnahme: maxlength und required können ohne Validierungsnachricht gelöst werden.)
 
 AHV-Nummer (optional)
@@ -59,13 +59,10 @@ Wegzugsadresse Politische Gemeinde
       <bpmn:incoming>SequenceFlow_1qa435t</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_09b5q9r</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:serviceTask id="PersonenidentifikatorGenerieren" name="Personenidentifikator generieren" camunda:asyncAfter="true" camunda:delegateExpression="#{generateLocalPersonIdAdapter}">
+    <bpmn:serviceTask id="PersonenidentifikatorGenerieren" name="Personenidentifikator generieren" camunda:delegateExpression="#{generateLocalPersonIdAdapter}">
       <bpmn:documentation>Generiert eine neue lokale PersonenId
 
 Als Id wird die AHV-Nummer gewählt, sofern vorhanden, ansonsten ein Zusammenzug aus je 3 Buchstaben Nachnamen und Vornamen sowie Geburtsdatum und Geschlecht, also z.B. aus Ruth Müller, Weiblich (2), 1.1.1980 wird "RutMül_1980-01-01_2".</bpmn:documentation>
-      <bpmn:extensionElements>
-        <camunda:failedJobRetryTimeCycle>PT30S</camunda:failedJobRetryTimeCycle>
-      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_09b5q9r</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0bbx1ag</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -94,38 +91,6 @@ Die Response ist ebenfalls vom Typ DeliveryType und enthält den Header sowie en
       <bpmn:incoming>KorrekturGewuenscht</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1qa435t</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_0endv5n" sourceRef="UmzugsmeldungGestartet" targetRef="ExclusiveGateway_1nsjb6v" />
-    <bpmn:sequenceFlow id="SequenceFlow_1qa435t" sourceRef="ExclusiveGateway_1nsjb6v" targetRef="IdentifikationsmerkmaleErfassen" />
-    <bpmn:sequenceFlow id="SequenceFlow_09b5q9r" sourceRef="IdentifikationsmerkmaleErfassen" targetRef="PersonenidentifikatorGenerieren" />
-    <bpmn:sequenceFlow id="SequenceFlow_0bbx1ag" sourceRef="PersonenidentifikatorGenerieren" targetRef="PersonIdentifizieren" />
-    <bpmn:sequenceFlow id="SequenceFlow_1nn0lr5" sourceRef="PersonIdentifizieren" targetRef="ExclusiveGateway_1kbj40j" />
-    <bpmn:sequenceFlow id="KorrekturGewuenscht" name="ja" sourceRef="ExclusiveGateway_02eif3q" targetRef="ExclusiveGateway_1nsjb6v">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${revisionDesired}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0slbt2s" sourceRef="NegativeReportErhalten" targetRef="ExclusiveGateway_05wiahg" />
-    <bpmn:sequenceFlow id="SequenceFlow_1jlptqu" sourceRef="AnSchalterVerwiesenWerden" targetRef="NegativePersonenidentifikationPersistieren" />
-    <bpmn:sequenceFlow id="SequenceFlow_0d6anna" sourceRef="ExclusiveGateway_0620p1a" targetRef="AnSchalterVerwiesenWerden" />
-    <bpmn:sequenceFlow id="KorrekturNichtGewuenscht" name="nein" sourceRef="ExclusiveGateway_02eif3q" targetRef="ExclusiveGateway_0620p1a">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!revisionDesired}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_1fttpqx" sourceRef="KorrekturbedarfMitteilen" targetRef="ExclusiveGateway_02eif3q" />
-    <bpmn:sequenceFlow id="SequenceFlow_0n90szt" sourceRef="ExclusiveGateway_0cjsigp" targetRef="PersonenidentifikationErfolgreichAbgeschlossen" />
-    <bpmn:sequenceFlow id="SequenceFlow_125p6va" sourceRef="MitumziehendePersonenAuswaehlen" targetRef="ExclusiveGateway_0cjsigp" />
-    <bpmn:sequenceFlow id="MitzuziehendePersonenNichtVorhanden" name="Nein" sourceRef="ExclusiveGateway_0vatjx1" targetRef="ExclusiveGateway_0cjsigp">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!relativesExist}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="MitzuziehendePersonenVorhanden" name="Ja" sourceRef="ExclusiveGateway_0vatjx1" targetRef="MitumziehendePersonenAuswaehlen">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${relativesExist}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="FuerEumzugBerechtigt" name="Für eUmzug berechtigt" sourceRef="ExclusiveGateway_1kbj40j" targetRef="ExclusiveGateway_0vatjx1">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${personKnown &amp;&amp; moveAllowed}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="NichtFuerEumzugBerechtigt" name="Nicht für eUmzug berechtigt" sourceRef="ExclusiveGateway_1kbj40j" targetRef="ExclusiveGateway_0620p1a">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${personKnown &amp;&amp; !moveAllowed}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="PersonNichtGefunden" name="Person nicht gefunden" sourceRef="ExclusiveGateway_1kbj40j" targetRef="ExclusiveGateway_05wiahg">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!personKnown}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
     <bpmn:userTask id="AnSchalterVerwiesenWerden" name="An Schalter verwiesen werden" camunda:asyncAfter="true" camunda:formKey="embedded:app:forms/AnSchalterVerwiesenWerdenForm.html" camunda:assignee="${meldePflichtiger}">
       <bpmn:documentation>Fehlermeldung (Bootstrap alert-warning): "Sie können den Umzug nicht elektronisch melden. Bitte melden Sie sich bei Ihrer Wegzugsgemeinde xyz am Schalter."
 xyz soll durch den Namen der Wegzugsgemeinde ersetzt sein.</bpmn:documentation>
@@ -182,18 +147,11 @@ Diejenigen Personen, welche vom Meldepflichtigen nicht angehakt wurden, werden v
       <bpmn:outgoing>NichtFuerEumzugBerechtigt</bpmn:outgoing>
       <bpmn:outgoing>FuerEumzugBerechtigt</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:boundaryEvent id="NegativeReportErhalten" name="NegativeReport erhalten" attachedToRef="PersonIdentifizieren">
-      <bpmn:documentation>Der geworfene negativeReportErhalten-Fehler wird abgefangen. Die Fehlermeldung selbst wird in der Prozessvariable NegativeReportTextGerman gespeichert.</bpmn:documentation>
-      <bpmn:outgoing>SequenceFlow_0slbt2s</bpmn:outgoing>
-      <bpmn:errorEventDefinition errorRef="Error_0b0fhfh" camunda:errorMessageVariable="negativeReportTextGerman" />
-    </bpmn:boundaryEvent>
     <bpmn:exclusiveGateway id="ExclusiveGateway_05wiahg">
       <bpmn:incoming>PersonNichtGefunden</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0slbt2s</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0jgrrf3</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_0jgrrf3" sourceRef="ExclusiveGateway_05wiahg" targetRef="KorrekturbedarfMitteilen" />
-    <bpmn:sequenceFlow id="SequenceFlow_0w3h9aj" sourceRef="NegativePersonenidentifikationPersistieren" targetRef="WegenNegativerPersonenIdentifikationAbgebrochen" />
     <bpmn:endEvent id="WegenNegativerPersonenIdentifikationAbgebrochen" name="Wegen negativer Personen-identifikation abgebrochen">
       <bpmn:incoming>SequenceFlow_0w3h9aj</bpmn:incoming>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_14fbx4x" errorRef="Error_0j8yidj" />
@@ -212,213 +170,252 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Wegen ne
       <bpmn:incoming>SequenceFlow_1jlptqu</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0w3h9aj</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="NegativeReportErhalten" name="NegativeReport erhalten" attachedToRef="PersonIdentifizieren">
+      <bpmn:documentation>Der geworfene negativeReportErhalten-Fehler wird abgefangen. Die Fehlermeldung selbst wird in der Prozessvariable NegativeReportTextGerman gespeichert.</bpmn:documentation>
+      <bpmn:outgoing>SequenceFlow_0slbt2s</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_0b0fhfh" camunda:errorMessageVariable="negativeReportTextGerman" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0w3h9aj" sourceRef="NegativePersonenidentifikationPersistieren" targetRef="WegenNegativerPersonenIdentifikationAbgebrochen" />
+    <bpmn:sequenceFlow id="SequenceFlow_0jgrrf3" sourceRef="ExclusiveGateway_05wiahg" targetRef="KorrekturbedarfMitteilen" />
+    <bpmn:sequenceFlow id="PersonNichtGefunden" name="Person nicht gefunden" sourceRef="ExclusiveGateway_1kbj40j" targetRef="ExclusiveGateway_05wiahg">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!personKnown}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="NichtFuerEumzugBerechtigt" name="Nicht für eUmzug berechtigt" sourceRef="ExclusiveGateway_1kbj40j" targetRef="ExclusiveGateway_0620p1a">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${personKnown &amp;&amp; !moveAllowed}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="FuerEumzugBerechtigt" name="Für eUmzug berechtigt" sourceRef="ExclusiveGateway_1kbj40j" targetRef="ExclusiveGateway_0vatjx1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${personKnown &amp;&amp; moveAllowed}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="MitzuziehendePersonenVorhanden" name="Ja" sourceRef="ExclusiveGateway_0vatjx1" targetRef="MitumziehendePersonenAuswaehlen">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${relativesExist}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="MitzuziehendePersonenNichtVorhanden" name="Nein" sourceRef="ExclusiveGateway_0vatjx1" targetRef="ExclusiveGateway_0cjsigp">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!relativesExist}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_125p6va" sourceRef="MitumziehendePersonenAuswaehlen" targetRef="ExclusiveGateway_0cjsigp" />
+    <bpmn:sequenceFlow id="SequenceFlow_0n90szt" sourceRef="ExclusiveGateway_0cjsigp" targetRef="PersonenidentifikationErfolgreichAbgeschlossen" />
+    <bpmn:sequenceFlow id="SequenceFlow_1fttpqx" sourceRef="KorrekturbedarfMitteilen" targetRef="ExclusiveGateway_02eif3q" />
+    <bpmn:sequenceFlow id="KorrekturNichtGewuenscht" name="nein" sourceRef="ExclusiveGateway_02eif3q" targetRef="ExclusiveGateway_0620p1a">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!revisionDesired}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0d6anna" sourceRef="ExclusiveGateway_0620p1a" targetRef="AnSchalterVerwiesenWerden" />
+    <bpmn:sequenceFlow id="SequenceFlow_1jlptqu" sourceRef="AnSchalterVerwiesenWerden" targetRef="NegativePersonenidentifikationPersistieren" />
+    <bpmn:sequenceFlow id="SequenceFlow_0slbt2s" sourceRef="NegativeReportErhalten" targetRef="ExclusiveGateway_05wiahg" />
+    <bpmn:sequenceFlow id="KorrekturGewuenscht" name="ja" sourceRef="ExclusiveGateway_02eif3q" targetRef="ExclusiveGateway_1nsjb6v">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${revisionDesired}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1nn0lr5" sourceRef="PersonIdentifizieren" targetRef="ExclusiveGateway_1kbj40j" />
+    <bpmn:sequenceFlow id="SequenceFlow_0bbx1ag" sourceRef="PersonenidentifikatorGenerieren" targetRef="PersonIdentifizieren" />
+    <bpmn:sequenceFlow id="SequenceFlow_09b5q9r" sourceRef="IdentifikationsmerkmaleErfassen" targetRef="PersonenidentifikatorGenerieren" />
+    <bpmn:sequenceFlow id="SequenceFlow_1qa435t" sourceRef="ExclusiveGateway_1nsjb6v" targetRef="IdentifikationsmerkmaleErfassen" />
+    <bpmn:sequenceFlow id="SequenceFlow_0endv5n" sourceRef="UmzugsmeldungGestartet" targetRef="ExclusiveGateway_1nsjb6v" />
   </bpmn:process>
   <bpmn:error id="Error_0j8yidj" name="ErrorPersonErfassenUndIdentifizieren" errorCode="WegenNegativerPersonenIdentifikationAbgebrochen" />
   <bpmn:error id="Error_0b0fhfh" name="ErrorPersonIdentifizieren" errorCode="NegativeReportErhalten" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_06rojpi">
-      <bpmndi:BPMNShape id="Participant_1hkfvkb_di" bpmnElement="PersonErfassenUndIdentifizierenParticipant">
-        <dc:Bounds x="-1" y="118" width="1792" height="399" />
+      <bpmndi:BPMNShape id="Participant_1hkfvkb_di" bpmnElement="PersonErfassenUndIdentifizierenParticipant" isHorizontal="true">
+        <dc:Bounds x="156" y="199" width="1792" height="399" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_14lr8fl_di" bpmnElement="UmzugsmeldungGestartet" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
-        <dc:Bounds x="72" y="246" width="36" height="36" />
+        <dc:Bounds x="229" y="327" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="49" y="289" width="83" height="27" />
+          <dc:Bounds x="206" y="370" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_0m8m5zm_di" bpmnElement="IdentifikationsmerkmaleErfassen" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
-        <dc:Bounds x="250" y="224" width="100" height="80" />
+        <dc:Bounds x="407" y="305" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_15zrloe_di" bpmnElement="PersonenidentifikatorGenerieren" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
-        <dc:Bounds x="394" y="224" width="100" height="80" />
+        <dc:Bounds x="551" y="305" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_09b5q9r_di" bpmnElement="SequenceFlow_09b5q9r">
-        <di:waypoint x="350" y="264" />
-        <di:waypoint x="394" y="264" />
+        <di:waypoint x="507" y="345" />
+        <di:waypoint x="551" y="345" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0endv5n_di" bpmnElement="SequenceFlow_0endv5n">
-        <di:waypoint x="108" y="264" />
-        <di:waypoint x="152" y="264" />
+        <di:waypoint x="265" y="345" />
+        <di:waypoint x="309" y="345" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ExclusiveGateway_1kbj40j_di" bpmnElement="ExclusiveGateway_1kbj40j" isMarkerVisible="true">
-        <dc:Bounds x="702" y="239" width="50" height="50" />
+        <dc:Bounds x="859" y="320" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="653" y="219" width="68" height="27" />
+          <dc:Bounds x="810" y="300" width="68" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_04385zn_di" bpmnElement="PersonIdentifizieren" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
-        <dc:Bounds x="546" y="224" width="100" height="80" />
+        <dc:Bounds x="703" y="305" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0vatjx1_di" bpmnElement="ExclusiveGateway_0vatjx1" isMarkerVisible="true">
-        <dc:Bounds x="841" y="239" width="50" height="50" />
+        <dc:Bounds x="998" y="320" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="831" y="193" width="71" height="40" />
+          <dc:Bounds x="988" y="274" width="71" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_0ko93ge_di" bpmnElement="MitumziehendePersonenAuswaehlen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <dc:Bounds x="964" y="224" width="100" height="80" />
+        <dc:Bounds x="1121" y="305" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0cjsigp_di" bpmnElement="ExclusiveGateway_0cjsigp" isMarkerVisible="true">
-        <dc:Bounds x="1112" y="239" width="50" height="50" />
+        <dc:Bounds x="1269" y="320" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_1010s5o_di" bpmnElement="KorrekturbedarfMitteilen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <dc:Bounds x="816" y="379" width="100" height="80" />
+        <dc:Bounds x="973" y="460" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_02eif3q_di" bpmnElement="ExclusiveGateway_02eif3q" isMarkerVisible="true">
-        <dc:Bounds x="989" y="394" width="50" height="50" />
+        <dc:Bounds x="1146" y="475" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="984" y="357" width="59" height="27" />
+          <dc:Bounds x="1141" y="438" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0620p1a_di" bpmnElement="ExclusiveGateway_0620p1a" isMarkerVisible="true">
-        <dc:Bounds x="1278" y="394" width="50" height="50" />
+        <dc:Bounds x="1435" y="475" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_0hwv8rb_di" bpmnElement="AnSchalterVerwiesenWerden" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <dc:Bounds x="1385" y="379" width="100" height="80" />
+        <dc:Bounds x="1542" y="460" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0j730q8_di" bpmnElement="WegenNegativerPersonenIdentifikationAbgebrochen">
-        <dc:Bounds x="1704" y="401" width="36" height="36" />
+        <dc:Bounds x="1861" y="482" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1681" y="441" width="84" height="53" />
+          <dc:Bounds x="1838" y="522" width="84" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1nn0lr5_di" bpmnElement="SequenceFlow_1nn0lr5">
-        <di:waypoint x="646" y="264" />
-        <di:waypoint x="702" y="264" />
+        <di:waypoint x="803" y="345" />
+        <di:waypoint x="859" y="345" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_00h8w1e_di" bpmnElement="PersonNichtGefunden">
-        <di:waypoint x="727" y="289" />
-        <di:waypoint x="727" y="394" />
+        <di:waypoint x="884" y="370" />
+        <di:waypoint x="884" y="475" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="734" y="301" width="63" height="27" />
+          <dc:Bounds x="891" y="382" width="63" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_19kndj1_di" bpmnElement="NichtFuerEumzugBerechtigt">
-        <di:waypoint x="727" y="239" />
-        <di:waypoint x="727" y="139" />
-        <di:waypoint x="1303" y="139" />
-        <di:waypoint x="1303" y="394" />
+        <di:waypoint x="884" y="320" />
+        <di:waypoint x="884" y="220" />
+        <di:waypoint x="1460" y="220" />
+        <di:waypoint x="1460" y="475" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="737" y="148" width="85" height="27" />
+          <dc:Bounds x="894" y="229" width="85" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1q5qbr1_di" bpmnElement="FuerEumzugBerechtigt">
-        <di:waypoint x="752" y="264" />
-        <di:waypoint x="841" y="264" />
+        <di:waypoint x="909" y="345" />
+        <di:waypoint x="998" y="345" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="757" y="228" width="61" height="27" />
+          <dc:Bounds x="914" y="309" width="61" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0h3btk1_di" bpmnElement="MitzuziehendePersonenVorhanden">
-        <di:waypoint x="891" y="264" />
-        <di:waypoint x="964" y="264" />
+        <di:waypoint x="1048" y="345" />
+        <di:waypoint x="1121" y="345" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="909" y="244" width="12" height="14" />
+          <dc:Bounds x="1066" y="325" width="12" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_01kktt1_di" bpmnElement="MitzuziehendePersonenNichtVorhanden">
-        <di:waypoint x="866" y="289" />
-        <di:waypoint x="866" y="342" />
-        <di:waypoint x="1137" y="344" />
-        <di:waypoint x="1137" y="291" />
+        <di:waypoint x="1023" y="370" />
+        <di:waypoint x="1023" y="423" />
+        <di:waypoint x="1294" y="425" />
+        <di:waypoint x="1294" y="372" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="881" y="321" width="23" height="14" />
+          <dc:Bounds x="1038" y="402" width="23" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_125p6va_di" bpmnElement="SequenceFlow_125p6va">
-        <di:waypoint x="1064" y="264" />
-        <di:waypoint x="1112" y="264" />
+        <di:waypoint x="1221" y="345" />
+        <di:waypoint x="1269" y="345" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1fttpqx_di" bpmnElement="SequenceFlow_1fttpqx">
-        <di:waypoint x="916" y="419" />
-        <di:waypoint x="989" y="419" />
+        <di:waypoint x="1073" y="500" />
+        <di:waypoint x="1146" y="500" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0btqzvc_di" bpmnElement="KorrekturNichtGewuenscht">
-        <di:waypoint x="1039" y="419" />
-        <di:waypoint x="1278" y="419" />
+        <di:waypoint x="1196" y="500" />
+        <di:waypoint x="1435" y="500" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1075" y="397" width="21" height="14" />
+          <dc:Bounds x="1232" y="478" width="21" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0d6anna_di" bpmnElement="SequenceFlow_0d6anna">
-        <di:waypoint x="1328" y="419" />
-        <di:waypoint x="1385" y="419" />
+        <di:waypoint x="1485" y="500" />
+        <di:waypoint x="1542" y="500" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1jlptqu_di" bpmnElement="SequenceFlow_1jlptqu">
-        <di:waypoint x="1485" y="419" />
-        <di:waypoint x="1541" y="419" />
+        <di:waypoint x="1642" y="500" />
+        <di:waypoint x="1698" y="500" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ExclusiveGateway_1nsjb6v_di" bpmnElement="ExclusiveGateway_1nsjb6v" isMarkerVisible="true">
-        <dc:Bounds x="152" y="239" width="50" height="50" />
+        <dc:Bounds x="309" y="320" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1qa435t_di" bpmnElement="SequenceFlow_1qa435t">
-        <di:waypoint x="202" y="264" />
-        <di:waypoint x="250" y="264" />
+        <di:waypoint x="359" y="345" />
+        <di:waypoint x="407" y="345" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0bbx1ag_di" bpmnElement="SequenceFlow_0bbx1ag">
-        <di:waypoint x="494" y="264" />
-        <di:waypoint x="546" y="264" />
+        <di:waypoint x="651" y="345" />
+        <di:waypoint x="703" y="345" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_02bic4y_di" bpmnElement="PersonenidentifikationErfolgreichAbgeschlossen">
-        <dc:Bounds x="1205" y="246" width="36" height="36" />
+        <dc:Bounds x="1362" y="327" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1181" y="289" width="85" height="40" />
+          <dc:Bounds x="1338" y="370" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0n90szt_di" bpmnElement="SequenceFlow_0n90szt">
-        <di:waypoint x="1162" y="264" />
-        <di:waypoint x="1205" y="264" />
+        <di:waypoint x="1319" y="345" />
+        <di:waypoint x="1362" y="345" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0fh0dge_di" bpmnElement="KorrekturGewuenscht">
-        <di:waypoint x="1014" y="444" />
-        <di:waypoint x="1014" y="496" />
-        <di:waypoint x="177" y="496" />
-        <di:waypoint x="177" y="289" />
+        <di:waypoint x="1171" y="525" />
+        <di:waypoint x="1171" y="577" />
+        <di:waypoint x="334" y="577" />
+        <di:waypoint x="334" y="370" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="993" y="474" width="8" height="14" />
+          <dc:Bounds x="1150" y="555" width="8" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Participant_0cfc1eh_di" bpmnElement="KantonalesPersonenregisterParticipant" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
-        <dc:Bounds x="460" y="0" width="300" height="60" />
+      <bpmndi:BPMNShape id="Participant_0cfc1eh_di" bpmnElement="KantonalesPersonenregisterParticipant" isHorizontal="true" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
+        <dc:Bounds x="617" y="81" width="300" height="60" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="MessageFlow_0jxik1a_di" bpmnElement="MessageFlow_0jxik1a" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
-        <di:waypoint x="584" y="224" />
-        <di:waypoint x="584" y="60" />
+        <di:waypoint x="741" y="305" />
+        <di:waypoint x="741" y="141" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="499" y="72" width="72" height="40" />
+          <dc:Bounds x="656" y="153" width="72" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="MessageFlow_0orjp5r_di" bpmnElement="MessageFlow_0orjp5r" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
-        <di:waypoint x="609" y="60" />
-        <di:waypoint x="609" y="224" />
+        <di:waypoint x="766" y="141" />
+        <di:waypoint x="766" y="305" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="621" y="72" width="64" height="40" />
+          <dc:Bounds x="778" y="153" width="64" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BoundaryEvent_0x5lag5_di" bpmnElement="NegativeReportErhalten" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <dc:Bounds x="560" y="286" width="36" height="36" />
+        <dc:Bounds x="717" y="367" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="596" y="318" width="78" height="27" />
+          <dc:Bounds x="753" y="399" width="78" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0slbt2s_di" bpmnElement="SequenceFlow_0slbt2s" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <di:waypoint x="578" y="322" />
-        <di:waypoint x="578" y="419" />
-        <di:waypoint x="702" y="419" />
+        <di:waypoint x="735" y="403" />
+        <di:waypoint x="735" y="500" />
+        <di:waypoint x="859" y="500" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ExclusiveGateway_05wiahg_di" bpmnElement="ExclusiveGateway_05wiahg" isMarkerVisible="true" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <dc:Bounds x="702" y="394" width="50" height="50" />
+        <dc:Bounds x="859" y="475" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0jgrrf3_di" bpmnElement="SequenceFlow_0jgrrf3">
-        <di:waypoint x="752" y="419" />
-        <di:waypoint x="816" y="419" />
+        <di:waypoint x="909" y="500" />
+        <di:waypoint x="973" y="500" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_1fnm3cg_di" bpmnElement="NegativePersonenidentifikationPersistieren" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <dc:Bounds x="1541" y="379" width="100" height="80" />
+        <dc:Bounds x="1698" y="460" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0w3h9aj_di" bpmnElement="SequenceFlow_0w3h9aj">
-        <di:waypoint x="1641" y="419" />
-        <di:waypoint x="1704" y="419" />
+        <di:waypoint x="1798" y="500" />
+        <di:waypoint x="1861" y="500" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

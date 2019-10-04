@@ -1,6 +1,5 @@
 package ch.zhaw.gpi.eumzugplattform.entities;
 
-import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -17,7 +16,7 @@ import javax.validation.constraints.Size;
  * @author scep
  */
 @Entity
-public class Person implements Serializable{
+public class Person {
 
     // Manuell gesetzte Personenidentifikation
     @Id

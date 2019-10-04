@@ -1,6 +1,5 @@
 package ch.zhaw.gpi.eumzugplattform.processdata;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -10,7 +9,7 @@ import java.util.Date;
  * 
  * @author scep
  */
-public class PersonPD implements Serializable {
+public class PersonPD {
     // Variablen passend zu eCH-044:PersonIdentificationType. Es könnte theoretisch
     // daher diese Klasse einbezogen werden statt all die einzelnen Attribute
     // aber diese generierte Klasse implementiert nicht Serializable, was für
