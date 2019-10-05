@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_131vro7" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" id="Definitions_131vro7" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.1.0">
   <bpmn:collaboration id="Collaboration_1o68a8d">
     <bpmn:participant id="ZuzugsinformationenErfassenUndPruefenParticipant" name="Zuzugsinformationen erfassen und prüfen" processRef="ZuzugsinformationenErfassenUndPruefen" />
     <bpmn:participant id="GebaeudeUndWohnungsregister" name="Gebäude- und Wohnungsregister">
@@ -78,7 +78,24 @@ Die Response ist vom Typ WohnungenAntwortType. Die darin enthaltene Methode getW
       <bpmn:outgoing>NichtMindestensEineWohnungGefunden</bpmn:outgoing>
       <bpmn:outgoing>MindestensEineWohnungGefunden</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_0gby9vq" sourceRef="WegzugsadressPruefungErfolgreichAbgeschlossen" targetRef="ExclusiveGateway_02h6ni7" />
+    <bpmn:endEvent id="ZuzugsInformationenErfolgreichGeprueft" name="Zuzugs-Informationen erfolgreich geprüft">
+      <bpmn:incoming>SequenceFlow_0sag684</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="WohnungAnZuzugsadresseAuswaehlen" name="Wohnung an Zuzugsadresse auswählen" camunda:formKey="embedded:app:forms/WohnungAnZuzugsadresseAuswaehlenForm.html" camunda:assignee="${meldePflichtiger}">
+      <bpmn:documentation>Wohnung
+  eCH-0010:apartmentMoveIn
+  String
+  select (basierend auf wohnungenList, wobei whgnr angezeigt wird)</bpmn:documentation>
+      <bpmn:incoming>MindestensEineWohnungGefunden</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0sag684</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0sag684" sourceRef="WohnungAnZuzugsadresseAuswaehlen" targetRef="ZuzugsInformationenErfolgreichGeprueft" />
+    <bpmn:sequenceFlow id="MindestensEineWohnungGefunden" name="ja" sourceRef="ExclusiveGateway_02hjo1y" targetRef="WohnungAnZuzugsadresseAuswaehlen">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${wohnungenGefunden}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_04ncg2b" sourceRef="WohnungenAnZuzugsadresseBestimmen" targetRef="ExclusiveGateway_02hjo1y" />
+    <bpmn:sequenceFlow id="SequenceFlow_1n0ru7f" sourceRef="ZuzugsadresseErfassen" targetRef="WohnungenAnZuzugsadresseBestimmen" />
+    <bpmn:sequenceFlow id="SequenceFlow_0fooiee" sourceRef="ExclusiveGateway_02h6ni7" targetRef="ZuzugsadresseErfassen" />
     <bpmn:sequenceFlow id="NichtMindestensEineWohnungGefunden" name="nein" sourceRef="ExclusiveGateway_02hjo1y" targetRef="ExclusiveGateway_02h6ni7">
       <bpmn:documentation>In einem Take-Listener wird die Zählervariable adresseUngueltigZaehler um 1 erhöht, um zu zählen, wie oft der Benutzer eine ungültige Adresse erfasst hat.</bpmn:documentation>
       <bpmn:extensionElements>
@@ -92,112 +109,95 @@ execution.setVariable("adresseUngueltigZaehler", adresseUngueltigZaehler + 1);</
       </bpmn:extensionElements>
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!wohnungenGefunden}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0fooiee" sourceRef="ExclusiveGateway_02h6ni7" targetRef="ZuzugsadresseErfassen" />
-    <bpmn:sequenceFlow id="SequenceFlow_1n0ru7f" sourceRef="ZuzugsadresseErfassen" targetRef="WohnungenAnZuzugsadresseBestimmen" />
-    <bpmn:sequenceFlow id="SequenceFlow_04ncg2b" sourceRef="WohnungenAnZuzugsadresseBestimmen" targetRef="ExclusiveGateway_02hjo1y" />
-    <bpmn:sequenceFlow id="MindestensEineWohnungGefunden" name="ja" sourceRef="ExclusiveGateway_02hjo1y" targetRef="WohnungAnZuzugsadresseAuswaehlen">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${wohnungenGefunden}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:endEvent id="ZuzugsInformationenErfolgreichGeprueft" name="Zuzugs-Informationen erfolgreich geprüft">
-      <bpmn:incoming>SequenceFlow_0sag684</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:userTask id="WohnungAnZuzugsadresseAuswaehlen" name="Wohnung an Zuzugsadresse auswählen" camunda:formKey="embedded:app:forms/WohnungAnZuzugsadresseAuswaehlenForm.html" camunda:assignee="${meldePflichtiger}">
-      <bpmn:documentation>Wohnung
-  eCH-0010:apartmentMoveIn
-  String
-  select (basierend auf wohnungenList, wobei whgnr angezeigt wird)</bpmn:documentation>
-      <bpmn:incoming>MindestensEineWohnungGefunden</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0sag684</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:sequenceFlow id="SequenceFlow_0sag684" sourceRef="WohnungAnZuzugsadresseAuswaehlen" targetRef="ZuzugsInformationenErfolgreichGeprueft" />
+    <bpmn:sequenceFlow id="SequenceFlow_0gby9vq" sourceRef="WegzugsadressPruefungErfolgreichAbgeschlossen" targetRef="ExclusiveGateway_02h6ni7" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1o68a8d">
-      <bpmndi:BPMNShape id="Participant_1t0xf0u_di" bpmnElement="ZuzugsinformationenErfassenUndPruefenParticipant">
-        <dc:Bounds x="0" y="132" width="938" height="243" />
+      <bpmndi:BPMNShape id="Participant_1t0xf0u_di" bpmnElement="ZuzugsinformationenErfassenUndPruefenParticipant" isHorizontal="true" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="156" y="214" width="938" height="243" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="WegzugsadressPruefungErfolgreichAbgeschlossen" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
-        <dc:Bounds x="71" y="234" width="36" height="36" />
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="WegzugsadressPruefungErfolgreichAbgeschlossen" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="227" y="316" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="49" y="277" width="82" height="53" />
+          <dc:Bounds x="205" y="359" width="82" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_02h6ni7_di" bpmnElement="ExclusiveGateway_02h6ni7" isMarkerVisible="true">
-        <dc:Bounds x="162" y="227" width="50" height="50" />
+      <bpmndi:BPMNShape id="ExclusiveGateway_02h6ni7_di" bpmnElement="ExclusiveGateway_02h6ni7" isMarkerVisible="true" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="318" y="309" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0gby9vq_di" bpmnElement="SequenceFlow_0gby9vq">
-        <di:waypoint x="107" y="252" />
-        <di:waypoint x="162" y="252" />
+      <bpmndi:BPMNEdge id="SequenceFlow_0gby9vq_di" bpmnElement="SequenceFlow_0gby9vq" bioc:stroke="black" bioc:fill="white">
+        <di:waypoint x="263" y="334" />
+        <di:waypoint x="318" y="334" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0fooiee_di" bpmnElement="SequenceFlow_0fooiee">
-        <di:waypoint x="212" y="252" />
-        <di:waypoint x="272" y="252" />
+      <bpmndi:BPMNEdge id="SequenceFlow_0fooiee_di" bpmnElement="SequenceFlow_0fooiee" bioc:stroke="black" bioc:fill="white">
+        <di:waypoint x="368" y="334" />
+        <di:waypoint x="428" y="334" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_164dpbh_di" bpmnElement="ZuzugsadresseErfassen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <dc:Bounds x="272" y="212" width="100" height="80" />
+      <bpmndi:BPMNShape id="UserTask_164dpbh_di" bpmnElement="ZuzugsadresseErfassen" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="428" y="294" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_1oew700_di" bpmnElement="WohnungenAnZuzugsadresseBestimmen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <dc:Bounds x="432" y="212" width="100" height="80" />
+      <bpmndi:BPMNShape id="ServiceTask_1oew700_di" bpmnElement="WohnungenAnZuzugsadresseBestimmen" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="588" y="294" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_02hjo1y_di" bpmnElement="ExclusiveGateway_02hjo1y" isMarkerVisible="true">
-        <dc:Bounds x="592" y="227" width="50" height="50" />
+      <bpmndi:BPMNShape id="ExclusiveGateway_02hjo1y_di" bpmnElement="ExclusiveGateway_02hjo1y" isMarkerVisible="true" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="748" y="309" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="576" y="182" width="81" height="40" />
+          <dc:Bounds x="732" y="264" width="81" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_04ncg2b_di" bpmnElement="SequenceFlow_04ncg2b">
-        <di:waypoint x="532" y="252" />
-        <di:waypoint x="592" y="252" />
+      <bpmndi:BPMNEdge id="SequenceFlow_04ncg2b_di" bpmnElement="SequenceFlow_04ncg2b" bioc:stroke="black" bioc:fill="white">
+        <di:waypoint x="688" y="334" />
+        <di:waypoint x="748" y="334" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1n0ru7f_di" bpmnElement="SequenceFlow_1n0ru7f">
-        <di:waypoint x="372" y="252" />
-        <di:waypoint x="432" y="252" />
+      <bpmndi:BPMNEdge id="SequenceFlow_1n0ru7f_di" bpmnElement="SequenceFlow_1n0ru7f" bioc:stroke="black" bioc:fill="white">
+        <di:waypoint x="528" y="334" />
+        <di:waypoint x="588" y="334" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1xdg697_di" bpmnElement="NichtMindestensEineWohnungGefunden">
-        <di:waypoint x="617" y="277" />
-        <di:waypoint x="617" y="321" />
-        <di:waypoint x="187" y="321" />
-        <di:waypoint x="187" y="277" />
+      <bpmndi:BPMNEdge id="SequenceFlow_1xdg697_di" bpmnElement="NichtMindestensEineWohnungGefunden" bioc:stroke="black" bioc:fill="white">
+        <di:waypoint x="773" y="359" />
+        <di:waypoint x="773" y="403" />
+        <di:waypoint x="343" y="403" />
+        <di:waypoint x="343" y="359" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="628" y="284" width="21" height="14" />
+          <dc:Bounds x="784" y="366" width="21" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_0mal49f_di" bpmnElement="ZuzugsInformationenErfolgreichGeprueft">
-        <dc:Bounds x="854" y="234" width="36" height="36" />
+      <bpmndi:BPMNShape id="EndEvent_0mal49f_di" bpmnElement="ZuzugsInformationenErfolgreichGeprueft" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="1010" y="316" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="828" y="277" width="90" height="40" />
+          <dc:Bounds x="984" y="359" width="90" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1kd2mjt_di" bpmnElement="MindestensEineWohnungGefunden">
-        <di:waypoint x="642" y="252" />
-        <di:waypoint x="704" y="252" />
+      <bpmndi:BPMNEdge id="SequenceFlow_1kd2mjt_di" bpmnElement="MindestensEineWohnungGefunden" bioc:stroke="black" bioc:fill="white">
+        <di:waypoint x="798" y="334" />
+        <di:waypoint x="860" y="334" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="652" y="231" width="8" height="14" />
+          <dc:Bounds x="808" y="313" width="8" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Participant_0yqqcl4_di" bpmnElement="GebaeudeUndWohnungsregister" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <dc:Bounds x="333" y="-1" width="300" height="60" />
+      <bpmndi:BPMNShape id="Participant_0yqqcl4_di" bpmnElement="GebaeudeUndWohnungsregister" isHorizontal="true" bioc:stroke="rgb(229, 57, 53)" bioc:fill="rgb(255, 205, 210)">
+        <dc:Bounds x="489" y="81" width="300" height="60" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="MessageFlow_1g54841_di" bpmnElement="Zuzugsadresse" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <di:waypoint x="468" y="212" />
-        <di:waypoint x="468" y="59" />
+      <bpmndi:BPMNEdge id="MessageFlow_1g54841_di" bpmnElement="Zuzugsadresse" bioc:stroke="black" bioc:fill="white">
+        <di:waypoint x="624" y="294" />
+        <di:waypoint x="624" y="141" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="410" y="83" width="40" height="27" />
+          <dc:Bounds x="566" y="165" width="40" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="MessageFlow_05ay0wk_di" bpmnElement="Wohnungen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <di:waypoint x="497" y="59" />
-        <di:waypoint x="497" y="212" />
+      <bpmndi:BPMNEdge id="MessageFlow_05ay0wk_di" bpmnElement="Wohnungen" bioc:stroke="black" bioc:fill="white">
+        <di:waypoint x="653" y="141" />
+        <di:waypoint x="653" y="294" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="505" y="84" width="59" height="14" />
+          <dc:Bounds x="661" y="166" width="59" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_07y7x4j_di" bpmnElement="WohnungAnZuzugsadresseAuswaehlen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <dc:Bounds x="704" y="212" width="100" height="80" />
+      <bpmndi:BPMNShape id="UserTask_07y7x4j_di" bpmnElement="WohnungAnZuzugsadresseAuswaehlen" bioc:stroke="black" bioc:fill="white">
+        <dc:Bounds x="860" y="294" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0sag684_di" bpmnElement="SequenceFlow_0sag684">
-        <di:waypoint x="804" y="252" />
-        <di:waypoint x="854" y="252" />
+      <bpmndi:BPMNEdge id="SequenceFlow_0sag684_di" bpmnElement="SequenceFlow_0sag684" bioc:stroke="black" bioc:fill="white">
+        <di:waypoint x="960" y="334" />
+        <di:waypoint x="1010" y="334" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

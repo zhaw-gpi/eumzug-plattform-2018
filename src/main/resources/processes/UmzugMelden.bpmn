@@ -1,49 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" targetNamespace="http://www.signavio.com/bpmn20" exporter="Camunda Modeler" exporterVersion="2.0.3" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" targetNamespace="http://www.signavio.com/bpmn20" exporter="Camunda Modeler" exporterVersion="3.1.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <collaboration id="Collaboration_05jmpr5">
     <participant id="UmzugMeldenParticipant" name="Umzug melden" processRef="UmzugMelden" />
   </collaboration>
   <process id="UmzugMelden" name="Umzug melden" isExecutable="true">
     <laneSet>
-      <lane id="Lane_1bppnkr" name="Umzugsplattform">
-        <flowNodeRef>UmzugsmeldungGestartet</flowNodeRef>
-        <flowNodeRef>UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen</flowNodeRef>
-        <flowNodeRef>UmzugsmeldungErfassenUndBezahlen</flowNodeRef>
-        <flowNodeRef>ErfolgreichenAbschlussPersistieren</flowNodeRef>
-        <flowNodeRef>UeberschreitenDerAntwortfristPersistieren</flowNodeRef>
-        <flowNodeRef>AblehnungPersistieren</flowNodeRef>
-        <flowNodeRef>EinAbbruchgrundIstEingetroffen</flowNodeRef>
-        <flowNodeRef>UmzugsmeldungErfolgreichAbgeschlossen</flowNodeRef>
-        <flowNodeRef>UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen</flowNodeRef>
-        <flowNodeRef>UmzugsmeldungWegenAblehnungFehlgeschlagen</flowNodeRef>
-        <flowNodeRef>NeueAdresseVeKaCenterMitteilen</flowNodeRef>
-        <childLaneSet id="LaneSet_072546v">
-          <lane id="UmzugsplattformAutomatisch" name="Automatisch">
-            <flowNodeRef>UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen</flowNodeRef>
-            <flowNodeRef>ErfolgreichenAbschlussPersistieren</flowNodeRef>
-            <flowNodeRef>UeberschreitenDerAntwortfristPersistieren</flowNodeRef>
-            <flowNodeRef>AblehnungPersistieren</flowNodeRef>
-            <flowNodeRef>UmzugsmeldungErfolgreichAbgeschlossen</flowNodeRef>
-            <flowNodeRef>UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen</flowNodeRef>
-            <flowNodeRef>UmzugsmeldungWegenAblehnungFehlgeschlagen</flowNodeRef>
-            <flowNodeRef>NeueAdresseVeKaCenterMitteilen</flowNodeRef>
-          </lane>
-          <lane id="UmzugsplattformMeldepflichtiger" name="Meldepflichtiger">
-            <flowNodeRef>UmzugsmeldungGestartet</flowNodeRef>
-            <flowNodeRef>UmzugsmeldungErfassenUndBezahlen</flowNodeRef>
-            <flowNodeRef>EinAbbruchgrundIstEingetroffen</flowNodeRef>
-          </lane>
-        </childLaneSet>
-      </lane>
       <lane id="KantonalerBenachrichtigungsdienst" name="Kantonaler Benachrichtigungsdienst">
         <flowNodeRef>ErfolgreichenAbschlussMitteilen</flowNodeRef>
         <flowNodeRef>AblehnungMitteilen</flowNodeRef>
         <flowNodeRef>UeberschreitenDerAntwortfristMitteilen</flowNodeRef>
       </lane>
-      <lane id="EksMeldedienst" name="EKS-Meldedienst">
+      <lane id="Lane_1bppnkr" name="Umzugsplattform">
+        <flowNodeRef>UmzugsmeldungGestartet</flowNodeRef>
+        <flowNodeRef>UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen</flowNodeRef>
+        <flowNodeRef>UmzugsmeldungErfassenUndBezahlen</flowNodeRef>
+        <flowNodeRef>UmzugsmeldungErfolgreichAbgeschlossen</flowNodeRef>
+        <flowNodeRef>ErfolgreichenAbschlussPersistieren</flowNodeRef>
+        <flowNodeRef>UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen</flowNodeRef>
+        <flowNodeRef>UeberschreitenDerAntwortfristPersistieren</flowNodeRef>
+        <flowNodeRef>UmzugsmeldungWegenAblehnungFehlgeschlagen</flowNodeRef>
+        <flowNodeRef>AblehnungPersistieren</flowNodeRef>
+        <flowNodeRef>NeueAdresseVeKaCenterMitteilen</flowNodeRef>
         <flowNodeRef>MitEKSystemenKommunizieren</flowNodeRef>
         <flowNodeRef>UmzugsmeldungAkzeptiert</flowNodeRef>
+        <flowNodeRef>EinAbbruchgrundIstEingetroffen</flowNodeRef>
         <flowNodeRef>DefinierteZeitVerstrichen</flowNodeRef>
+        <childLaneSet id="LaneSet_072546v">
+          <lane id="UmzugsplattformMeldepflichtiger" name="Meldepflichtiger">
+            <flowNodeRef>UmzugsmeldungGestartet</flowNodeRef>
+            <flowNodeRef>UmzugsmeldungErfassenUndBezahlen</flowNodeRef>
+            <flowNodeRef>EinAbbruchgrundIstEingetroffen</flowNodeRef>
+          </lane>
+          <lane id="UmzugsplattformAutomatisch" name="Automatisch">
+            <flowNodeRef>UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen</flowNodeRef>
+            <flowNodeRef>UmzugsmeldungErfolgreichAbgeschlossen</flowNodeRef>
+            <flowNodeRef>ErfolgreichenAbschlussPersistieren</flowNodeRef>
+            <flowNodeRef>UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen</flowNodeRef>
+            <flowNodeRef>UeberschreitenDerAntwortfristPersistieren</flowNodeRef>
+            <flowNodeRef>UmzugsmeldungWegenAblehnungFehlgeschlagen</flowNodeRef>
+            <flowNodeRef>AblehnungPersistieren</flowNodeRef>
+            <flowNodeRef>NeueAdresseVeKaCenterMitteilen</flowNodeRef>
+            <flowNodeRef>MitEKSystemenKommunizieren</flowNodeRef>
+            <flowNodeRef>UmzugsmeldungAkzeptiert</flowNodeRef>
+            <flowNodeRef>DefinierteZeitVerstrichen</flowNodeRef>
+          </lane>
+        </childLaneSet>
       </lane>
     </laneSet>
     <startEvent id="UmzugsmeldungGestartet" name="Umzugsmeldung gestartet" camunda:formKey="embedded:app:forms/UmzugsmeldungGestartetForm.html" camunda:initiator="meldePflichtiger">
@@ -76,12 +77,9 @@ execution.setBusinessKey(businessCaseId);</camunda:script>
       </extensionElements>
       <outgoing>SequenceFlow_0ypg6cw</outgoing>
     </startEvent>
-    <sequenceFlow id="SequenceFlow_0ypg6cw" sourceRef="UmzugsmeldungGestartet" targetRef="UmzugsmeldungErfassenUndBezahlen" />
     <endEvent id="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen" name="Umzugsmeldung wegen einem Abbruchgrund fehlgeschlagen">
       <incoming>SequenceFlow_1312w0k</incoming>
     </endEvent>
-    <sequenceFlow id="SequenceFlow_1iopode" sourceRef="UmzugsmeldungErfassenUndBezahlen" targetRef="MitEKSystemenKommunizieren" />
-    <sequenceFlow id="SequenceFlow_1312w0k" sourceRef="EinAbbruchgrundIstEingetroffen" targetRef="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen" />
     <callActivity id="UmzugsmeldungErfassenUndBezahlen" name="Umzugsmeldung erfassen und bezahlen" calledElement="UmzugsmeldungErfassenUndBezahlen">
       <documentation>Prozess 'UmzugsmeldungErfassenUndBezahlen' aufrufen
 
@@ -98,104 +96,6 @@ Theoretisch: Dem Prozess wird der BusinessKey, die BusinessCaseId und der meldeP
       <incoming>SequenceFlow_0ypg6cw</incoming>
       <outgoing>SequenceFlow_1iopode</outgoing>
     </callActivity>
-    <boundaryEvent id="EinAbbruchgrundIstEingetroffen" name="Ein Abbruchgrund ist eingetroffen" attachedToRef="UmzugsmeldungErfassenUndBezahlen">
-      <documentation>Gewisse Ausnahmefälle innerhalb des aufgerufenen Prozesses sind allenfalls so gravierend, dass eine Weiterführung des Hauptprozesses keinen Sinn macht.
-
-Der eigentliche Fehler soll innerhalb des aufgerufenen Prozesses behandelt werden, während der Hauptprozess lediglich darüber informiert wird, damit dessen Prozessinstanz entsprechend vorzeitig beendet werden kann.</documentation>
-      <outgoing>SequenceFlow_1312w0k</outgoing>
-      <errorEventDefinition id="ErrorEventDefinition_0pb3nhb" errorRef="Error_12sd8hn" />
-    </boundaryEvent>
-    <serviceTask id="ErfolgreichenAbschlussMitteilen" name="Erfolgreichen Abschluss mitteilen" camunda:type="external" camunda:topic="Notification">
-      <documentation>Dem Meldepflichtigen wird der aktuelle Status mitgeteilt, einerseits per EMail und andererseits (sofern in KontaktangabenErfassenForm so gewählt) per SMS.
-
-Die eigentliche Nachricht wird über den Kantonalen Benachrichtigungsdienst durchgeführt, welcher sich für das Topic 'Notification' bei der Umzugsplattform registiert. Demnach ist die Implementation dieses Service Tasks ein External Task.
-
-Der kantonale Benachrichtigungsdienst erwartet eine HashMap mit dort spezifierten Key-Value-Paaren. Diese HashMap wird in einer JavaDelegate-Klasse (Named=GenerateNotificationTaskVariableAdapter) durchgeführt, welche in einem Start Listener dieses Service Tasks aufgerufen wird.
-
-Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Prozessvariablen zusammenstellen, zum andern benötigt sie folgende zwei Prozessvariablen, die als Input-Parameter in diesem Service Task erstellt werden:
-- notificationSubject=eUmzugsmeldung erfolgreich abgeschlossen
-- notificationMessageBody=Die Einwohnerkontrollen haben die Umzugsmeldung akzeptiert. Der eUmzug-Meldeprozess ist damit erfolgreich abgeschlossen.</documentation>
-      <extensionElements>
-        <camunda:executionListener delegateExpression="#{GenerateNotificationTaskVariableAdapter}" event="start" />
-        <camunda:inputOutput>
-          <camunda:inputParameter name="notificationMessageBody">Die Einwohnerkontrollen haben die Umzugsmeldung akzeptiert. Der eUmzug-Meldeprozess ist damit erfolgreich abgeschlossen.</camunda:inputParameter>
-          <camunda:inputParameter name="notificationSubject">eUmzugsmeldung erfolgreich abgeschlossen</camunda:inputParameter>
-        </camunda:inputOutput>
-      </extensionElements>
-      <incoming>SequenceFlow_19k3fjn</incoming>
-      <outgoing>SequenceFlow_1x0qckx</outgoing>
-    </serviceTask>
-    <serviceTask id="AblehnungMitteilen" name="Ablehnung mitteilen" camunda:type="external" camunda:topic="Notification">
-      <documentation>Dem Meldepflichtigen wird der aktuelle Status mitgeteilt, einerseits per EMail und andererseits (sofern in KontaktangabenErfassenForm so gewählt) per SMS.
-
-Die eigentliche Nachricht wird über den Kantonalen Benachrichtigungsdienst durchgeführt, welcher sich für das Topic 'Notification' bei der Umzugsplattform registiert. Demnach ist die Implementation dieses Service Tasks ein External Task.
-
-Der kantonale Benachrichtigungsdienst erwartet eine HashMap mit dort spezifierten Key-Value-Paaren. Diese HashMap wird in einer JavaDelegate-Klasse (Named=GenerateNotificationTaskVariableAdapter) durchgeführt, welche in einem Start Listener dieses Service Tasks aufgerufen wird.
-
-Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Prozessvariablen zusammenstellen, zum andern benötigt sie folgende zwei Prozessvariablen, die als Input-Parameter in diesem Service Task erstellt werden:
-- notificationSubject=eUmzugsmeldung abgelehnt
-- notificationMessageBody=Die Einwohnerkontrollen haben die Umzugsmeldung abgelehnt. Melden Sie sich bei ihnen.</documentation>
-      <extensionElements>
-        <camunda:executionListener delegateExpression="#{GenerateNotificationTaskVariableAdapter}" event="start" />
-        <camunda:inputOutput>
-          <camunda:inputParameter name="notificationSubject">eUmzugsmeldung abgelehnt</camunda:inputParameter>
-          <camunda:inputParameter name="notificationMessageBody">Die Einwohnerkontrollen haben die Umzugsmeldung abgelehnt. Melden Sie sich bei ihnen.</camunda:inputParameter>
-        </camunda:inputOutput>
-      </extensionElements>
-      <incoming>SequenceFlow_1woxygr</incoming>
-      <outgoing>SequenceFlow_1563am6</outgoing>
-    </serviceTask>
-    <task id="MitEKSystemenKommunizieren" name="Mit EK-Systemen kommunizieren">
-      <documentation>Dem oder den Einwohnerkontrollsystemen werden  die vom Meldepflichtigen erfassten Angaben asynchron über eine definierte technische Schnittstelle mitgeteilt.
-
-Nach einigen Minuten bis Tagen trifft eine bestätigende oder ablehnende Nachricht von dem oder den Einwohnerkontrollsystemen ein, ebenfalls über eine definierte technische Schnittstelle.
-
-Wie genau eine Gemeinde mit der erhaltenen Meldung umgeht, ist je nach Gemeinde und verwendeter Software unterschiedlich. Sicher jedoch ist, dass eine Meldung nicht 100%-ig automatisiert verarbeitet werden darf, sondern dass ein Sachbearbeiter die Verarbeitung anstösst.</documentation>
-      <incoming>SequenceFlow_1iopode</incoming>
-      <outgoing>SequenceFlow_1ptg35o</outgoing>
-    </task>
-    <exclusiveGateway id="UmzugsmeldungAkzeptiert" name="Umzugsmeldung akzeptiert?">
-      <incoming>SequenceFlow_1ptg35o</incoming>
-      <outgoing>SequenceFlow_19k3fjn</outgoing>
-      <outgoing>SequenceFlow_1woxygr</outgoing>
-    </exclusiveGateway>
-    <serviceTask id="UeberschreitenDerAntwortfristMitteilen" name="Überschreiten der Antwortfrist mitteilen" camunda:type="external" camunda:topic="Notification">
-      <documentation>Dem Meldepflichtigen wird der aktuelle Status mitgeteilt, einerseits per EMail und andererseits (sofern in KontaktangabenErfassenForm so gewählt) per SMS.
-
-Die eigentliche Nachricht wird über den Kantonalen Benachrichtigungsdienst durchgeführt, welcher sich für das Topic 'Notification' bei der Umzugsplattform registiert. Demnach ist die Implementation dieses Service Tasks ein External Task.
-
-Der kantonale Benachrichtigungsdienst erwartet eine HashMap mit dort spezifierten Key-Value-Paaren. Diese HashMap wird in einer JavaDelegate-Klasse (Named=GenerateNotificationTaskVariableAdapter) durchgeführt, welche in einem Start Listener dieses Service Tasks aufgerufen wird.
-
-Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Prozessvariablen zusammenstellen, zum andern benötigt sie folgende zwei Prozessvariablen, die als Input-Parameter in diesem Service Task erstellt werden:
-- notificationSubject=eUmzugsmeldung abgebrochen
-- notificationMessageBody=Die Einwohnerkontrollen haben die Umzugsmeldung nicht innerhalb von 60 Tagen beantwortet. Melden Sie sich bei ihnen.</documentation>
-      <extensionElements>
-        <camunda:executionListener delegateExpression="#{GenerateNotificationTaskVariableAdapter}" event="start" />
-        <camunda:inputOutput>
-          <camunda:inputParameter name="notificationSubject">eUmzugsmeldung abgebrochen</camunda:inputParameter>
-          <camunda:inputParameter name="notificationMessageBody">Die Einwohnerkontrollen haben die Umzugsmeldung nicht innerhalb von 60 Tagen beantwortet. Melden Sie sich bei ihnen.</camunda:inputParameter>
-        </camunda:inputOutput>
-      </extensionElements>
-      <incoming>SequenceFlow_0qpbkoo</incoming>
-      <outgoing>SequenceFlow_0ygmvzp</outgoing>
-    </serviceTask>
-    <sequenceFlow id="SequenceFlow_1x0qckx" sourceRef="ErfolgreichenAbschlussMitteilen" targetRef="NeueAdresseVeKaCenterMitteilen" />
-    <sequenceFlow id="SequenceFlow_19k3fjn" name="ja" sourceRef="UmzugsmeldungAkzeptiert" targetRef="ErfolgreichenAbschlussMitteilen">
-      <conditionExpression xsi:type="tFormalExpression">${true == true}</conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="SequenceFlow_1woxygr" name="nein" sourceRef="UmzugsmeldungAkzeptiert" targetRef="AblehnungMitteilen">
-      <conditionExpression xsi:type="tFormalExpression">${false == true}</conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="SequenceFlow_1563am6" sourceRef="AblehnungMitteilen" targetRef="AblehnungPersistieren" />
-    <sequenceFlow id="SequenceFlow_1ptg35o" sourceRef="MitEKSystemenKommunizieren" targetRef="UmzugsmeldungAkzeptiert" />
-    <sequenceFlow id="SequenceFlow_0qpbkoo" sourceRef="DefinierteZeitVerstrichen" targetRef="UeberschreitenDerAntwortfristMitteilen" />
-    <sequenceFlow id="SequenceFlow_0ygmvzp" sourceRef="UeberschreitenDerAntwortfristMitteilen" targetRef="UeberschreitenDerAntwortfristPersistieren" />
-    <boundaryEvent id="DefinierteZeitVerstrichen" name="Definierte Zeit verstrichen" attachedToRef="MitEKSystemenKommunizieren">
-      <outgoing>SequenceFlow_0qpbkoo</outgoing>
-      <timerEventDefinition id="TimerEventDefinition_12hpg9n">
-        <timeDuration xsi:type="tFormalExpression">P60D</timeDuration>
-      </timerEventDefinition>
-    </boundaryEvent>
     <endEvent id="UmzugsmeldungErfolgreichAbgeschlossen" name="Umzugsmeldung erfolgreich abgeschlossen">
       <incoming>SequenceFlow_1hdylfx</incoming>
     </endEvent>
@@ -241,9 +141,6 @@ Die Personenidentifikations-Angaben sind bereits als Prozessvariablen vorhanden 
       <incoming>SequenceFlow_1563am6</incoming>
       <outgoing>SequenceFlow_1czfkrs</outgoing>
     </serviceTask>
-    <sequenceFlow id="SequenceFlow_1hdylfx" sourceRef="ErfolgreichenAbschlussPersistieren" targetRef="UmzugsmeldungErfolgreichAbgeschlossen" />
-    <sequenceFlow id="SequenceFlow_13o5ois" sourceRef="UeberschreitenDerAntwortfristPersistieren" targetRef="UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen" />
-    <sequenceFlow id="SequenceFlow_1czfkrs" sourceRef="AblehnungPersistieren" targetRef="UmzugsmeldungWegenAblehnungFehlgeschlagen" />
     <serviceTask id="NeueAdresseVeKaCenterMitteilen" name="Neue Adresse VeKa-Center mitteilen" camunda:delegateExpression="#{updateAddressAtVekaAdapter}">
       <documentation>Mitteilen der Adressänderung für alle umziehenden Personen an das VeKa-Center
 
@@ -254,184 +151,284 @@ Im UpdateAddressAtVekaService soll es eine Methode geben, welche folgende Anford
 - Sie weist die Adressangaben einem Objekt vom Typ einer neu zu erstellenden Klasse zu, welches so serialisiert wird, wie dies von der VeKa-API erwartet wird.
 - Für jede grundversicherte (!) Person ruft sie eine Methode updateAddressForPerson in einem ausgelagerten VeKaClientService auf und übergibt dieser die erstellte Adresse zu und die Id der Person, wie diese im VeKa-Service vergeben wird (Achtung: Dies entspricht nicht der localPersonId =&gt; in processData.Person muss ein id-Attribut ergänzt werden, damit beim Aufruf von getVeKaCard die VeKa-Personen-Id deserialisiert wird.
 - Die  Methode updateAddressForPerson wiederum sendet über eine PUT-Anfrage an  /vekaapi/v1/persons/{id}/address die neue Adresse als RequestBody für eine bestimmte Personen-Id (id). Dabei wird keine Antwort der API-Methode ausgelesen. Tipp: Für PUT-Anfragen gibt es zig Varianten, aber da wir kein ResponseBody vom Server erwarten, ist die einfachste RestTemplate.put(url, RequestBody-Objekt, url Parameter).
-- Allgemein ist (im Unterschied zur Grundversicherungsprüfung) als prototypische Vereinfachung kein Fehlerhandling eingebaut, also in keiner der genannten Klassen/Methoden.
-</documentation>
+- Allgemein ist (im Unterschied zur Grundversicherungsprüfung) als prototypische Vereinfachung kein Fehlerhandling eingebaut, also in keiner der genannten Klassen/Methoden.</documentation>
       <incoming>SequenceFlow_1x0qckx</incoming>
       <outgoing>SequenceFlow_0m2es8o</outgoing>
     </serviceTask>
+    <callActivity id="MitEKSystemenKommunizieren" name="Mit EK-Systemen kommunizieren">
+      <documentation>Dem oder den Einwohnerkontrollsystemen werden  die vom Meldepflichtigen erfassten Angaben asynchron über eine definierte technische Schnittstelle mitgeteilt.
+
+Nach einigen Minuten bis Tagen trifft eine bestätigende oder ablehnende Nachricht von dem oder den Einwohnerkontrollsystemen ein, ebenfalls über eine definierte technische Schnittstelle.
+
+Wie genau eine Gemeinde mit der erhaltenen Meldung umgeht, ist je nach Gemeinde und verwendeter Software unterschiedlich. Sicher jedoch ist, dass eine Meldung nicht 100%-ig automatisiert verarbeitet werden darf, sondern dass ein Sachbearbeiter die Verarbeitung anstösst.</documentation>
+      <incoming>SequenceFlow_1iopode</incoming>
+      <outgoing>SequenceFlow_1ptg35o</outgoing>
+    </callActivity>
+    <exclusiveGateway id="UmzugsmeldungAkzeptiert" name="Umzugsmeldung akzeptiert?">
+      <incoming>SequenceFlow_1ptg35o</incoming>
+      <outgoing>SequenceFlow_19k3fjn</outgoing>
+      <outgoing>SequenceFlow_1woxygr</outgoing>
+    </exclusiveGateway>
+    <serviceTask id="ErfolgreichenAbschlussMitteilen" name="Erfolgreichen Abschluss mitteilen" camunda:type="external" camunda:topic="Notification">
+      <documentation>Dem Meldepflichtigen wird der aktuelle Status mitgeteilt, einerseits per EMail und andererseits (sofern in KontaktangabenErfassenForm so gewählt) per SMS.
+
+Die eigentliche Nachricht wird über den Kantonalen Benachrichtigungsdienst durchgeführt, welcher sich für das Topic 'Notification' bei der Umzugsplattform registiert. Demnach ist die Implementation dieses Service Tasks ein External Task.
+
+Der kantonale Benachrichtigungsdienst erwartet eine HashMap mit dort spezifierten Key-Value-Paaren. Diese HashMap wird in einer JavaDelegate-Klasse (Named=GenerateNotificationTaskVariableAdapter) durchgeführt, welche in einem Start Listener dieses Service Tasks aufgerufen wird.
+
+Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Prozessvariablen zusammenstellen, zum andern benötigt sie folgende zwei Prozessvariablen, die als Input-Parameter in diesem Service Task erstellt werden:
+- notificationSubject=eUmzugsmeldung erfolgreich abgeschlossen
+- notificationMessageBody=Die Einwohnerkontrollen haben die Umzugsmeldung akzeptiert. Der eUmzug-Meldeprozess ist damit erfolgreich abgeschlossen.</documentation>
+      <extensionElements>
+        <camunda:executionListener delegateExpression="#{GenerateNotificationTaskVariableAdapter}" event="start" />
+        <camunda:inputOutput>
+          <camunda:inputParameter name="notificationMessageBody">Die Einwohnerkontrollen haben die Umzugsmeldung akzeptiert. Der eUmzug-Meldeprozess ist damit erfolgreich abgeschlossen.</camunda:inputParameter>
+          <camunda:inputParameter name="notificationSubject">eUmzugsmeldung erfolgreich abgeschlossen</camunda:inputParameter>
+        </camunda:inputOutput>
+      </extensionElements>
+      <incoming>SequenceFlow_19k3fjn</incoming>
+      <outgoing>SequenceFlow_1x0qckx</outgoing>
+    </serviceTask>
+    <serviceTask id="AblehnungMitteilen" name="Ablehnung mitteilen" camunda:type="external" camunda:topic="Notification">
+      <documentation>Dem Meldepflichtigen wird der aktuelle Status mitgeteilt, einerseits per EMail und andererseits (sofern in KontaktangabenErfassenForm so gewählt) per SMS.
+
+Die eigentliche Nachricht wird über den Kantonalen Benachrichtigungsdienst durchgeführt, welcher sich für das Topic 'Notification' bei der Umzugsplattform registiert. Demnach ist die Implementation dieses Service Tasks ein External Task.
+
+Der kantonale Benachrichtigungsdienst erwartet eine HashMap mit dort spezifierten Key-Value-Paaren. Diese HashMap wird in einer JavaDelegate-Klasse (Named=GenerateNotificationTaskVariableAdapter) durchgeführt, welche in einem Start Listener dieses Service Tasks aufgerufen wird.
+
+Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Prozessvariablen zusammenstellen, zum andern benötigt sie folgende zwei Prozessvariablen, die als Input-Parameter in diesem Service Task erstellt werden:
+- notificationSubject=eUmzugsmeldung abgelehnt
+- notificationMessageBody=Die Einwohnerkontrollen haben die Umzugsmeldung abgelehnt. Melden Sie sich bei ihnen.</documentation>
+      <extensionElements>
+        <camunda:executionListener delegateExpression="#{GenerateNotificationTaskVariableAdapter}" event="start" />
+        <camunda:inputOutput>
+          <camunda:inputParameter name="notificationSubject">eUmzugsmeldung abgelehnt</camunda:inputParameter>
+          <camunda:inputParameter name="notificationMessageBody">Die Einwohnerkontrollen haben die Umzugsmeldung abgelehnt. Melden Sie sich bei ihnen.</camunda:inputParameter>
+        </camunda:inputOutput>
+      </extensionElements>
+      <incoming>SequenceFlow_1woxygr</incoming>
+      <outgoing>SequenceFlow_1563am6</outgoing>
+    </serviceTask>
+    <serviceTask id="UeberschreitenDerAntwortfristMitteilen" name="Überschreiten der Antwortfrist mitteilen" camunda:type="external" camunda:topic="Notification">
+      <documentation>Dem Meldepflichtigen wird der aktuelle Status mitgeteilt, einerseits per EMail und andererseits (sofern in KontaktangabenErfassenForm so gewählt) per SMS.
+
+Die eigentliche Nachricht wird über den Kantonalen Benachrichtigungsdienst durchgeführt, welcher sich für das Topic 'Notification' bei der Umzugsplattform registiert. Demnach ist die Implementation dieses Service Tasks ein External Task.
+
+Der kantonale Benachrichtigungsdienst erwartet eine HashMap mit dort spezifierten Key-Value-Paaren. Diese HashMap wird in einer JavaDelegate-Klasse (Named=GenerateNotificationTaskVariableAdapter) durchgeführt, welche in einem Start Listener dieses Service Tasks aufgerufen wird.
+
+Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Prozessvariablen zusammenstellen, zum andern benötigt sie folgende zwei Prozessvariablen, die als Input-Parameter in diesem Service Task erstellt werden:
+- notificationSubject=eUmzugsmeldung abgebrochen
+- notificationMessageBody=Die Einwohnerkontrollen haben die Umzugsmeldung nicht innerhalb von 60 Tagen beantwortet. Melden Sie sich bei ihnen.</documentation>
+      <extensionElements>
+        <camunda:executionListener delegateExpression="#{GenerateNotificationTaskVariableAdapter}" event="start" />
+        <camunda:inputOutput>
+          <camunda:inputParameter name="notificationSubject">eUmzugsmeldung abgebrochen</camunda:inputParameter>
+          <camunda:inputParameter name="notificationMessageBody">Die Einwohnerkontrollen haben die Umzugsmeldung nicht innerhalb von 60 Tagen beantwortet. Melden Sie sich bei ihnen.</camunda:inputParameter>
+        </camunda:inputOutput>
+      </extensionElements>
+      <incoming>SequenceFlow_0qpbkoo</incoming>
+      <outgoing>SequenceFlow_0ygmvzp</outgoing>
+    </serviceTask>
+    <boundaryEvent id="EinAbbruchgrundIstEingetroffen" name="Abbruchgrund eingetroffen" attachedToRef="UmzugsmeldungErfassenUndBezahlen">
+      <documentation>Gewisse Ausnahmefälle innerhalb des aufgerufenen Prozesses sind allenfalls so gravierend, dass eine Weiterführung des Hauptprozesses keinen Sinn macht.
+
+Der eigentliche Fehler soll innerhalb des aufgerufenen Prozesses behandelt werden, während der Hauptprozess lediglich darüber informiert wird, damit dessen Prozessinstanz entsprechend vorzeitig beendet werden kann.</documentation>
+      <outgoing>SequenceFlow_1312w0k</outgoing>
+      <errorEventDefinition id="ErrorEventDefinition_0pb3nhb" errorRef="Error_12sd8hn" />
+    </boundaryEvent>
+    <boundaryEvent id="DefinierteZeitVerstrichen" name="Definierte Zeit verstrichen" attachedToRef="MitEKSystemenKommunizieren">
+      <outgoing>SequenceFlow_0qpbkoo</outgoing>
+      <timerEventDefinition id="TimerEventDefinition_12hpg9n">
+        <timeDuration xsi:type="tFormalExpression">P60D</timeDuration>
+      </timerEventDefinition>
+    </boundaryEvent>
     <sequenceFlow id="SequenceFlow_0m2es8o" sourceRef="NeueAdresseVeKaCenterMitteilen" targetRef="ErfolgreichenAbschlussPersistieren" />
+    <sequenceFlow id="SequenceFlow_1czfkrs" sourceRef="AblehnungPersistieren" targetRef="UmzugsmeldungWegenAblehnungFehlgeschlagen" />
+    <sequenceFlow id="SequenceFlow_13o5ois" sourceRef="UeberschreitenDerAntwortfristPersistieren" targetRef="UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen" />
+    <sequenceFlow id="SequenceFlow_1hdylfx" sourceRef="ErfolgreichenAbschlussPersistieren" targetRef="UmzugsmeldungErfolgreichAbgeschlossen" />
+    <sequenceFlow id="SequenceFlow_0ygmvzp" sourceRef="UeberschreitenDerAntwortfristMitteilen" targetRef="UeberschreitenDerAntwortfristPersistieren" />
+    <sequenceFlow id="SequenceFlow_0qpbkoo" sourceRef="DefinierteZeitVerstrichen" targetRef="UeberschreitenDerAntwortfristMitteilen" />
+    <sequenceFlow id="SequenceFlow_1ptg35o" sourceRef="MitEKSystemenKommunizieren" targetRef="UmzugsmeldungAkzeptiert" />
+    <sequenceFlow id="SequenceFlow_1563am6" sourceRef="AblehnungMitteilen" targetRef="AblehnungPersistieren" />
+    <sequenceFlow id="SequenceFlow_1woxygr" name="nein" sourceRef="UmzugsmeldungAkzeptiert" targetRef="AblehnungMitteilen">
+      <conditionExpression xsi:type="tFormalExpression">${false == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_19k3fjn" name="ja" sourceRef="UmzugsmeldungAkzeptiert" targetRef="ErfolgreichenAbschlussMitteilen">
+      <conditionExpression xsi:type="tFormalExpression">${true == true}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_1x0qckx" sourceRef="ErfolgreichenAbschlussMitteilen" targetRef="NeueAdresseVeKaCenterMitteilen" />
+    <sequenceFlow id="SequenceFlow_1312w0k" sourceRef="EinAbbruchgrundIstEingetroffen" targetRef="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen" />
+    <sequenceFlow id="SequenceFlow_1iopode" sourceRef="UmzugsmeldungErfassenUndBezahlen" targetRef="MitEKSystemenKommunizieren" />
+    <sequenceFlow id="SequenceFlow_0ypg6cw" sourceRef="UmzugsmeldungGestartet" targetRef="UmzugsmeldungErfassenUndBezahlen" />
   </process>
   <error id="Error_12sd8hn" name="ErrorUmzugsmeldungErfassenUndBezahlen" />
   <error id="Error_04jbe5p" name="ErrorEksAblehnung" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_TwitterDemoProcess">
     <bpmndi:BPMNPlane id="BPMNPlane_TwitterDemoProcess" bpmnElement="Collaboration_05jmpr5">
-      <bpmndi:BPMNShape id="Participant_1mdci1z_di" bpmnElement="UmzugMeldenParticipant">
-        <omgdc:Bounds x="-1" y="-1" width="1278" height="1011" />
+      <bpmndi:BPMNShape id="Participant_1mdci1z_di" bpmnElement="UmzugMeldenParticipant" isHorizontal="true">
+        <omgdc:Bounds x="156" y="81" width="1278" height="862" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_1bppnkr_di" bpmnElement="Lane_1bppnkr">
-        <omgdc:Bounds x="29" y="-1" width="1248" height="526" />
+      <bpmndi:BPMNShape id="Lane_1bppnkr_di" bpmnElement="Lane_1bppnkr" isHorizontal="true">
+        <omgdc:Bounds x="186" y="81" width="1248" height="530" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_1474uhv_di" bpmnElement="EksMeldedienst">
-        <omgdc:Bounds x="29" y="525" width="1248" height="152" />
+      <bpmndi:BPMNShape id="Lane_0ppjtrr_di" bpmnElement="UmzugsplattformMeldepflichtiger" isHorizontal="true">
+        <omgdc:Bounds x="216" y="81" width="1218" height="165" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_0ppjtrr_di" bpmnElement="UmzugsplattformMeldepflichtiger">
-        <omgdc:Bounds x="59" y="-1" width="1218" height="165" />
+      <bpmndi:BPMNShape id="Lane_0eghv6k_di" bpmnElement="UmzugsplattformAutomatisch" isHorizontal="true">
+        <omgdc:Bounds x="216" y="246" width="1218" height="365" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_0eghv6k_di" bpmnElement="UmzugsplattformAutomatisch">
-        <omgdc:Bounds x="59" y="164" width="1218" height="361" />
+      <bpmndi:BPMNShape id="Lane_09fif4i_di" bpmnElement="KantonalerBenachrichtigungsdienst" isHorizontal="true">
+        <omgdc:Bounds x="186" y="611" width="1248" height="332" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_09fif4i_di" bpmnElement="KantonalerBenachrichtigungsdienst">
-        <omgdc:Bounds x="29" y="677" width="1248" height="333" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_0fypb5d_di" bpmnElement="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
-        <omgdc:Bounds x="300" y="206" width="36" height="36" />
+      <bpmndi:BPMNShape id="EndEvent_0fypb5d_di" bpmnElement="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="457" y="288" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="278" y="246" width="83" height="53" />
+          <omgdc:Bounds x="435" y="328" width="83" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_15z9qe3_di" bpmnElement="UmzugsmeldungErfolgreichAbgeschlossen">
-        <omgdc:Bounds x="1195" y="206" width="36" height="36" />
+      <bpmndi:BPMNShape id="EndEvent_15z9qe3_di" bpmnElement="UmzugsmeldungErfolgreichAbgeschlossen" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="1352" y="288" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="1172" y="249" width="83" height="40" />
+          <omgdc:Bounds x="1329" y="331" width="83" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_13cetj5_di" bpmnElement="UmzugsmeldungWegenAblehnungFehlgeschlagen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdc:Bounds x="1195" y="312" width="36" height="36" />
+      <bpmndi:BPMNShape id="EndEvent_13cetj5_di" bpmnElement="UmzugsmeldungWegenAblehnungFehlgeschlagen" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="1352" y="394" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="1169" y="355" width="88" height="40" />
+          <omgdc:Bounds x="1326" y="437" width="88" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_1egx8l8_di" bpmnElement="UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdc:Bounds x="1195" y="420" width="36" height="36" />
+      <bpmndi:BPMNShape id="EndEvent_1egx8l8_di" bpmnElement="UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="1352" y="502" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="1172" y="463" width="83" height="53" />
+          <omgdc:Bounds x="1329" y="545" width="83" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BoundaryEvent_1n6yipp_di" bpmnElement="DefinierteZeitVerstrichen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdc:Bounds x="458" y="621" width="36" height="36" />
+      <bpmndi:BPMNShape id="BoundaryEvent_1n6yipp_di" bpmnElement="DefinierteZeitVerstrichen" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="626" y="328" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="496" y="647" width="70" height="27" />
+          <omgdc:Bounds x="664" y="354" width="70" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1ptg35o_di" bpmnElement="SequenceFlow_1ptg35o">
-        <omgdi:waypoint x="541" y="599" />
-        <omgdi:waypoint x="586" y="599" />
+      <bpmndi:BPMNEdge id="SequenceFlow_1ptg35o_di" bpmnElement="SequenceFlow_1ptg35o" bioc:stroke="black" bioc:fill="white">
+        <omgdi:waypoint x="709" y="306" />
+        <omgdi:waypoint x="743" y="306" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1woxygr_di" bpmnElement="SequenceFlow_1woxygr" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdi:waypoint x="611" y="624" />
-        <omgdi:waypoint x="611" y="849" />
-        <omgdi:waypoint x="663" y="849" />
+      <bpmndi:BPMNEdge id="SequenceFlow_1woxygr_di" bpmnElement="SequenceFlow_1woxygr" bioc:stroke="black" bioc:fill="white">
+        <omgdi:waypoint x="768" y="331" />
+        <omgdi:waypoint x="768" y="779" />
+        <omgdi:waypoint x="820" y="779" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="622" y="632" width="21" height="14" />
+          <omgdc:Bounds x="779" y="354" width="21" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1hdylfx_di" bpmnElement="SequenceFlow_1hdylfx">
-        <omgdi:waypoint x="1112" y="224" />
-        <omgdi:waypoint x="1195" y="224" />
+      <bpmndi:BPMNEdge id="SequenceFlow_1hdylfx_di" bpmnElement="SequenceFlow_1hdylfx" bioc:stroke="black" bioc:fill="white">
+        <omgdi:waypoint x="1269" y="306" />
+        <omgdi:waypoint x="1352" y="306" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1czfkrs_di" bpmnElement="SequenceFlow_1czfkrs">
-        <omgdi:waypoint x="1112" y="330" />
-        <omgdi:waypoint x="1195" y="330" />
+      <bpmndi:BPMNEdge id="SequenceFlow_1czfkrs_di" bpmnElement="SequenceFlow_1czfkrs" bioc:stroke="black" bioc:fill="white">
+        <omgdi:waypoint x="1269" y="412" />
+        <omgdi:waypoint x="1352" y="412" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0qpbkoo_di" bpmnElement="SequenceFlow_0qpbkoo">
-        <omgdi:waypoint x="476" y="657" />
-        <omgdi:waypoint x="476" y="953" />
-        <omgdi:waypoint x="663" y="953" />
+        <omgdi:waypoint x="644" y="364" />
+        <omgdi:waypoint x="644" y="883" />
+        <omgdi:waypoint x="820" y="883" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_13o5ois_di" bpmnElement="SequenceFlow_13o5ois">
-        <omgdi:waypoint x="1112" y="438" />
-        <omgdi:waypoint x="1195" y="438" />
+      <bpmndi:BPMNEdge id="SequenceFlow_13o5ois_di" bpmnElement="SequenceFlow_13o5ois" bioc:stroke="black" bioc:fill="white">
+        <omgdi:waypoint x="1269" y="520" />
+        <omgdi:waypoint x="1352" y="520" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="StartEvent_0ernray_di" bpmnElement="UmzugsmeldungGestartet">
-        <omgdc:Bounds x="123" y="46" width="36" height="36" />
+        <omgdc:Bounds x="280" y="128" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="100" y="83" width="83" height="27" />
+          <omgdc:Bounds x="257" y="165" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0ypg6cw_di" bpmnElement="SequenceFlow_0ypg6cw">
-        <omgdi:waypoint x="159" y="64" />
-        <omgdi:waypoint x="230" y="64" />
+        <omgdi:waypoint x="316" y="146" />
+        <omgdi:waypoint x="387" y="146" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_0u85wij_di" bpmnElement="MitEKSystemenKommunizieren" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <omgdc:Bounds x="441" y="559" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1iopode_di" bpmnElement="SequenceFlow_1iopode">
-        <omgdi:waypoint x="330" y="64" />
-        <omgdi:waypoint x="406" y="64" />
-        <omgdi:waypoint x="406" y="599" />
-        <omgdi:waypoint x="441" y="599" />
+        <omgdi:waypoint x="487" y="146" />
+        <omgdi:waypoint x="563" y="146" />
+        <omgdi:waypoint x="563" y="306" />
+        <omgdi:waypoint x="609" y="306" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BoundaryEvent_18l55ip_di" bpmnElement="EinAbbruchgrundIstEingetroffen" bioc:stroke="#1E88E5" bioc:fill="#BBDEFB">
-        <omgdc:Bounds x="235" y="86" width="36" height="36" />
+      <bpmndi:BPMNShape id="BoundaryEvent_18l55ip_di" bpmnElement="EinAbbruchgrundIstEingetroffen" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="392" y="168" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="273" y="126" width="89" height="27" />
+          <omgdc:Bounds x="440" y="208" width="69" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1312w0k_di" bpmnElement="SequenceFlow_1312w0k">
-        <omgdi:waypoint x="253" y="122" />
-        <omgdi:waypoint x="253" y="224" />
-        <omgdi:waypoint x="300" y="224" />
+        <omgdi:waypoint x="410" y="204" />
+        <omgdi:waypoint x="410" y="306" />
+        <omgdi:waypoint x="457" y="306" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="CallActivity_1jsp0ib_di" bpmnElement="UmzugsmeldungErfassenUndBezahlen">
-        <omgdc:Bounds x="230" y="24" width="100" height="80" />
+      <bpmndi:BPMNShape id="CallActivity_1jsp0ib_di" bpmnElement="UmzugsmeldungErfassenUndBezahlen" bioc:stroke="rgb(30, 136, 229)" bioc:fill="rgb(187, 222, 251)">
+        <omgdc:Bounds x="387" y="106" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0hhrqwf_di" bpmnElement="ErfolgreichenAbschlussPersistieren" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <omgdc:Bounds x="1012" y="184" width="100" height="80" />
+      <bpmndi:BPMNShape id="ServiceTask_0hhrqwf_di" bpmnElement="ErfolgreichenAbschlussPersistieren" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="1169" y="266" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0hxz067_di" bpmnElement="UeberschreitenDerAntwortfristPersistieren" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdc:Bounds x="1012" y="398" width="100" height="80" />
+      <bpmndi:BPMNShape id="ServiceTask_0hxz067_di" bpmnElement="UeberschreitenDerAntwortfristPersistieren" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="1169" y="480" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_1fxn2rg_di" bpmnElement="AblehnungPersistieren" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdc:Bounds x="1012" y="290" width="100" height="80" />
+      <bpmndi:BPMNShape id="ServiceTask_1fxn2rg_di" bpmnElement="AblehnungPersistieren" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="1169" y="372" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0aqrb40_di" bpmnElement="ErfolgreichenAbschlussMitteilen" bioc:stroke="#8E24AA" bioc:fill="#E1BEE7">
-        <omgdc:Bounds x="663" y="706" width="100" height="80" />
+      <bpmndi:BPMNShape id="ServiceTask_0aqrb40_di" bpmnElement="ErfolgreichenAbschlussMitteilen" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="820" y="636" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1563am6_di" bpmnElement="SequenceFlow_1563am6">
-        <omgdi:waypoint x="763" y="849" />
-        <omgdi:waypoint x="816" y="849" />
-        <omgdi:waypoint x="816" y="330" />
-        <omgdi:waypoint x="1012" y="330" />
+        <omgdi:waypoint x="920" y="779" />
+        <omgdi:waypoint x="973" y="779" />
+        <omgdi:waypoint x="973" y="412" />
+        <omgdi:waypoint x="1169" y="412" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0ygmvzp_di" bpmnElement="SequenceFlow_0ygmvzp">
-        <omgdi:waypoint x="763" y="953" />
-        <omgdi:waypoint x="835" y="953" />
-        <omgdi:waypoint x="835" y="438" />
-        <omgdi:waypoint x="1012" y="438" />
+        <omgdi:waypoint x="920" y="883" />
+        <omgdi:waypoint x="992" y="883" />
+        <omgdi:waypoint x="992" y="520" />
+        <omgdi:waypoint x="1169" y="520" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1x0qckx_di" bpmnElement="SequenceFlow_1x0qckx">
-        <omgdi:waypoint x="763" y="746" />
-        <omgdi:waypoint x="797" y="746" />
-        <omgdi:waypoint x="797" y="224" />
-        <omgdi:waypoint x="854" y="224" />
+        <omgdi:waypoint x="920" y="676" />
+        <omgdi:waypoint x="954" y="676" />
+        <omgdi:waypoint x="954" y="306" />
+        <omgdi:waypoint x="1011" y="306" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_0mxcs2j_di" bpmnElement="UeberschreitenDerAntwortfristMitteilen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdc:Bounds x="663" y="913" width="100" height="80" />
+      <bpmndi:BPMNShape id="ServiceTask_0mxcs2j_di" bpmnElement="UeberschreitenDerAntwortfristMitteilen" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="820" y="843" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0j38d2g_di" bpmnElement="AblehnungMitteilen" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdc:Bounds x="663" y="809" width="100" height="80" />
+      <bpmndi:BPMNShape id="ServiceTask_0j38d2g_di" bpmnElement="AblehnungMitteilen" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="820" y="739" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_11qo1r7_di" bpmnElement="UmzugsmeldungAkzeptiert" isMarkerVisible="true" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdc:Bounds x="586" y="574" width="50" height="50" />
+      <bpmndi:BPMNShape id="ExclusiveGateway_11qo1r7_di" bpmnElement="UmzugsmeldungAkzeptiert" isMarkerVisible="true" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="743" y="281" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="569" y="541" width="83" height="27" />
+          <omgdc:Bounds x="726" y="250" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_19k3fjn_di" bpmnElement="SequenceFlow_19k3fjn" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
-        <omgdi:waypoint x="636" y="599" />
-        <omgdi:waypoint x="713" y="599" />
-        <omgdi:waypoint x="713" y="706" />
+      <bpmndi:BPMNEdge id="SequenceFlow_19k3fjn_di" bpmnElement="SequenceFlow_19k3fjn" bioc:stroke="black" bioc:fill="white">
+        <omgdi:waypoint x="793" y="306" />
+        <omgdi:waypoint x="870" y="306" />
+        <omgdi:waypoint x="870" y="636" />
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="652" y="575" width="8" height="14" />
+          <omgdc:Bounds x="809" y="282" width="8" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_0rkoc7f_di" bpmnElement="NeueAdresseVeKaCenterMitteilen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
-        <omgdc:Bounds x="854" y="184" width="100" height="80" />
+      <bpmndi:BPMNShape id="ServiceTask_0rkoc7f_di" bpmnElement="NeueAdresseVeKaCenterMitteilen" bioc:stroke="black" bioc:fill="white">
+        <omgdc:Bounds x="1011" y="266" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0m2es8o_di" bpmnElement="SequenceFlow_0m2es8o">
-        <omgdi:waypoint x="954" y="224" />
-        <omgdi:waypoint x="1012" y="224" />
+      <bpmndi:BPMNEdge id="SequenceFlow_0m2es8o_di" bpmnElement="SequenceFlow_0m2es8o" bioc:stroke="black" bioc:fill="white">
+        <omgdi:waypoint x="1111" y="306" />
+        <omgdi:waypoint x="1169" y="306" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_08s5ygq_di" bpmnElement="MitEKSystemenKommunizieren" bioc:stroke="rgb(30, 136, 229)" bioc:fill="rgb(187, 222, 251)">
+        <omgdc:Bounds x="609" y="266" width="100" height="80" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </definitions>

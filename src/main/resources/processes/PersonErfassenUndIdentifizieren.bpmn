@@ -214,83 +214,83 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Wegen ne
   <bpmn:error id="Error_0b0fhfh" name="ErrorPersonIdentifizieren" errorCode="NegativeReportErhalten" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_06rojpi">
-      <bpmndi:BPMNShape id="Participant_1hkfvkb_di" bpmnElement="PersonErfassenUndIdentifizierenParticipant" isHorizontal="true">
+      <bpmndi:BPMNShape id="Participant_1hkfvkb_di" bpmnElement="PersonErfassenUndIdentifizierenParticipant" isHorizontal="true" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="156" y="199" width="1792" height="399" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="StartEvent_14lr8fl_di" bpmnElement="UmzugsmeldungGestartet" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
+      <bpmndi:BPMNShape id="StartEvent_14lr8fl_di" bpmnElement="UmzugsmeldungGestartet" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="229" y="327" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="206" y="370" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0m8m5zm_di" bpmnElement="IdentifikationsmerkmaleErfassen" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
+      <bpmndi:BPMNShape id="UserTask_0m8m5zm_di" bpmnElement="IdentifikationsmerkmaleErfassen" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="407" y="305" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_15zrloe_di" bpmnElement="PersonenidentifikatorGenerieren" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
+      <bpmndi:BPMNShape id="ServiceTask_15zrloe_di" bpmnElement="PersonenidentifikatorGenerieren" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="551" y="305" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_09b5q9r_di" bpmnElement="SequenceFlow_09b5q9r">
+      <bpmndi:BPMNEdge id="SequenceFlow_09b5q9r_di" bpmnElement="SequenceFlow_09b5q9r" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="507" y="345" />
         <di:waypoint x="551" y="345" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0endv5n_di" bpmnElement="SequenceFlow_0endv5n">
+      <bpmndi:BPMNEdge id="SequenceFlow_0endv5n_di" bpmnElement="SequenceFlow_0endv5n" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="265" y="345" />
         <di:waypoint x="309" y="345" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_1kbj40j_di" bpmnElement="ExclusiveGateway_1kbj40j" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="ExclusiveGateway_1kbj40j_di" bpmnElement="ExclusiveGateway_1kbj40j" isMarkerVisible="true" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="859" y="320" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="810" y="300" width="68" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_04385zn_di" bpmnElement="PersonIdentifizieren" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
+      <bpmndi:BPMNShape id="ServiceTask_04385zn_di" bpmnElement="PersonIdentifizieren" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="703" y="305" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0vatjx1_di" bpmnElement="ExclusiveGateway_0vatjx1" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="ExclusiveGateway_0vatjx1_di" bpmnElement="ExclusiveGateway_0vatjx1" isMarkerVisible="true" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="998" y="320" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="988" y="274" width="71" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0ko93ge_di" bpmnElement="MitumziehendePersonenAuswaehlen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
+      <bpmndi:BPMNShape id="UserTask_0ko93ge_di" bpmnElement="MitumziehendePersonenAuswaehlen" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="1121" y="305" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0cjsigp_di" bpmnElement="ExclusiveGateway_0cjsigp" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="ExclusiveGateway_0cjsigp_di" bpmnElement="ExclusiveGateway_0cjsigp" isMarkerVisible="true" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="1269" y="320" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_1010s5o_di" bpmnElement="KorrekturbedarfMitteilen" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
+      <bpmndi:BPMNShape id="UserTask_1010s5o_di" bpmnElement="KorrekturbedarfMitteilen" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="973" y="460" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_02eif3q_di" bpmnElement="ExclusiveGateway_02eif3q" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="ExclusiveGateway_02eif3q_di" bpmnElement="ExclusiveGateway_02eif3q" isMarkerVisible="true" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="1146" y="475" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1141" y="438" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0620p1a_di" bpmnElement="ExclusiveGateway_0620p1a" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="ExclusiveGateway_0620p1a_di" bpmnElement="ExclusiveGateway_0620p1a" isMarkerVisible="true" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="1435" y="475" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0hwv8rb_di" bpmnElement="AnSchalterVerwiesenWerden" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
+      <bpmndi:BPMNShape id="UserTask_0hwv8rb_di" bpmnElement="AnSchalterVerwiesenWerden" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="1542" y="460" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_0j730q8_di" bpmnElement="WegenNegativerPersonenIdentifikationAbgebrochen">
+      <bpmndi:BPMNShape id="EndEvent_0j730q8_di" bpmnElement="WegenNegativerPersonenIdentifikationAbgebrochen" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="1861" y="482" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1838" y="522" width="84" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1nn0lr5_di" bpmnElement="SequenceFlow_1nn0lr5">
+      <bpmndi:BPMNEdge id="SequenceFlow_1nn0lr5_di" bpmnElement="SequenceFlow_1nn0lr5" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="803" y="345" />
         <di:waypoint x="859" y="345" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_00h8w1e_di" bpmnElement="PersonNichtGefunden">
+      <bpmndi:BPMNEdge id="SequenceFlow_00h8w1e_di" bpmnElement="PersonNichtGefunden" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="884" y="370" />
         <di:waypoint x="884" y="475" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="891" y="382" width="63" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_19kndj1_di" bpmnElement="NichtFuerEumzugBerechtigt">
+      <bpmndi:BPMNEdge id="SequenceFlow_19kndj1_di" bpmnElement="NichtFuerEumzugBerechtigt" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="884" y="320" />
         <di:waypoint x="884" y="220" />
         <di:waypoint x="1460" y="220" />
@@ -299,21 +299,21 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Wegen ne
           <dc:Bounds x="894" y="229" width="85" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1q5qbr1_di" bpmnElement="FuerEumzugBerechtigt">
+      <bpmndi:BPMNEdge id="SequenceFlow_1q5qbr1_di" bpmnElement="FuerEumzugBerechtigt" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="909" y="345" />
         <di:waypoint x="998" y="345" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="914" y="309" width="61" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0h3btk1_di" bpmnElement="MitzuziehendePersonenVorhanden">
+      <bpmndi:BPMNEdge id="SequenceFlow_0h3btk1_di" bpmnElement="MitzuziehendePersonenVorhanden" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="1048" y="345" />
         <di:waypoint x="1121" y="345" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1066" y="325" width="12" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_01kktt1_di" bpmnElement="MitzuziehendePersonenNichtVorhanden">
+      <bpmndi:BPMNEdge id="SequenceFlow_01kktt1_di" bpmnElement="MitzuziehendePersonenNichtVorhanden" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="1023" y="370" />
         <di:waypoint x="1023" y="423" />
         <di:waypoint x="1294" y="425" />
@@ -322,51 +322,51 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Wegen ne
           <dc:Bounds x="1038" y="402" width="23" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_125p6va_di" bpmnElement="SequenceFlow_125p6va">
+      <bpmndi:BPMNEdge id="SequenceFlow_125p6va_di" bpmnElement="SequenceFlow_125p6va" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="1221" y="345" />
         <di:waypoint x="1269" y="345" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1fttpqx_di" bpmnElement="SequenceFlow_1fttpqx">
+      <bpmndi:BPMNEdge id="SequenceFlow_1fttpqx_di" bpmnElement="SequenceFlow_1fttpqx" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="1073" y="500" />
         <di:waypoint x="1146" y="500" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0btqzvc_di" bpmnElement="KorrekturNichtGewuenscht">
+      <bpmndi:BPMNEdge id="SequenceFlow_0btqzvc_di" bpmnElement="KorrekturNichtGewuenscht" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="1196" y="500" />
         <di:waypoint x="1435" y="500" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1232" y="478" width="21" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0d6anna_di" bpmnElement="SequenceFlow_0d6anna">
+      <bpmndi:BPMNEdge id="SequenceFlow_0d6anna_di" bpmnElement="SequenceFlow_0d6anna" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="1485" y="500" />
         <di:waypoint x="1542" y="500" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1jlptqu_di" bpmnElement="SequenceFlow_1jlptqu">
+      <bpmndi:BPMNEdge id="SequenceFlow_1jlptqu_di" bpmnElement="SequenceFlow_1jlptqu" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="1642" y="500" />
         <di:waypoint x="1698" y="500" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_1nsjb6v_di" bpmnElement="ExclusiveGateway_1nsjb6v" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="ExclusiveGateway_1nsjb6v_di" bpmnElement="ExclusiveGateway_1nsjb6v" isMarkerVisible="true" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="309" y="320" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1qa435t_di" bpmnElement="SequenceFlow_1qa435t">
+      <bpmndi:BPMNEdge id="SequenceFlow_1qa435t_di" bpmnElement="SequenceFlow_1qa435t" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="359" y="345" />
         <di:waypoint x="407" y="345" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0bbx1ag_di" bpmnElement="SequenceFlow_0bbx1ag">
+      <bpmndi:BPMNEdge id="SequenceFlow_0bbx1ag_di" bpmnElement="SequenceFlow_0bbx1ag" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="651" y="345" />
         <di:waypoint x="703" y="345" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_02bic4y_di" bpmnElement="PersonenidentifikationErfolgreichAbgeschlossen">
+      <bpmndi:BPMNShape id="EndEvent_02bic4y_di" bpmnElement="PersonenidentifikationErfolgreichAbgeschlossen" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="1362" y="327" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1338" y="370" width="85" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0n90szt_di" bpmnElement="SequenceFlow_0n90szt">
+      <bpmndi:BPMNEdge id="SequenceFlow_0n90szt_di" bpmnElement="SequenceFlow_0n90szt" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="1319" y="345" />
         <di:waypoint x="1362" y="345" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0fh0dge_di" bpmnElement="KorrekturGewuenscht">
+      <bpmndi:BPMNEdge id="SequenceFlow_0fh0dge_di" bpmnElement="KorrekturGewuenscht" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="1171" y="525" />
         <di:waypoint x="1171" y="577" />
         <di:waypoint x="334" y="577" />
@@ -375,45 +375,45 @@ In einem Input-Parameter wird die Prozessvariable 'status' gesetzt mit "Wegen ne
           <dc:Bounds x="1150" y="555" width="8" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Participant_0cfc1eh_di" bpmnElement="KantonalesPersonenregisterParticipant" isHorizontal="true" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
+      <bpmndi:BPMNShape id="Participant_0cfc1eh_di" bpmnElement="KantonalesPersonenregisterParticipant" isHorizontal="true" bioc:stroke="rgb(229, 57, 53)" bioc:fill="rgb(255, 205, 210)">
         <dc:Bounds x="617" y="81" width="300" height="60" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="MessageFlow_0jxik1a_di" bpmnElement="MessageFlow_0jxik1a" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
+      <bpmndi:BPMNEdge id="MessageFlow_0jxik1a_di" bpmnElement="MessageFlow_0jxik1a" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="741" y="305" />
         <di:waypoint x="741" y="141" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="656" y="153" width="72" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="MessageFlow_0orjp5r_di" bpmnElement="MessageFlow_0orjp5r" bioc:stroke="#E53935" bioc:fill="#FFCDD2">
+      <bpmndi:BPMNEdge id="MessageFlow_0orjp5r_di" bpmnElement="MessageFlow_0orjp5r" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="766" y="141" />
         <di:waypoint x="766" y="305" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="778" y="153" width="64" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BoundaryEvent_0x5lag5_di" bpmnElement="NegativeReportErhalten" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
+      <bpmndi:BPMNShape id="BoundaryEvent_0x5lag5_di" bpmnElement="NegativeReportErhalten" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="717" y="367" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="753" y="399" width="78" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0slbt2s_di" bpmnElement="SequenceFlow_0slbt2s" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
+      <bpmndi:BPMNEdge id="SequenceFlow_0slbt2s_di" bpmnElement="SequenceFlow_0slbt2s" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="735" y="403" />
         <di:waypoint x="735" y="500" />
         <di:waypoint x="859" y="500" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_05wiahg_di" bpmnElement="ExclusiveGateway_05wiahg" isMarkerVisible="true" bioc:stroke="#FB8C00" bioc:fill="#FFE0B2">
+      <bpmndi:BPMNShape id="ExclusiveGateway_05wiahg_di" bpmnElement="ExclusiveGateway_05wiahg" isMarkerVisible="true" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="859" y="475" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0jgrrf3_di" bpmnElement="SequenceFlow_0jgrrf3">
+      <bpmndi:BPMNEdge id="SequenceFlow_0jgrrf3_di" bpmnElement="SequenceFlow_0jgrrf3" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="909" y="500" />
         <di:waypoint x="973" y="500" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_1fnm3cg_di" bpmnElement="NegativePersonenidentifikationPersistieren" bioc:stroke="#43A047" bioc:fill="#C8E6C9">
+      <bpmndi:BPMNShape id="ServiceTask_1fnm3cg_di" bpmnElement="NegativePersonenidentifikationPersistieren" bioc:stroke="black" bioc:fill="white">
         <dc:Bounds x="1698" y="460" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0w3h9aj_di" bpmnElement="SequenceFlow_0w3h9aj">
+      <bpmndi:BPMNEdge id="SequenceFlow_0w3h9aj_di" bpmnElement="SequenceFlow_0w3h9aj" bioc:stroke="black" bioc:fill="white">
         <di:waypoint x="1798" y="500" />
         <di:waypoint x="1861" y="500" />
       </bpmndi:BPMNEdge>
