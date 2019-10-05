@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope/" soap:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+	<soap:Body xmlns:eCH-0058="http://www.ech.ch/xmlns/eCH-0058/5" xmlns:eCH-0194="http://www.ech.ch/xmlns/eCH-0194/1">
+		<!-- eventReport gemäss eCH-0058-Anweisungen und Namespaces-Deklarationen -->
+		<eventReport>
+			<!-- header nach eCH-0058, dessen Inhalt in deliveryHeader.xml aufgeführt ist, da für alle Nachrichten fast identisch -->
+			<eCH-0058:header>...</eCH-0058:header>
+			<!-- Eigentlicher Nachrichteninhalt -->
+			<eCH-0058:info>
+				<!-- ENTWEDER positive Antwort -->
+				<eCH-0194:positiveReport>
+					<!-- OPTIONAL (Wieso, eigentlich zwingend?) Generelle Antwort -->
+					<eCH-0194:generalResponse>
+						<!-- OPTIONAL (Wieso, eigentlich zwingend?) Code, NonNegativeInteger als 1 (Abgelehnt) oder 2 (Durchgeführt) -->
+						<eCH-0194:code>2</eCH-0194:code>
+						<!-- OPTIONAL Deutscher Freitext mit Details, bei Ablehnung sinnvollerweise zwingend vorhanden, String, mind. 1 Zeichen -->
+						<eCH-0194:textGerman>Meist leer, da ja erfolgreich</eCH-0194:textGerman>
+						<!-- OPTIONAL weitere Freitextsprachen, nicht relevant -->
+						<eCH-0194:textEnglish>...</eCH-0194:textEnglish>
+						<eCH-0194:textFrench>...</eCH-0194:textFrench>
+						<eCH-0194:textItalian>...</eCH-0194:textItalian>
+					</eCH-0194:generalResponse>
+					<!-- OPTIONAL personenspezifische Antworten, nicht relevant -->
+					<eCH-0194:personResponse>...</eCH-0194:personResponse>
+				</eCH-0194:positiveReport>
+				<!-- ODER negative Antwort -->
+				<eCH-0194:negativeReport>
+					<!-- OPTIONAL (Wieso, eigentlich zwingend?) Generelle Antwort -->
+					<eCH-0194:generalError>
+						<!-- OPTIONAL (Wieso, eigentlich zwingend?) Code, NonNegativeInteger als 1 (Abgelehnt) oder 2 (Durchgeführt) -->
+						<eCH-0194:code>1</eCH-0194:code>
+						<!-- OPTIONAL Deutscher Freitext mit Details, bei Ablehnung sinnvollerweise zwingend vorhanden, String, mind. 1 Zeichen -->
+						<eCH-0194:textGerman>Abgelehnt, da xyz nicht erfüllt</eCH-0194:textGerman>
+						<!-- OPTIONAL weitere Freitextsprachen, nicht relevant -->
+						<eCH-0194:textEnglish>...</eCH-0194:textEnglish>
+						<eCH-0194:textFrench>...</eCH-0194:textFrench>
+						<eCH-0194:textItalian>...</eCH-0194:textItalian>
+					</eCH-0194:generalError>
+					<!-- OPTIONAL personenspezifische Antworten, nicht relevant -->
+					<eCH-0194:personResponse>...</eCH-0194:personResponse>
+				</eCH-0194:negativeReport>
+			</eCH-0058:info>
+		</eventReport>
+	</soap:Body>
+</soap:Envelope>

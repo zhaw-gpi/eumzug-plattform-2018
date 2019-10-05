@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope/" soap:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+	<soap:Body xmlns:eCH-0194="http://www.ech.ch/xmlns/eCH-0194/1" xmlns:eCH-0058="http://www.ech.ch/xmlns/eCH-0058/5" xmlns:eCH-0044="http://www.ech.ch/xmlns/eCH-0044/4" xmlns:eCH-0185="http://www.ech.ch/xmlns/eCH-0185/1" xmlns:eCH-0007="http://www.ech.ch/xmlns/eCH-0007/5" xmlns:eCH-0011="http://www.ech.ch/xmlns/eCH-0011/8">
+		<!-- Delivery gemäss eCH-0058-Anweisungen und Namespaces-Deklarationen -->
+		<delivery>
+			<!-- deliveryHeader nach eCH-0058, dessen Inhalt in deliveryHeader.xml aufgeführt ist, da für alle Nachrichten fast identisch -->
+			<eCH-0194:deliveryHeader>...</eCH-0194:deliveryHeader>
+			<!-- Eigentlicher Nachrichteninhalt -->
+			<eCH-0194:platformMoveOut>
+				<!-- Personenidentifikation -->
+				<eCH-0194:personIdentification>
+					<!-- OPTIONAL AHV-Nummer, unsignedlong 7560000000001-7569999999999 -->
+					<eCH-0044:vn>7560000000001</eCH-0044:vn>
+					<!-- Lokale PersonenId von Umzugsplattform vergeben -->
+					<eCH-0044:localPersonId>
+						<!-- PersonIdCategory gemäss Kapitel 3.6.5, also irgendetwas mit LOC beginnend, 1-20 Zeichen als Token -->
+						<eCH-0044:personIdCategory>LOC.UMZUGPLATTFORM</eCH-0044:personIdCategory>
+						<!-- Eigentlicher Identifikator, Token 1-36 Zeichen -->
+						<eCH-0044:personId>XY00933928</eCH-0044:personId>
+					</eCH-0044:localPersonId>
+					<!-- OPTIONAL Beliebige andere PersonenIds, mehrfach vorkommend, wohl kaum gebraucht von den Studierenden, ansonsten gleicher Aufbau wie localPersonId -->
+					<eCH-0044:otherPersonId>...</eCH-0044:otherPersonId>
+					<eCH-0044:euPersonId>...</eCH-0044:euPersonId>
+					<!-- Amtlicher Name (Nachname), Token 1-100 Zeichen -->
+					<eCH-0044:officialName>Scheppler</eCH-0044:officialName>
+					<!-- Vornamen in der richtigen Reihenfolge, Token 1-100 Zeichen -->
+					<eCH-0044:firstName>Björn Benjamin</eCH-0044:firstName>
+					<!-- OPTIONAL Ledigname, Token 1-100 Zeichen -->
+					<eCH-0044:originalName>...</eCH-0044:originalName>
+					<!-- Geschlecht, String mit drei möglichen Werten 1 (männlich), 2 (weiblich), 3 (unbestimmt) -->
+					<eCH-0044:sex>1</eCH-0044:sex>
+					<!-- Geburtsdatum, in der Regel wohl als yearMonthDay, erlaubt wären aber auch yearMonth und year. Bei yearMonthDay als xs:date, also JJJJ-MM-DD -->
+					<eCH-0044:dateOfBirth>
+						<eCH-0044:yearMonthDay>1976-04-25</eCH-0044:yearMonthDay>
+					</eCH-0044:dateOfBirth>
+				</eCH-0194:personIdentification>
+				<!-- Kontaktangaben -->
+				<eCH-0194:contactData>
+					<!-- Telefonnummmer, String mit Einschränkungen (10-20 Ziffern) -->
+					<eCH-0185:phoneNumber>0585122222</eCH-0185:phoneNumber>
+					<!-- Mail-Adresse, String mit Einschränkungen (max. 100 Zeichen, folgendes RegEx-Pattern: [A-Za-zäöüÄÖÜàáâãåæçèéêëìíîïðñòóôõøùúûýþÿ0-9!#-'\*\+\-/=\?\^_`\{-~]+(\.[A-Za-zäöüÄÖÜàáâãåæçèéêëìíîïðñòóôõøùúûýþÿ0-9!#-'\*\+\-/=\?\^_`\{-~]+)*@[A-Za-zäöüÄÖÜàáâãåæçèéêëìíîïðñòóôõøùúûýþÿ0-9!#-'\*\+\-/=\?\^_`\{-~]+(\.[A-Za-zäöüÄÖÜàáâãåæçèéêëìíîïðñòóôõøùúûýþÿ0-9!#-'\*\+\-/=\?\^_`\{-~]+)*") -->
+					<eCH-0185:emailAddress>scep@zhaw.ch</eCH-0185:emailAddress>
+					<!-- OPTIONAL Erweiterung, Beliebige weitere XML-Elemente in extension, wohl kaum gebraucht -->
+					<eCH-0185:extension>...</eCH-0185:extension>
+				</eCH-0194:contactData>
+				<!-- Angaben zum Zuzug -->
+				<eCH-0194:destination>
+					<!-- Meldegemeinde -->
+					<eCH-0194:moveOutMunicipality>
+						<!-- BFS-Gemeindenummer aus Gemeindetabelle, Integer 1-9999 -->
+						<eCH-0007:municipalityId>329</eCH-0007:municipalityId>
+						<!-- Amtlicher Gemeindename, Token, 0-40 Zeichen -->
+						<eCH-0007:municipalityName>Köniz (BE)</eCH-0007:municipalityName>
+						<!-- OPTIONAL Kantonskürzel und Historische Gemeindenummern, werden Studierende wohl kaum nutzen -->
+						<eCH-0007:cantonAbbreviation>...</eCH-0007:cantonAbbreviation>
+						<eCH-0007:historyMunicipalityId>...</eCH-0007:historyMunicipalityId>
+					</eCH-0194:moveOutMunicipality>
+					<!-- Zuzugsgemeinde -->
+					<eCH-0194:destinationMunicipality>
+						<!-- BFS-Gemeindenummer aus Gemeindetabelle, Integer 1-9999 -->
+						<eCH-0007:municipalityId>450</eCH-0007:municipalityId>
+						<!-- Amtlicher Gemeindename, Token, 0-40 Zeichen -->
+						<eCH-0007:municipalityName>Wichtrach</eCH-0007:municipalityName>
+						<!-- OPTIONAL Kantonskürzel und Historische Gemeindenummern, werden Studierende wohl kaum nutzen -->
+						<eCH-0007:cantonAbbreviation>...</eCH-0007:cantonAbbreviation>
+						<eCH-0007:historyMunicipalityId>...</eCH-0007:historyMunicipalityId>
+					</eCH-0194:destinationMunicipality>
+					<!-- Zuzugsadresse -->
+					<eCH-0194:destinationAddress>
+						<!-- OPTIONAL EGID, wohl kaum genutzt, aber falls doch, dann ein unsignedInteger von 1-999999999 -->
+						<eCH-0011:EGID>45000</eCH-0011:EGID>
+						<!-- OPTIONAL EWID, wohl kaum genutzt, aber falls doch, dann ein unsignedInteger von 1-999 -->
+						<eCH-0011:EWID>45000</eCH-0011:EWID>
+						<!-- OPTIONAL Haushaltsidentifikation, wohl kaum genutzt, aber falls doch, dann ein Token -->
+						<eCH-0011:householdID>...</eCH-0011:householdID>
+						<!-- Adresse, diese wäre recht komplex, wenn man wirklich alle Varianten abbilden will, hier die wohl übliche Form -->
+						<eCH-0011:address>
+							<!-- Strasse, Token, max. 60 Zeichen -->
+							<eCH-0010:street>Dickbuch</eCH-0010:street>
+							<!-- Hausnummer, Token, max. 12 Zeichen -->
+							<eCH-0010:houseNumber>432</eCH-0010:houseNumber>
+							<!-- Ortschaft, Token, max. 40 Zeichen -->
+							<eCH-0010:town>Hofstetten</eCH-0010:town>
+							<!-- PLZ, unsignedInteger 1000-9999 -->
+							<eCH-0010:swissZipCode>8354</eCH-0010:swissZipCode>
+							<!-- Land, als ISO-Code, also immer CH -->
+							<eCH-0010:country>CH</eCH-0010:country>
+						</eCH-0011:address>
+						<!-- Haushaltsart, String, da nicht wirklich bekannt (!?) wohl einfach stets 0 (Haushaltsart noch nicht zugeteilt) angeben, ansonsten wären 1 (Privathaushalt), 2 (Kollektivhaushalt) und 3 (Sammelhaushalt) -->
+						<eCH-0011:typeOfHousehold>0</eCH-0011:typeOfHousehold>
+						<!-- OPTIONAL Umzugsdatum, vermutlich ist das Einzugsdatum gemeint, XS-Date mit Jahr-Monat-Tag -->
+						<eCH-0011:movingDate>2017-12-24</eCH-0011:movingDate>
+					</eCH-0194:destinationAddress>
+					<!-- Umzugsdatum, Date mit Jahr-Monat-Tag -->
+					<eCH-0194:departureDate>2017-12-24</eCH-0194:departureDate>			
+				</eCH-0194:destination>
+				<!-- OPTIONAL Haustierangaben, nur wenn Bonus-Punkte, dann entsprechend eCH-0185:petData -->
+				<eCH-0194:petData>...</eCH-0194:petData>
+				<!-- OPITONAL Erweiterungen, beliebige, aber wohl kaum genutzt -->
+				<eCH-0194:extension>...</eCH-0194:extension>
+			</eCH-0194:platformMoveOut>
+		</delivery>
+	</soap:Body>
+</soap:Envelope>

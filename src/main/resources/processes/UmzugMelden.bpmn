@@ -21,9 +21,9 @@
         <flowNodeRef>UmzugsmeldungWegenAblehnungFehlgeschlagen</flowNodeRef>
         <flowNodeRef>AblehnungPersistieren</flowNodeRef>
         <flowNodeRef>NeueAdresseVeKaCenterMitteilen</flowNodeRef>
-        <flowNodeRef>MitEKSystemenKommunizieren</flowNodeRef>
         <flowNodeRef>UmzugsmeldungAkzeptiert</flowNodeRef>
         <flowNodeRef>EinAbbruchgrundIstEingetroffen</flowNodeRef>
+        <flowNodeRef>MitEKSystemenKommunizieren</flowNodeRef>
         <flowNodeRef>DefinierteZeitVerstrichen</flowNodeRef>
         <childLaneSet id="LaneSet_072546v">
           <lane id="UmzugsplattformMeldepflichtiger" name="Meldepflichtiger">
@@ -40,8 +40,8 @@
             <flowNodeRef>UmzugsmeldungWegenAblehnungFehlgeschlagen</flowNodeRef>
             <flowNodeRef>AblehnungPersistieren</flowNodeRef>
             <flowNodeRef>NeueAdresseVeKaCenterMitteilen</flowNodeRef>
-            <flowNodeRef>MitEKSystemenKommunizieren</flowNodeRef>
             <flowNodeRef>UmzugsmeldungAkzeptiert</flowNodeRef>
+            <flowNodeRef>MitEKSystemenKommunizieren</flowNodeRef>
             <flowNodeRef>DefinierteZeitVerstrichen</flowNodeRef>
           </lane>
         </childLaneSet>
@@ -155,15 +155,6 @@ Im UpdateAddressAtVekaService soll es eine Methode geben, welche folgende Anford
       <incoming>SequenceFlow_1x0qckx</incoming>
       <outgoing>SequenceFlow_0m2es8o</outgoing>
     </serviceTask>
-    <callActivity id="MitEKSystemenKommunizieren" name="Mit EK-Systemen kommunizieren">
-      <documentation>Dem oder den Einwohnerkontrollsystemen werden  die vom Meldepflichtigen erfassten Angaben asynchron über eine definierte technische Schnittstelle mitgeteilt.
-
-Nach einigen Minuten bis Tagen trifft eine bestätigende oder ablehnende Nachricht von dem oder den Einwohnerkontrollsystemen ein, ebenfalls über eine definierte technische Schnittstelle.
-
-Wie genau eine Gemeinde mit der erhaltenen Meldung umgeht, ist je nach Gemeinde und verwendeter Software unterschiedlich. Sicher jedoch ist, dass eine Meldung nicht 100%-ig automatisiert verarbeitet werden darf, sondern dass ein Sachbearbeiter die Verarbeitung anstösst.</documentation>
-      <incoming>SequenceFlow_1iopode</incoming>
-      <outgoing>SequenceFlow_1ptg35o</outgoing>
-    </callActivity>
     <exclusiveGateway id="UmzugsmeldungAkzeptiert" name="Umzugsmeldung akzeptiert?">
       <incoming>SequenceFlow_1ptg35o</incoming>
       <outgoing>SequenceFlow_19k3fjn</outgoing>
@@ -236,12 +227,6 @@ Der eigentliche Fehler soll innerhalb des aufgerufenen Prozesses behandelt werde
       <outgoing>SequenceFlow_1312w0k</outgoing>
       <errorEventDefinition id="ErrorEventDefinition_0pb3nhb" errorRef="Error_12sd8hn" />
     </boundaryEvent>
-    <boundaryEvent id="DefinierteZeitVerstrichen" name="Definierte Zeit verstrichen" attachedToRef="MitEKSystemenKommunizieren">
-      <outgoing>SequenceFlow_0qpbkoo</outgoing>
-      <timerEventDefinition id="TimerEventDefinition_12hpg9n">
-        <timeDuration xsi:type="tFormalExpression">P60D</timeDuration>
-      </timerEventDefinition>
-    </boundaryEvent>
     <sequenceFlow id="SequenceFlow_0m2es8o" sourceRef="NeueAdresseVeKaCenterMitteilen" targetRef="ErfolgreichenAbschlussPersistieren" />
     <sequenceFlow id="SequenceFlow_1czfkrs" sourceRef="AblehnungPersistieren" targetRef="UmzugsmeldungWegenAblehnungFehlgeschlagen" />
     <sequenceFlow id="SequenceFlow_13o5ois" sourceRef="UeberschreitenDerAntwortfristPersistieren" targetRef="UmzugsmeldungWegenZeitueberschreitungFehlgeschlagen" />
@@ -260,6 +245,21 @@ Der eigentliche Fehler soll innerhalb des aufgerufenen Prozesses behandelt werde
     <sequenceFlow id="SequenceFlow_1312w0k" sourceRef="EinAbbruchgrundIstEingetroffen" targetRef="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen" />
     <sequenceFlow id="SequenceFlow_1iopode" sourceRef="UmzugsmeldungErfassenUndBezahlen" targetRef="MitEKSystemenKommunizieren" />
     <sequenceFlow id="SequenceFlow_0ypg6cw" sourceRef="UmzugsmeldungGestartet" targetRef="UmzugsmeldungErfassenUndBezahlen" />
+    <task id="MitEKSystemenKommunizieren" name="Mit EK-Systemen kommunizieren">
+      <documentation>Dem oder den Einwohnerkontrollsystemen werden  die vom Meldepflichtigen erfassten Angaben asynchron über eine definierte technische Schnittstelle mitgeteilt.
+
+Nach einigen Minuten bis Tagen trifft eine bestätigende oder ablehnende Nachricht von dem oder den Einwohnerkontrollsystemen ein, ebenfalls über eine definierte technische Schnittstelle.
+
+Wie genau eine Gemeinde mit der erhaltenen Meldung umgeht, ist je nach Gemeinde und verwendeter Software unterschiedlich. Sicher jedoch ist, dass eine Meldung nicht 100%-ig automatisiert verarbeitet werden darf, sondern dass ein Sachbearbeiter die Verarbeitung anstösst.</documentation>
+      <incoming>SequenceFlow_1iopode</incoming>
+      <outgoing>SequenceFlow_1ptg35o</outgoing>
+    </task>
+    <boundaryEvent id="DefinierteZeitVerstrichen" name="Definierte Zeit verstrichen" attachedToRef="MitEKSystemenKommunizieren">
+      <outgoing>SequenceFlow_0qpbkoo</outgoing>
+      <timerEventDefinition id="TimerEventDefinition_12hpg9n">
+        <timeDuration xsi:type="tFormalExpression">P60D</timeDuration>
+      </timerEventDefinition>
+    </boundaryEvent>
   </process>
   <error id="Error_12sd8hn" name="ErrorUmzugsmeldungErfassenUndBezahlen" />
   <error id="Error_04jbe5p" name="ErrorEksAblehnung" />
@@ -426,7 +426,7 @@ Der eigentliche Fehler soll innerhalb des aufgerufenen Prozesses behandelt werde
         <omgdi:waypoint x="1111" y="306" />
         <omgdi:waypoint x="1169" y="306" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="CallActivity_08s5ygq_di" bpmnElement="MitEKSystemenKommunizieren" bioc:stroke="rgb(30, 136, 229)" bioc:fill="rgb(187, 222, 251)">
+      <bpmndi:BPMNShape id="Task_1i5613p_di" bpmnElement="MitEKSystemenKommunizieren" bioc:stroke="rgb(30, 136, 229)" bioc:fill="rgb(187, 222, 251)">
         <omgdc:Bounds x="609" y="266" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

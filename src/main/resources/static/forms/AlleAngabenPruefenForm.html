@@ -59,9 +59,9 @@
                     <tr>
                         <th scope="row">Geschlecht</th>
                         <td>
-                            <span ng-show="sex === '1'">Männlich</span>
-                            <span ng-show="sex === '2'">Weiblich</span>
-                            <span ng-show="sex === '3'">Unbestimmt</span>
+                            <span ng-show="sex === 1">Männlich</span>
+                            <span ng-show="sex === 2">Weiblich</span>
+                            <span ng-show="sex === 3">Unbestimmt</span>
                         </td>
                     </tr>
                     <tr style="border-bottom: 1px solid #ddd">
@@ -351,7 +351,7 @@
             variableManager.fetchVariable('houseNumberMoveIn');
             variableManager.fetchVariable('swissZipCodeMoveIn');
             variableManager.fetchVariable('townMoveIn');
-            variableManager.fetchVariable('apartmentIdMoveIn');
+            variableManager.fetchVariable('apartmentMoveIn');
             variableManager.fetchVariable('municipalityNameMoveIn');
             variableManager.fetchVariable('arrivalDate');
             
@@ -396,7 +396,7 @@
             $scope.houseNumberMoveIn = variableManager.variableValue('houseNumberMoveIn');
             $scope.swissZipCodeMoveIn = variableManager.variableValue('swissZipCodeMoveIn');
             $scope.townMoveIn = variableManager.variableValue('townMoveIn');
-            $scope.apartmentIdMoveIn = variableManager.variableValue('apartmentIdMoveIn');
+            $scope.apartmentIdMoveIn = variableManager.variableValue('apartmentMoveIn').whgnr;
             $scope.municipalityNameMoveIn = variableManager.variableValue('municipalityNameMoveIn');
             $scope.arrivalDate = variableManager.variableValue('arrivalDate');
             

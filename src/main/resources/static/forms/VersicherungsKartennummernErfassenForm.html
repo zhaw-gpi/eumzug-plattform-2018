@@ -37,6 +37,7 @@ Autor: Gruppe TZb 05 und scep
         });
 
         $scope.checkBaseInsuranceNumberOfPerson = function(personToCheck) {
+            personToCheck.checkBaseInsuranceResultDetails = null;
             if (personToCheck.baseInsuranceNumber != null){
                 // URL für CheckBaseInsuranceService definieren
                 var url = '/umzugapi/v1/checkbaseinsurance';

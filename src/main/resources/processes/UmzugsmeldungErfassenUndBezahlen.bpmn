@@ -297,7 +297,7 @@ Die Key-Value-Paare kann diese einerseits basierend auf bereits vorhandenen Proz
         <camunda:executionListener delegateExpression="#{GenerateNotificationTaskVariableAdapter}" event="start" />
         <camunda:inputOutput>
           <camunda:inputParameter name="notificationSubject">Bestätigung eUmzugsmeldung-Erfassung</camunda:inputParameter>
-          <camunda:inputParameter name="notificationMessageBody">Danke für die Erfassung der eUmzugsmeldung, welche nun an die Einwohnerkontrollen zur Prüfung weitergeleitet werden.</camunda:inputParameter>
+          <camunda:inputParameter name="notificationMessageBody">Danke für die Erfassung der eUmzugsmeldung, welche nun an die Einwohnerkontrollen zur Prüfung weitergeleitet wird.</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1mqg9bq</bpmn:incoming>

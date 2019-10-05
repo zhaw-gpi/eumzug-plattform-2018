@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mit XMLSpy v2012 sp1 (http://www.altova.com) von Martin Stingelin (Stingelin Informatik GmbH) bearbeitet -->
+<!-- edited with XMLSpy v2012 rel. 2 sp1 (http://www.altova.com) by Martin Stingelin (Stingelin Informatik GmbH) -->
+<!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com) by BITUSER (Bundesamt für Informatik und Telekommunikation) -->
+<xs:schema xmlns:eCH-0185="http://www.ech.ch/xmlns/eCH-0185/1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:eCH-0010="http://www.ech.ch/xmlns/eCH-0010/5" targetNamespace="http://www.ech.ch/xmlns/eCH-0185/1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xs:annotation>
+		<xs:documentation xml:lang="de">Ausgabedatum:21.08.2015</xs:documentation>
+	</xs:annotation>
+	<xs:import namespace="http://www.ech.ch/xmlns/eCH-0010/5" schemaLocation="http://www.ech.ch/xmlns/eCH-0010/5/eCH-0010-5-1.xsd"/>
+	<xs:element name="extension">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="generalTextType">
+		<xs:restriction base="xs:token">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="250"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="shortTextType">
+		<xs:restriction base="xs:token">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="freeTextType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="idType">
+		<xs:restriction base="xs:nonNegativeInteger">
+			<xs:minInclusive value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="priceType">
+		<xs:restriction base="xs:decimal">
+			<xs:totalDigits value="6"/>
+			<xs:fractionDigits value="2"/>
+			<xs:minInclusive value="0.01"/>
+			<xs:maxInclusive value="9999.99"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="datePartiallyKnownType">
+		<xs:choice>
+			<xs:element name="yearMonthDay" type="xs:date"/>
+			<xs:element name="yearMonth" type="xs:gYearMonth"/>
+			<xs:element name="year" type="xs:gYear"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:simpleType name="phoneNumberType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="20"/>
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="\d{10,20}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="emailAddressType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"/>
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="[A-Za-zäöüÄÖÜàáâãåæçèéêëìíîïðñòóôõøùúûýþÿ0-9!#-'\*\+\-/=\?\^_`\{-~]+(\.[A-Za-zäöüÄÖÜàáâãåæçèéêëìíîïðñòóôõøùúûýþÿ0-9!#-'\*\+\-/=\?\^_`\{-~]+)*@[A-Za-zäöüÄÖÜàáâãåæçèéêëìíîïðñòóôõøùúûýþÿ0-9!#-'\*\+\-/=\?\^_`\{-~]+(\.[A-Za-zäöüÄÖÜàáâãåæçèéêëìíîïðñòóôõøùúûýþÿ0-9!#-'\*\+\-/=\?\^_`\{-~]+)*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="contactDataType">
+		<xs:sequence>
+			<xs:element name="phoneNumber" type="eCH-0185:phoneNumberType" minOccurs="0"/>
+			<xs:element name="emailAddress" type="eCH-0185:emailAddressType" minOccurs="0"/>
+			<xs:element ref="eCH-0185:extension" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="petData">
+		<xs:sequence>
+			<xs:element name="dogData" type="eCH-0185:dogDataType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="sexType">
+		<xs:restriction base="xs:nonNegativeInteger">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ANISnumberType">
+		<xs:restriction base="xs:nonNegativeInteger"/>
+	</xs:simpleType>
+	<xs:complexType name="dogDataType">
+		<xs:sequence>
+			<xs:element name="name" type="eCH-0185:generalTextType"/>
+			<xs:element name="sex" type="eCH-0185:sexType" minOccurs="0"/>
+			<xs:element name="birthDate" type="eCH-0185:datePartiallyKnownType" minOccurs="0"/>
+			<xs:element name="chipNumber" type="eCH-0185:shortTextType" minOccurs="0"/>
+			<xs:element name="tattooNumber" type="eCH-0185:shortTextType" minOccurs="0"/>
+			<xs:element name="ANISnumber" type="eCH-0185:ANISnumberType" minOccurs="0"/>
+			<xs:element ref="eCH-0185:extension" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="serviceDataType">
+		<xs:sequence>
+			<xs:element name="serviceIdentification" type="eCH-0185:idType"/>
+			<xs:element name="serviceName" type="eCH-0185:generalTextType"/>
+			<xs:element name="serviceAmount" type="xs:nonNegativeInteger"/>
+			<xs:element name="serviceOrderDate" type="xs:date"/>
+			<xs:element name="serviceDuration" type="eCH-0185:shortTextType" minOccurs="0"/>
+			<xs:element name="serviceDescription" type="eCH-0185:freeTextType" minOccurs="0"/>
+			<xs:element name="servicePrice" type="eCH-0185:priceType" minOccurs="0"/>
+			<xs:element ref="eCH-0185:extension" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="housingSituationTypeType">
+		<xs:restriction base="xs:nonNegativeInteger">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="housingSituationMoveInMunicipalityType">
+		<xs:sequence>
+			<xs:element name="housingSituationType" type="eCH-0185:housingSituationTypeType"/>
+			<xs:element name="name" type="eCH-0185:shortTextType" minOccurs="0"/>
+			<xs:element name="address" type="eCH-0010:addressInformationType" minOccurs="0"/>
+			<xs:element ref="eCH-0185:extension" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="moveInAdditionalDataType">
+		<xs:sequence>
+			<xs:element name="housingSituationMoveInMunicipality" type="eCH-0185:housingSituationMoveInMunicipalityType"/>
+			<xs:element ref="eCH-0185:extension" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="administativeDwellingNumberType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="12"/>
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="floorType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="20"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="positionOnFloorType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="40"/>
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EGIDType">
+		<xs:restriction base="xs:unsignedInt">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="999999999"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EWIDType">
+		<xs:restriction base="xs:unsignedInt">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="999"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="dwellingIdentificationType">
+		<xs:choice>
+			<xs:element name="administrativDwellingNumber" type="eCH-0185:administativeDwellingNumberType"/>
+			<xs:sequence>
+				<xs:element name="EGID" type="eCH-0185:EGIDType"/>
+				<xs:element name="EWID" type="eCH-0185:EWIDType"/>
+			</xs:sequence>
+			<xs:sequence>
+				<xs:element name="floor" type="eCH-0185:floorType" minOccurs="0"/>
+				<xs:element name="positionOnFloor" type="eCH-0185:positionOnFloorType" minOccurs="0"/>
+			</xs:sequence>
+		</xs:choice>
+	</xs:complexType>
+	<xs:simpleType name="cardNumberType">
+		<xs:restriction base="xs:token">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="checkResulType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="Yes"/>
+			<xs:enumeration value="No"/>
+			<xs:enumeration value="Unknown"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="healthInsuranceDataType">
+		<xs:sequence>
+			<xs:element name="cardNumber" type="eCH-0185:cardNumberType" minOccurs="0"/>
+			<xs:element name="insuranceName" type="eCH-0185:generalTextType" minOccurs="0"/>
+			<xs:element name="checkResult" type="eCH-0185:checkResulType"/>
+			<xs:element ref="eCH-0185:extension" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="addOnDataRoot">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="contactData" type="eCH-0185:contactDataType" minOccurs="0"/>
+				<xs:element name="petData" type="eCH-0185:petData" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="serviceData" type="eCH-0185:serviceDataType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="moveInAdditionalData" type="eCH-0185:moveInAdditionalDataType" minOccurs="0"/>
+				<xs:element name="dwellingIdentification" type="eCH-0185:dwellingIdentificationType" minOccurs="0"/>
+				<xs:element name="healthInsuranceData" type="eCH-0185:healthInsuranceDataType" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

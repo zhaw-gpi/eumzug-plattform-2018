@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope/" soap:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+	<soap:Body xmlns:eCH-0194="http://www.ech.ch/xmlns/eCH-0194/1" xmlns:eCH-0058="http://www.ech.ch/xmlns/eCH-0058/5" xmlns:eCH-0044="http://www.ech.ch/xmlns/eCH-0044/4" xmlns:eCH-0007="http://www.ech.ch/xmlns/eCH-0007/5" xmlns:eCH-0011="http://www.ech.ch/xmlns/eCH-0011/8">
+		<!-- Delivery gemäss eCH-0058-Anweisungen und Namespaces-Deklarationen -->
+		<delivery>
+			<!-- deliveryHeader nach eCH-0058, dessen Inhalt in deliveryHeader.xml aufgeführt ist, da für alle Nachrichten fast identisch -->
+			<eCH-0194:deliveryHeader>...</eCH-0194:deliveryHeader>
+			<!-- Eigentlicher Nachrichteninhalt -->
+			<eCH-0194:personMoveResponse>
+				<!-- Gemeindeinformationen, im Prinzip dieselben, welche auch bei personMoveRequest angefragt wurden -->
+				<eCH-0194:reportingMunicipality>
+					<!-- BFS-Gemeindenummer aus Gemeindetabelle, Integer 1-9999 -->
+					<eCH-0007:municipalityId>329</eCH-0007:municipalityId>
+					<!-- Amtlicher Gemeindename, Token, 0-40 Zeichen -->
+					<eCH-0007:municipalityName>Köniz (BE)</eCH-0007:municipalityName>
+					<!-- OPTIONAL Kantonskürzel und Historische Gemeindenummern, werden Studierende wohl kaum nutzen -->
+					<eCH-0007:cantonAbbreviation>...</eCH-0007:cantonAbbreviation>
+					<eCH-0007:historyMunicipalityId>...</eCH-0007:historyMunicipalityId>
+				</eCH-0194:reportingMunicipality>
+				<!-- Person bekannt, Boolean -->
+				<eCH-0194:personKnown>true</eCH-0194:personKnown>
+				<!-- OPTIONAL Personenidentifikation, werden Studierende wohl eher nicht umsetzen -->
+				<eCH-0194:personIdentification>...</eCH-0194:personIdentification>
+				<!-- optional (wobei nur, wenn Person unbekannt) Umzug erlaubt, NonNegativeInteger mit 1 (Wegzug/Umzug erlaubt), 2 (Wegzug/Umzug nicht erlaubt), 3 nicht relevant -->
+				<eCH-0194:moveAllowed>true</eCH-0194:moveAllowed>
+				<!-- OPTIONAL Ausländerkategorie, von Studierenden wohl kaum genutzt -->
+				<eCH-0194:residencePermitDataType>...</eCH-0194:residencePermitDataType>
+				<!-- OPTIONAL Haustierangaben, nur falls Studierende Bonus-Punkte sammeln wollen, dann muss Formatierung entsprechend eCH-0185:petData" minOccurs="0" maxOccurs="unbounded" sein -->
+				<eCH-0194:petData>...</eCH-0194:petData>
+				<!-- OPTIONAL Zugehörige Personen, falls Studierende Bonus-Punkte wollen -->
+				<eCH-0194:relatedPerson>...</eCH-0194:relatedPerson>
+				<!-- OPTIONAL verschiedenste Angaben im Zusammenhang mit zweigeteiltem Meldeprozess, ist bei uns nicht relevant, da nur Umzug innerhalb des Kantons und damit der Umzugsplattform -->
+				<eCH-0194:destination>...</eCH-0194:destination>
+				<eCH-0194:moveInAdditionalData>...</eCH-0194:moveInAdditionalData>
+				<eCH-0194:dwellingIdentification>...</deCH-0194:wellingIdentification>
+				<eCH-0194:arrivalDate>...</eCH-0194:arrivalDate>
+				<eCH-0194:healthInsuranceData>...</eCH-0194:healthInsuranceData>
+				<eCH-0194:extension>...</eCH-0194:extension>
+			</eCH-0194:personMoveResponse>
+		</delivery>
+	</soap:Body>
+</soap:Envelope>

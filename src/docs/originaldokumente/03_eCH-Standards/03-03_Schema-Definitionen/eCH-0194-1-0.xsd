@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2012 rel. 2 sp1 (http://www.altova.com) by Martin Stingelin (Stingelin Informatik GmbH) -->
+<!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com) by BITUSER (Bundesamt für Informatik und Telekommunikation) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:eCH-0194="http://www.ech.ch/xmlns/eCH-0194/1" xmlns:eCH-0058="http://www.ech.ch/xmlns/eCH-0058/5" xmlns:eCH-0021="http://www.ech.ch/xmlns/eCH-0021/7" xmlns:eCH-0044="http://www.ech.ch/xmlns/eCH-0044/4" xmlns:eCH-0007="http://www.ech.ch/xmlns/eCH-0007/5" xmlns:eCH-0011="http://www.ech.ch/xmlns/eCH-0011/8" xmlns:eCH-0185="http://www.ech.ch/xmlns/eCH-0185/1" targetNamespace="http://www.ech.ch/xmlns/eCH-0194/1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xs:annotation>
+		<xs:documentation>Ausgabedatum: 21.08.2015</xs:documentation>
+	</xs:annotation>
+	<xs:import namespace="http://www.ech.ch/xmlns/eCH-0007/5" schemaLocation="http://www.ech.ch/xmlns/eCH-0007/5/eCH-0007-5-0.xsd"/>
+	<xs:import namespace="http://www.ech.ch/xmlns/eCH-0011/8" schemaLocation="http://www.ech.ch/xmlns/eCH-0011/8/eCH-0011-8-1.xsd"/>
+	<xs:import namespace="http://www.ech.ch/xmlns/eCH-0021/7" schemaLocation="http://www.ech.ch/xmlns/eCH-0021/7/eCH-0021-7-0.xsd"/>
+	<xs:import namespace="http://www.ech.ch/xmlns/eCH-0044/4" schemaLocation="http://www.ech.ch/xmlns/eCH-0044/4/eCH-0044-4-1.xsd"/>
+	<xs:import namespace="http://www.ech.ch/xmlns/eCH-0058/5" schemaLocation="http://www.ech.ch/xmlns/eCH-0058/5/eCH-0058-5-0.xsd"/>
+	<xs:import namespace="http://www.ech.ch/xmlns/eCH-0185/1" schemaLocation="http://www.ech.ch/xmlns/eCH-0185/1/eCH-0185-1-0.xsd"/>
+	<xs:element name="extension">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="personKnownType">
+		<xs:restriction base="xs:boolean"/>
+	</xs:simpleType>
+	<xs:simpleType name="moveAllowedType">
+		<xs:restriction base="xs:nonNegativeInteger">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="personMoveRequest">
+		<xs:sequence>
+			<xs:element name="personIdentification" type="eCH-0044:personIdentificationType"/>
+			<xs:element name="municipality" type="eCH-0007:swissMunicipalityType"/>
+			<xs:element ref="eCH-0194:extension" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="typeOfRelationshipType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="moveOutReportingDestinationType">
+		<xs:sequence>
+			<xs:element name="moveOutMunicipality" type="eCH-0007:swissMunicipalityType"/>
+			<xs:element name="destinationMunicipality" type="eCH-0007:swissMunicipalityType"/>
+			<xs:element name="destinationAddress" type="eCH-0011:dwellingAddressType"/>
+			<xs:element name="departureDate" type="xs:date"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="personMoveResponse">
+		<xs:sequence>
+			<xs:element name="reportingMunicipality" type="eCH-0007:swissMunicipalityType"/>
+			<xs:element name="personKnown" type="eCH-0194:personKnownType"/>
+			<xs:element name="personIdentification" type="eCH-0044:personIdentificationType" minOccurs="0"/>
+			<xs:element name="moveAllowed" type="eCH-0194:moveAllowedType" minOccurs="0"/>
+			<xs:element name="residencePermitMovingPerson" type="eCH-0011:residencePermitDataType" minOccurs="0"/>
+			<xs:element name="petData" type="eCH-0185:petData" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="relatedPerson" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="personIdentification" type="eCH-0044:personIdentificationType"/>
+						<xs:element name="residencePermitRelatedPerson" type="eCH-0011:residencePermitDataType" minOccurs="0"/>
+						<xs:element name="petData" type="eCH-0185:petData" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="destination" type="eCH-0194:moveOutReportingDestinationType" minOccurs="0"/>
+			<xs:element name="moveInAdditionalData" type="eCH-0185:moveInAdditionalDataType" minOccurs="0"/>
+			<xs:element name="dwellingIdentification" type="eCH-0185:dwellingIdentificationType" minOccurs="0"/>
+			<xs:element name="arrivalDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="healthInsuranceData" type="eCH-0185:healthInsuranceDataType" minOccurs="0"/>
+			<xs:element ref="eCH-0194:extension" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="platformMoveOut">
+		<xs:sequence>
+			<xs:element name="personIdentification" type="eCH-0044:personIdentificationType"/>
+			<xs:element name="contactData" type="eCH-0185:contactDataType" minOccurs="0"/>
+			<xs:element name="destination" type="eCH-0194:moveOutReportingDestinationType"/>
+			<xs:element name="petData" type="eCH-0185:petData" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="extension" type="xs:anyType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="platformMoveIn">
+		<xs:sequence>
+			<xs:element name="personIdentification" type="eCH-0044:personIdentificationType"/>
+			<xs:element name="contactData" type="eCH-0185:contactDataType" minOccurs="0"/>
+			<xs:element name="petData" type="eCH-0185:petData" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="serviceData" type="eCH-0185:serviceDataType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="moveInAdditionalData" type="eCH-0185:moveInAdditionalDataType" minOccurs="0"/>
+			<xs:element name="dwellingIdentification" type="eCH-0185:dwellingIdentificationType" minOccurs="0"/>
+			<xs:element name="arrivalDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="healthInsuranceData" type="eCH-0185:healthInsuranceDataType" minOccurs="0"/>
+			<xs:element name="extension" type="xs:anyType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="platformMoveData">
+		<xs:sequence>
+			<xs:element name="personIdentification" type="eCH-0044:personIdentificationType"/>
+			<xs:element name="contactData" type="eCH-0185:contactDataType" minOccurs="0"/>
+			<xs:element name="petData" type="eCH-0185:petData" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="serviceData" type="eCH-0185:serviceDataType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="dwellingAddress" type="eCH-0011:dwellingAddressType"/>
+			<xs:element name="dwellingIdentification" type="eCH-0185:dwellingIdentificationType" minOccurs="0"/>
+			<xs:element name="extension" type="xs:anyType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="platformMoveCommit">
+		<xs:sequence>
+			<xs:element name="personIdentification" type="eCH-0044:personIdentificationType"/>
+			<xs:element name="contactData" type="eCH-0185:contactDataType" minOccurs="0"/>
+			<xs:element name="destination" type="eCH-0194:moveOutReportingDestinationType"/>
+			<xs:element name="petData" type="eCH-0185:petData" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="serviceData" type="eCH-0185:serviceDataType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="moveInAdditionalData" type="eCH-0185:moveInAdditionalDataType" minOccurs="0"/>
+			<xs:element name="dwellingIdentification" type="eCH-0185:dwellingIdentificationType" minOccurs="0"/>
+			<xs:element name="arrivalDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="healthInsuranceData" type="eCH-0185:healthInsuranceDataType" minOccurs="0"/>
+			<xs:element name="extension" type="xs:anyType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="platformMoveInAddress">
+		<xs:sequence>
+			<xs:element name="personIdentification" type="eCH-0044:personIdentificationType"/>
+			<xs:element name="address" type="eCH-0011:dwellingAddressType"/>
+			<xs:element name="extension" type="xs:anyType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="infoType">
+		<xs:sequence>
+			<xs:element name="code" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:nonNegativeInteger">
+						<xs:enumeration value="1"/>
+						<xs:enumeration value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="textEnglish" type="eCH-0194:infoTextType" minOccurs="0"/>
+			<xs:element name="textGerman" type="eCH-0194:infoTextType" minOccurs="0"/>
+			<xs:element name="textFrench" type="eCH-0194:infoTextType" minOccurs="0"/>
+			<xs:element name="textItalian" type="eCH-0194:infoTextType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="infoTextType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="negativeReportType">
+		<xs:sequence>
+			<xs:element name="generalError" type="eCH-0194:infoType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="personError" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="personIdentification" type="eCH-0044:personIdentificationType"/>
+						<xs:element name="errorInfo" type="eCH-0194:infoType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="positiveReportType">
+		<xs:sequence>
+			<xs:element name="generalResponse" type="eCH-0194:infoType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="personResponse" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="personIdentification" type="eCH-0044:personIdentificationType"/>
+						<xs:element name="response" type="eCH-0194:infoType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="delivery">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="deliveryHeader" type="eCH-0058:headerType"/>
+				<xs:choice>
+					<xs:element name="personMoveRequest" type="eCH-0194:personMoveRequest"/>
+					<xs:element name="personMoveResponse" type="eCH-0194:personMoveResponse"/>
+					<xs:element name="platformMoveIn" type="eCH-0194:platformMoveIn"/>
+					<xs:element name="platformMoveOut" type="eCH-0194:platformMoveOut"/>
+					<xs:element name="platformMoveData" type="eCH-0194:platformMoveData"/>
+					<xs:element name="platformMoveCommit" type="eCH-0194:platformMoveCommit"/>
+					<xs:element name="platformMoveInAddress" type="eCH-0194:platformMoveInAddress"/>
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -3,8 +3,8 @@ Formular zum UserTask "Zuzugsadresse erfassen"
 -->
 <form name="camundaForm">
     <!-- WARNMELDUNG FALLS NICHT GEFUNDENE ADRESSE EINGEGEBEN WURDE -->
-    <div class="alert alert-warning" ng-show="adresseUngueltigZaehler > 0">      
-        Die Adresse ist<span ng-show="adresseUngueltigZaehler > 1"> erneut</span> nicht gültig, respektive kann im GWR nicht gefunden werden.
+    <div class="alert alert-warning" ng-show="adresseUngueltigZaehlerModel > 0">      
+        Die Adresse ist<span ng-show="adresseUngueltigZaehlerModel > 1"> erneut</span> nicht gültig, respektive kann im GWR nicht gefunden werden.
 
         Bitte korrigieren Sie entweder Ihre Eingaben im nächsten Formular oder melden Sie sich bei Ihrer Zuzugsgemeinde {{municipalityNameMoveIn}} am Schalter, wenn Sie der Meinung sind, eigentlich die korrekte Adresse erfasst zu haben. In diesem Fall können Sie einfach diese Webseite schliessen, denn Ihre elektronische Umzugsmeldung wird automatisch nach 48 Stunden archiviert. 
     </div>

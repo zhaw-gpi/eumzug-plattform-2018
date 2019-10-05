@@ -19,18 +19,16 @@ Die Lösung entstand im Rahmen des **Moduls Geschäftsprozesssintegration im Stu
     + [VeKa-Center-Auskunftsdienst](#veka-center-auskunftsdienst)
     + [Stripe-Online-Bezahldienst](#stripe-online-bezahldienst)
     + [Einwohnerkontrollsysteme (EKS)](#einwohnerkontrollsysteme--eks-)
-    + [EKS-Kommunikationsservice](#eks-kommunikationsservice)
     + [Kantonaler Benachrichtigungsdienst](#kantonaler-benachrichtigungsdienst)
   * [(Technische) Komponenten der Umzugsplattform](#-technische--komponenten-der-umzugsplattform)
-  * [Erforderliche Schritte für das Testen der Applikation](#erforderliche-schritte-f-r-das-testen-der-applikation)
+  * [Vorbereitung für das Ausführen/Testen der Applikation](#vorbereitung-f-r-das-ausf-hren-testen-der-applikation)
     + [Voraussetzungen](#voraussetzungen)
     + [Deployment](#deployment)
-  * [Nutzung (Testing) der Applikation](#nutzung--testing--der-applikation)
+  * [Ausführen/Testen der Applikation](#ausf-hren-testen-der-applikation)
     + [Manuelles Testen](#manuelles-testen)
     + [Semi-Manuelles Testen](#semi-manuelles-testen)
     + [Automatisiertes Testen](#automatisiertes-testen)
-  * [Prototypische Vereinfachungen](#prototypische-vereinfachungen)
-  * [TODOs](#todos)
+  * [Weitere prototypische Vereinfachungen](#weitere-prototypische-vereinfachungen)
   * [Mitwirkende](#mitwirkende)
 
 ## Anforderungsspezifikation und Aufgabenstellung
@@ -82,8 +80,6 @@ Die **Farben** bedeuten dabei:
 6. **JavaDelegate 'xyz persistieren'**:
     1. In diesem Teil des End-to-End-Prozesses (und auch teilweise in den aufgerufenen Prozessen) erfolgt die automatisierte **Persistierung von Personendaten und Prozessstatus in der Umzugsplattform-Datenbank**.
     2. Diese Persistierung geschieht **über eine in der Umzugsplattform integrierte JavaDelegate-Klasse**, welche auf die Repositories zugreift.
-7. **Prozess 'Zahlungsbericht aufbereiten und versenden'**:
-   1. @TODO
 
 
 ### Personenregister sowie Gebäude- und Wohnungsregister
@@ -151,6 +147,7 @@ Nach der Beschreibung der Gesamtarchitektur mit den einzelnen Komponenten folgt 
     8. Endpoint-Deklarationen für GWR und Personenregister in application.properties
 5. **WebService REST-Komponenten**:
    1. @TODO
+   2. Um auf die Daten der Umzugsplattform (nicht die Camunda Process Engine) zuzugreifen, wurde eine separate REST-API erstellt (Umzugsplattform-API) in DocumentRestController, MunicipalityRestController und TransactionLogController
 6. **Zahlungsabwicklungs-Komponenten**:
     1. Stripe Java API Library für die server-seitige Kommunikation mit Stripe
     2. StripeClientService-Klasse als Vermittler zwischen der API Library und ...
@@ -177,6 +174,15 @@ Nach der Beschreibung der Gesamtarchitektur mit den einzelnen Komponenten folgt 
     6. Den Publishable Key in /src/main/ressources/static.forms/ErfassenDerZahlungsdetailsForm.html im Code unter `var stripeCheckoutHandler = StripeCheckout.configure({` beim Parameter key einfügen
     7. Den Secret Key als Umgebungsvariable hinzufügen, wie dies in /src/main/ressources/application.properties beim Eintrag `stripe.apiKey` im Kommentar beschrieben ist.
 4. **Angepasste Camunda Webapps**: Das Projekt https://github.com/zhaw-gpi/be-services-plattform muss gemäss der dort aufgeführten Anleitung konfiguriert und gebuilded sein, damit es im lokalen Maven-Repository zur Verfügung steht.
+5. **Umgebungsvariablen**: Folgende Umgebungsvariablen müssen gesetzt sein, damit das Projekt ausgeführt werden kann. Gezeigt ist die Darstellung, wie sie in VS Code in der launch.json-Datei eingefügt werden muss:
+```
+"env": {
+                "stripeSecretKey": "sk_test_OMnaCgZa0FVQp9rjtA93I1zk",
+                "stripePublicKey": "pk_test_YM8GGxfywicmmBgtFcOjEm00",
+                "paymentreportreceiver": "scep@zhaw.ch",
+                "umzugsplattformMailaddress": "umzugsplattform@be.ch"
+            }
+```
 
 ### Deployment
 1. **Erstmalig** oder bei Problemen ein `mvn clean install` durchführen
@@ -215,14 +221,25 @@ Nach der Beschreibung der Gesamtarchitektur mit den einzelnen Komponenten folgt 
             3. 4100000000000019: Aus Sicht des Kartenherausgebers gültige Karte, die aber von Stripe aufgrund Betrugsverdacht blockierte Karte
             4. 4000000000000002: Vom Kartenherausgeber abgelehnte Karte ohne Angabe von Gründen
     6. **Zahlungserfolg prüfen**: Um zu sehen, ob eine Zahlung auch "wirklich" durchgeführt wurde, bei Stripe anmelden und die [Events-Seite](https://dashboard.stripe.com/test/events) aufrufen.
-    7. **Persistierung prüfen**: Um zu sehen, ob ein Status im Transaktionslog der Umzugsdatenbank persistiert wurde, einen SELECT auf die Tabelle TRANSACTIONLOG durchführen wie beschrieben in ???????
+    7. **Persistierung prüfen**: Um zu sehen, ob ein Status im Transaktionslog der Umzugsdatenbank persistiert wurde, einen SELECT auf die Tabelle TRANSACTIONLOG durchführen
     8. **Prozessverlauf überwachen/nachvollziehen**: Um zu sehen, wo der Prozess momentan steckt (Runtime) oder wo abgeschlossene Instanzen durchliefen (History) kann die Cockpit-Webapplikation genutzt werden unter http://localhost:8081.
 
 ### Semi-Manuelles Testen
-@TODO
+In src\test\resources gibt es ein soapUI-Testprojekt. Im Knoten http://localhost:8081/rest/process-definition/key/UmzugMelden/start gibt es mehrere POST-Requests. Führt man diese aus, wird eine neue Prozessinstanz für den UmzugMelden-Prozess gestartet, welcher schon Variablen übergeben wurden. Insbesondere der Request "TestdatenFuerKorrekturDerArbeiten" erlaubt ein Durchspielen, fast ohne, dass man in den Formularen etwas ausfüllen müsste. Ausnahmen davon sind:
+1. Mitumziehende Personen auswählen: Anna und Fritz
+2. Versicherungs-Kartennummern erfassen:
+   1. Hans erfolgreich: 743794085316616 / Hans nicht erfolgreich: 360269466985268
+   2. Anna: 788475892684035
+   3. Fritz (hat keine hinterlegt): 00899988800
+3. Dokumente hochladen: Man kann, muss aber nicht irgendwelche Dokumente bei den einzelnen Personen hochladen
+4. Erfassen der Zahlungsdetails:
+   1. Kreditkartennummer: 4000007560000009 (falls es funktionieren soll) / 4100000000000019 (falls es nicht funktionieren soll)
+   2. Datum: in der Zukunft
+   3. CVC: z.B. 333
+5. Ganz am Schluss, wenn man möchte, noch http://localhost:8070/vekaapi/v1/cards/743794085316616 aufrufen, um zu beweisen, dass im VeKa-Center-Dienst nun die neue Adresse aufgeführt ist. Und natürlich auch im Posteingang zeigen, dass eine E-Mail angekommen ist.
 
 ### Automatisiertes Testen
-@TODO
+Für einen Teil der Umzugsplattform-API gibt es eine TestSuite im soapUI-Testprojekt, welches im vorherigen Kapitel genannt wurde. Ursprünglich waren auch Testfälle vorhanden für die Umzugsplattform, aber da diese aufgrund einer veränderten Struktur nicht mehr laufen, wurden sie gelöscht.
 
 ## Weitere prototypische Vereinfachungen
 Etliche prototypische Vereinfachungen wurden bereits im Text oben erwähnt. Aber es gibt noch mehr...
@@ -247,16 +264,35 @@ für den Haupt-Stack mit SpringBoot & Co.
         1. Formulare: DatePicker mit Format TT.MM.JJJJ
         2. Mitzuziehende Personen auswählen
         3. Dokumente hochladen
-        4. PDF mit allen relevanten Informationen wird als E-Mail-Anhang mitgesendet
+        4. PDF mit allen relevanten Informationen wird als E-Mail-Anhang mitgesendet (inzwischen wieder gelöscht)
         5. Kleinere Verbesserungen an der originalen Musterlösung
-    2. Gruppe TZa02 (Alessandro Paradiso, Davor Gavranic, Lars Günthardt, Luka Devcic,
+    1. Gruppe TZa02 (Alessandro Paradiso, Davor Gavranic, Lars Günthardt, Luka Devcic,
     Robin Chahal):
         1. Wohnungen auswählen
         2. Kleinere Verbesserungen an der originalen Musterlösung
-    3. Gruppe TZa03 (Christian Sonntag, Felix Huber, Lukas Brütsch, Tamara Wenk, Vladan 
+    1. Gruppe TZa03 (Christian Sonntag, Felix Huber, Lukas Brütsch, Tamara Wenk, Vladan 
     Jankovic):
         1. Formulare: Mehrspaltiges Layout
         2. Formulare: Placeholders
         3. Formulare: Bessere Alert- und Help Block-Texte
-    4. Gruppe TZb05 (Arbr Wagner, Christoffer Brunner, Leulinda Gutaj, Martin Schwab, 
+    1. Gruppe TZb05 (Arbr Wagner, Christoffer Brunner, Leulinda Gutaj, Martin Schwab, 
     Saskia Iwaniw): Formular "Alle Angaben prüfen"
+5. Studierende aus dem Herbstsemester 2018:
+   1. Gruppe TZa02 (Daniel Degenhardt, Luca Spänni, Stefan Glättli, Tobias Brunner, Didier Furrer):
+      1. Separate Webapplikation, um die Meldepflichtigen zu verwalten (wieder gelöscht)
+   2. Gruppe TZa03 (Fabio Gihr, Timothy Locher, Yanik Pfenninger, Kisanth Ketheeswaran, Lucky Bassi):
+      1. Grundversicherungsprüfung direkt aus dem Formular heraus
+   3. Gruppe TZb01 (Lukas Gollmer, Alexander Petermaier, Jan Hartmann, Dominik Spescha, Michael Zbinden, Olivier Alther):
+      1. Dokumente hochladen elegant in einem Formular für alle mitumziehenden Personen
+   4. Gruppe TZb05 (Patrick Schönenberger, Stefan Kaufmann, Aleksandar Todorovic, Stefan Fischer):
+      1. Separate Datenbank für Umzugsplattform vs. Process Engine
+   5. Gruppe TZc01 (Fabio Serratore, Sven Schwarzer, Christof Schuh, Luca Saletta, Pascal Schoch, Stefan Gautschi):
+      1. Buchhaltungsabteilung wird einmal monatlich informiert über eingegangene Zahlungen von Stripe (inzwischen wieder gelöscht)
+   6. Gruppe TZc03 (Janick Spirig, Adrian Meier, Leo Rettich, Emir Odic, Timo Graf):
+      1. Dokumente hochladen elegant in einem Formular für alle mitumziehenden Personen,    
+   7. Gruppe TZc05 (Jascha Pfäffli, Rehmil Sabani, Egzon Murtaj, Dardan Sylejmani):
+      1. Dokumente hochladen elegant in einem Formular für alle mitumziehenden Personen
+   8. Gruppe VZa02 (Dario Burch, Aleksandar Sekulic, Ilija Kurobasa, Gregory Huber, Blerton Ismaili, Marvin Bindemann):
+      1. Separate Webapplikation, um die Meldepflichtigen zu verwalten (wieder gelöscht)    
+   9.  Gruppe VZb02 (Simon Degiorgi, Thomas Landolt, Romeo Weber, Martin Knecht, Manuel Weiss, Janick Michot):
+      2. Dokumente hochladen elegant in einem Formular für alle mitumziehenden Personen
