@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0iokdd4" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.1.0">
+  <bpmn:message id="Message_0d7u76u" name="EksAntwort" />
+  <bpmn:collaboration id="Collaboration_1rf823u">
+    <bpmn:participant id="Participant_MitEKSKommunizieren" name="Mit EKS kommunizieren" processRef="MitEksKommunizieren" />
+    <bpmn:participant id="Participant_Einwohnerkontrollsystem" name="Einwohnerkontrollsystem" />
+    <bpmn:messageFlow id="MessageFlow_ECH0194PlatformMove" name="eCH-0194 PlatformMove" sourceRef="IntermediateThrowEvent_UmzugsanfrageGesendet" targetRef="Participant_Einwohnerkontrollsystem" />
+    <bpmn:messageFlow id="MessageFlow_ECH0058FachlicheQuittung" name="eCH-0058 Fachliche Quittung" sourceRef="Participant_Einwohnerkontrollsystem" targetRef="IntermediateCatchEvent_FachlicheQuittungErhalten" />
+  </bpmn:collaboration>
+  <bpmn:process id="MitEksKommunizieren" name="MitEksKommunizieren" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_UmzugsmeldungErfasst" name="Umzugsmeldung erfasst">
+      <bpmn:outgoing>SequenceFlow_0dg4z42</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_KommunikationMitEKSAbgeschlossen" name="Kommunikation mit EKS abgeschlossen">
+      <bpmn:incoming>SequenceFlow_13ploy8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_FachlicheQuittungErhalten" name="Fachliche Quittung &#10;erhalten">
+      <bpmn:incoming>SequenceFlow_10v1k5h</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_13ploy8</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0v6q8of" messageRef="Message_0d7u76u" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_UmzugsanfrageGesendet" name="Umzugsanfrage&#10;gesendet">
+      <bpmn:incoming>SequenceFlow_0dg4z42</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_10v1k5h</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0eenf9m" camunda:delegateExpression="#{sendPlatformMoveToEksAdapter}" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0dg4z42" sourceRef="StartEvent_UmzugsmeldungErfasst" targetRef="IntermediateThrowEvent_UmzugsanfrageGesendet" />
+    <bpmn:sequenceFlow id="SequenceFlow_10v1k5h" sourceRef="IntermediateThrowEvent_UmzugsanfrageGesendet" targetRef="IntermediateCatchEvent_FachlicheQuittungErhalten" />
+    <bpmn:sequenceFlow id="SequenceFlow_13ploy8" sourceRef="IntermediateCatchEvent_FachlicheQuittungErhalten" targetRef="EndEvent_KommunikationMitEKSAbgeschlossen" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1rf823u">
+      <bpmndi:BPMNShape id="Participant_0q09af7_di" bpmnElement="Participant_MitEKSKommunizieren" isHorizontal="true">
+        <dc:Bounds x="149" y="81" width="600" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_UmzugsmeldungErfasst">
+        <dc:Bounds x="224" y="179" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="201" y="222" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_09akxzg_di" bpmnElement="EndEvent_KommunikationMitEKSAbgeschlossen">
+        <dc:Bounds x="610" y="179" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="590" y="222" width="76" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0dg4z42_di" bpmnElement="SequenceFlow_0dg4z42">
+        <di:waypoint x="260" y="197" />
+        <di:waypoint x="336" y="197" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_1vfisjz_di" bpmnElement="Participant_Einwohnerkontrollsystem" isHorizontal="true">
+        <dc:Bounds x="149" y="431" width="600" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_1561iu4_di" bpmnElement="IntermediateThrowEvent_UmzugsanfrageGesendet">
+        <dc:Bounds x="336" y="179" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="316" y="142" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_10v1k5h_di" bpmnElement="SequenceFlow_10v1k5h">
+        <di:waypoint x="372" y="197" />
+        <di:waypoint x="472" y="197" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0ifc0o8_di" bpmnElement="IntermediateCatchEvent_FachlicheQuittungErhalten">
+        <dc:Bounds x="472" y="179" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="466" y="130" width="48" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_13ploy8_di" bpmnElement="SequenceFlow_13ploy8">
+        <di:waypoint x="508" y="197" />
+        <di:waypoint x="610" y="197" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_0vq4vos_di" bpmnElement="MessageFlow_ECH0194PlatformMove">
+        <di:waypoint x="354" y="215" />
+        <di:waypoint x="354" y="431" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="371" y="371" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_1x1hjvq_di" bpmnElement="MessageFlow_ECH0058FachlicheQuittung">
+        <di:waypoint x="490" y="431" />
+        <di:waypoint x="490" y="215" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="506" y="364" width="51" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

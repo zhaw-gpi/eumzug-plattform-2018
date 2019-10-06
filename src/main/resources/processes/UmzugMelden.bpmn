@@ -236,24 +236,32 @@ Der eigentliche Fehler soll innerhalb des aufgerufenen Prozesses behandelt werde
     <sequenceFlow id="SequenceFlow_1ptg35o" sourceRef="MitEKSystemenKommunizieren" targetRef="UmzugsmeldungAkzeptiert" />
     <sequenceFlow id="SequenceFlow_1563am6" sourceRef="AblehnungMitteilen" targetRef="AblehnungPersistieren" />
     <sequenceFlow id="SequenceFlow_1woxygr" name="nein" sourceRef="UmzugsmeldungAkzeptiert" targetRef="AblehnungMitteilen">
-      <conditionExpression xsi:type="tFormalExpression">${false == true}</conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">${responseCode == 0}</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="SequenceFlow_19k3fjn" name="ja" sourceRef="UmzugsmeldungAkzeptiert" targetRef="ErfolgreichenAbschlussMitteilen">
-      <conditionExpression xsi:type="tFormalExpression">${true == true}</conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression">${responseCode == 1}</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="SequenceFlow_1x0qckx" sourceRef="ErfolgreichenAbschlussMitteilen" targetRef="NeueAdresseVeKaCenterMitteilen" />
     <sequenceFlow id="SequenceFlow_1312w0k" sourceRef="EinAbbruchgrundIstEingetroffen" targetRef="UmzugsmeldungWegenEinemAbbruchgrundFehlgeschlagen" />
     <sequenceFlow id="SequenceFlow_1iopode" sourceRef="UmzugsmeldungErfassenUndBezahlen" targetRef="MitEKSystemenKommunizieren" />
     <sequenceFlow id="SequenceFlow_0ypg6cw" sourceRef="UmzugsmeldungGestartet" targetRef="UmzugsmeldungErfassenUndBezahlen" />
-    <task id="MitEKSystemenKommunizieren" name="Mit EK-Systemen kommunizieren">
+    <callActivity id="MitEKSystemenKommunizieren" name="Mit EK-Systemen kommunizieren" calledElement="MitEksKommunizieren">
       <documentation>Dem oder den Einwohnerkontrollsystemen werden  die vom Meldepflichtigen erfassten Angaben asynchron über eine definierte technische Schnittstelle mitgeteilt.
 
 Nach einigen Minuten bis Tagen trifft eine bestätigende oder ablehnende Nachricht von dem oder den Einwohnerkontrollsystemen ein, ebenfalls über eine definierte technische Schnittstelle.
 
 Wie genau eine Gemeinde mit der erhaltenen Meldung umgeht, ist je nach Gemeinde und verwendeter Software unterschiedlich. Sicher jedoch ist, dass eine Meldung nicht 100%-ig automatisiert verarbeitet werden darf, sondern dass ein Sachbearbeiter die Verarbeitung anstösst.</documentation>
+      <extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in variables="all" />
+        <camunda:out variables="all" />
+        <camunda:in source="firstName" target="firstName" />
+        <camunda:in source="officialName" target="officialName" />
+        <camunda:in source="townMoveIn" target="townMoveIn" />
+      </extensionElements>
       <incoming>SequenceFlow_1iopode</incoming>
       <outgoing>SequenceFlow_1ptg35o</outgoing>
-    </task>
+    </callActivity>
     <boundaryEvent id="DefinierteZeitVerstrichen" name="Definierte Zeit verstrichen" attachedToRef="MitEKSystemenKommunizieren">
       <outgoing>SequenceFlow_0qpbkoo</outgoing>
       <timerEventDefinition id="TimerEventDefinition_12hpg9n">
@@ -426,7 +434,7 @@ Wie genau eine Gemeinde mit der erhaltenen Meldung umgeht, ist je nach Gemeinde 
         <omgdi:waypoint x="1111" y="306" />
         <omgdi:waypoint x="1169" y="306" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_1i5613p_di" bpmnElement="MitEKSystemenKommunizieren" bioc:stroke="rgb(30, 136, 229)" bioc:fill="rgb(187, 222, 251)">
+      <bpmndi:BPMNShape id="CallActivity_1r7jycs_di" bpmnElement="MitEKSystemenKommunizieren" bioc:stroke="rgb(30, 136, 229)" bioc:fill="rgb(187, 222, 251)">
         <omgdc:Bounds x="609" y="266" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

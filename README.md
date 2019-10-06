@@ -2,7 +2,7 @@
 
 > Autoren der Dokumentation: Björn Scheppler
 
-> Dokumentation letztmals aktualisiert: 5.10.2019
+> Dokumentation letztmals aktualisiert: 6.10.2019
 
 > TOC erstellt mit https://ecotrust-canada.github.io/markdown-toc/
 
@@ -74,6 +74,7 @@ Die **Farben** bedeuten dabei:
 4. **Aufrufprozess 'Mit EK-Systemen kommunizieren'**:
     1. In diesem Teil des End-to-End-Prozesses erfolgt die automatisierte Kommunikation mit den **Einwohner-Kontrollsystemen** der Wegzugs-/Umzugs-/Zuzugsgemeinden.
     2. Diese geschieht **asynchron**: Im Aufrufprozess wird dem gemockten Einwohner-Kontrollsystem per REST (in der Realität per SOAP) die Umzugsmeldung mitgeteilt. Umgekehrt wird eine REST-Schnittstelle nach aussen angeboten, an welche das Einwohner-Kontrollsystem die Antwortmeldung an die Umzugsplattform senden kann. Über Message Correlation wird diese dann der korrekten Prozessinstanz übergeben. 
+    3. Details zur technischen Implementation können dieser Github-Repository-Dokumentation entnommen werden: https://github.com/zhaw-gpi/async-rest-messaging
 5. **External Tasks 'xyz mitteilen'**:
     1. In diesem Teil des End-to-End-Prozesses (und auch teilweise in den aufgerufenen Prozessen) erfolgt die automatisierte **Ein-Weg-Kommunikation mit dem Meldepflichtigen**.
     2. Diese geschieht nicht direkt, sondern über einen Dienst (**Kantonaler Benachrichtigungsdienst**), welcher über das **External Task Pattern** in die Umzugsplattform eingebunden ist.
@@ -104,9 +105,10 @@ Die **Farben** bedeuten dabei:
 1. Diese Umsysteme müssen wir wieder für unsere Demo-Zwecke **mocken**, also selbst irgendwie implementieren.
 2. In der **Realität** sind solche EKS in der Regel **Module in umfassenden Gemeindesoftware-Paketen**. Zwei Bekannte sind etwa [Loganto von VRSG](https://www.abraxas.ch/de/loesungen/fachanwendungen/subjekte) oder [NEST](https://www.nest.ch/).
 3. Daraus benötigen wir **gemocked lediglich einen Teil**, wo es um die Verwaltung von Zuzug/Wegzug/Umzug geht.
-4. In der Realität muss in diesem Prozess mindestens ein Schritt sein, der von einem Menschen durchgeführt wird, welcher also die erhaltene Umzugsmeldung manuell prüft. Dies wird hier lediglich gemockt durch einen Zufallsgenerator für die Zeit, bis eine Antwort an die Umzugsplattform gesendet wird. Die Entscheidung selbst wird durch einen einfachen Algorithmus "berechnet".
+4. In der Realität muss in diesem Prozess mindestens ein Schritt sein, der von einem Menschen durchgeführt wird, welcher also die erhaltene Umzugsmeldung manuell prüft. Dies wird hier lediglich gemockt durch einen Zufallsgenerator für die Zeit, bis eine Antwort an die Umzugsplattform gesendet wird. Die Entscheidung selbst wird durch einen einfachen Algorithmus "berechnet" (Vorname beginnt mit A-M => Angenommen).
 5. In der Realität haben wir es **nicht bloss mit einem EKS zu tun**, sondern mit sovielen, wie der Kanton Bern Gemeinden hat. Entsprechend würde es in der Umzugsplattform oder ausserhalb davon einen Routing-Service benötigen, welcher zur ID der Gemeinde die passende URL für den WebService des zugehörigen EKS zurück gibt. Darauf wird verzichtet.
-6. Die detaillierte Dokumentation ist zu finden in folgender **Github-Repository**: https://github.com/zhaw-gpi/einwohnerkontrollsystem
+6. Hinzu kommt, dass bei einem Wegzug/Zuzug zwei Gemeinden je diesen akzeptieren müssen, während im Prototoyp vereinfacht nur umgesetzt ist, dass eine Gemeinde ein Urteil fällt.
+7. Die detaillierte Dokumentation ist zu finden in folgender **Github-Repository**: https://github.com/zhaw-gpi/einwohnerkontrollsystem
 
 ### Kantonaler Benachrichtigungsdienst
 1. Aufgrund der **Komplexität** - es sollen nebst Mail-Benachrichtigung z.B. auch SMS-Benachrichtigung ermöglicht werden -, ist eine Implementation nur als JavaDelegate direkt in der Umzugsplattform nicht sinnvoll.
@@ -146,8 +148,9 @@ Nach der Beschreibung der Gesamtarchitektur mit den einzelnen Komponenten folgt 
     7. WebServiceHeaderActionCodeEnumeration-Klasse
     8. Endpoint-Deklarationen für GWR und Personenregister in application.properties
 5. **WebService REST-Komponenten**:
-   1. @TODO
+   1. Spring Boot Webapplikations-Komponenten für den Aufruf von REST-Services (RestTemplate) und das Anbieten von REST-Endpoints
    2. Um auf die Daten der Umzugsplattform (nicht die Camunda Process Engine) zuzugreifen, wurde eine separate REST-API erstellt (Umzugsplattform-API) in DocumentRestController, MunicipalityRestController und TransactionLogController
+   3. Dieselbe API enthält auch den TechnicalReceiptRestController, welcher durch die Einwohnerkontrollsysteme als Callback aufgerufen wird.
 6. **Zahlungsabwicklungs-Komponenten**:
     1. Stripe Java API Library für die server-seitige Kommunikation mit Stripe
     2. StripeClientService-Klasse als Vermittler zwischen der API Library und ...
@@ -159,7 +162,6 @@ Nach der Beschreibung der Gesamtarchitektur mit den einzelnen Komponenten folgt 
     3. Ordner static/forms mit allen Embedded Forms-HTML-Dateien, welche den HTML-Code für die Forms sowie JavaScript-Code enthalten
 8. "Sinnvolle" **Grundkonfiguration** in application.properties für Camunda, Datenbank und Tomcat
 9.  Ein **soapUI-Testprojekt** in test/ressources/EumzugPlattform2018Tests-soapui-project.xml
-    1.  @TODO
 
 ## Vorbereitung für das Ausführen/Testen der Applikation
 ### Voraussetzungen
