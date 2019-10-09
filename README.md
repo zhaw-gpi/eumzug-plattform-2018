@@ -2,13 +2,15 @@
 
 > Autoren der Dokumentation: Björn Scheppler
 
-> Dokumentation letztmals aktualisiert: 6.10.2019
+> Dokumentation letztmals aktualisiert: 9.10.2019
 
 > TOC erstellt mit https://ecotrust-canada.github.io/markdown-toc/
 
 In diesem Projekt ist eine mögliche Lösung für den [UmzugsmeldeProzess](https://www.egovernment.ch/de/umsetzung/schwerpunktplan/e-umzug-schweiz/) entwickelt.
 
 Die Lösung entstand im Rahmen des **Moduls Geschäftsprozesssintegration im Studiengang Wirtschaftsinformatik** an der ZHAW School of Management and Law basierend auf der Lösung vom HS 2017, aber architektonisch und technisch auf den Stand für HS 2018 gebracht. Im Oktober 2019 wurde sie auf Camunda 7.10 gebracht, jedoch bewusst nicht auf 7.11, da hierdurch zu viele Anpassungen im Frontend erforderlich wären.
+
+[![Screencast](https://img.youtube.com/vi/jKUTCAZbhRI/0.jpg)](https://www.youtube.com/watch?v=jKUTCAZbhRI&list=PLrEte7-XNZvJYiDo3nAg8844UazdAk41c)
 
 ## Inhaltsverzeichnis
   * [Anforderungsspezifikation und Aufgabenstellung](#anforderungsspezifikation-und-aufgabenstellung)
